@@ -1,0 +1,57 @@
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:10
+    container_name: forgejo
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - FORGEJO__server__PROTOCOL=http
+      - FORGEJO__server__HTTP_ADDR=0.0.0.0
+      - FORGEJO__server__HTTP_PORT=3000
+      - FORGEJO__server__DOMAIN=localhost
+      - FORGEJO__server__ROOT_URL=http://localhost:3333/
+      - FORGEJO__server__OFFLINE_MODE=false
+      - FORGEJO__service__DISABLE_REGISTRATION=true
+      - FORGEJO__service__REQUIRE_SIGNIN_VIEW=true
+      - FORGEJO__database__DB_TYPE=postgres
+      - FORGEJO__database__HOST=db:5432
+      - FORGEJO__database__NAME=forgejo
+      - FORGEJO__database__USER=postgres
+      - FORGEJO__database__PASSWD=postgres
+      - FORGEJO__security__INSTALL_LOCK=true
+      - FORGEJO__security__SECRET_KEY=change-this-secret-key-in-production-please
+      - FORGEJO__admin__user=admin
+      - FORGEJO__admin__password=admin123
+      - FORGEJO__admin__email=admin@localhost
+      - FORGEJO__actions__ENABLED=true
+    restart: always
+    volumes:
+      - forgejo_data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3333:3000"
+      - "2222:22"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: forgejo-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=forgejo
+    restart: always
+    volumes:
+      - forgejo_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  forgejo_data:
+  forgejo_db:

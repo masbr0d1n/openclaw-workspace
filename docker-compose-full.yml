@@ -1,0 +1,78 @@
+# Docker Compose for StreamHub
+# Frontend (Next.js) + Backend (FastAPI)
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: streamhub-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: streamhub
+      POSTGRES_PASSWORD: streamhub_password
+      POSTGRES_DB: streamhub
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streamhub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - streamhub-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./apistreamhub-fastapi
+      dockerfile: Dockerfile
+    container_name: streamhub-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://streamhub:streamhub_password@postgres:5432/streamhub
+      SECRET_KEY: your-secret-key-change-in-production
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - streamhub-network
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./streamhub-nextjs
+      dockerfile: Dockerfile
+    container_name: streamhub-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8000/api/v1
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - streamhub-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  streamhub-network:
+    driver: bridge

@@ -1,0 +1,13 @@
+[Unit]
+Description=Power Watchdog - Alert on AC power loss
+After=multi-user.target
+
+[Service]
+Type=simple
+User=sysop
+ExecStart=/home/sysop/.openclaw/workspace/scripts/power-watchdog.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+
+# Large data directories
+downloads/
+tiktok-videos/
+tiktok-sample/
+
+# Git repos (submodules)
+apistreamhub-fastapi/
+apistreamhub/
+geeky-theme-backup/
+qras/
+streamhub-dashboard/
+streamhub-refactor/
+streamhub/
+mlx-callcenter-bot/
+nextjs-blog/
+nextjs-blog-backup/
+rspress-blog/
+hugo-blog/
+
+# Test files
+test-*.py
+test-*.sh
+test-*.html
+game.html
+test-game.html
+
+# Backup files
+*.bak
+IDENTITY.md.bak

@@ -1,0 +1,45 @@
+graph TB
+    subgraph Clients["👥 Multiple Users"]
+        U1[User 1]
+        U2[User 2]
+        U3[User N]
+    end
+    
+    subgraph LB["⚖️ Load Balancer (Nginx)"]
+        Nginx[Nginx]
+    end
+    
+    subgraph API["🔧 API Servers"]
+        API1[API Server 1]
+        API2[API Server 2]
+        API3[API Server 3]
+    end
+    
+    subgraph Cache["💾 Cache Layer"]
+        Redis[(Redis Cache)]
+    end
+    
+    subgraph DB["🗄️ Vector DB"]
+        Qdrant[(Qdrant)]
+    end
+    
+    subgraph LLM["🤖 LLM Service"]
+        LLM[Qwen2.5 API]
+    end
+    
+    subgraph Queue["📬 Message Queue"]
+        Celery[Celery Workers]
+    end
+    
+    U1 & U2 & U3 --> Nginx
+    Nginx --> API1 & API2 & API3
+    API1 & API2 & API3 --> Redis
+    API1 & API2 & API3 --> Qdrant
+    API1 & API2 & API3 --> Celery
+    Celery --> LLM
+    
+    style LB fill:#fff4e1
+    style Cache fill:#ffe1e1
+    style DB fill:#e1f0ff
+    style LLM fill:#e1ffe1
+    style Queue fill:#f0e1ff

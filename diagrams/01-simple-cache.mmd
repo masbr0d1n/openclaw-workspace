@@ -1,0 +1,19 @@
+graph LR
+    User[👤 User] --> API[API Gateway]
+    API --> Redis[(Redis Cache)]
+    
+    Redis -->|Cache HIT| Response[✅ Response]
+    Redis -->|Cache MISS| RAG[RAG Engine]
+    
+    RAG --> Qdrant[(Qdrant DB)]
+    RAG --> LLM[Qwen2.5 LLM]
+    
+    Qdrant --> RAG
+    LLM --> RAG
+    RAG --> Store[Store in Cache]
+    Store --> Response
+    
+    style User fill:#e1f5e1
+    style Redis fill:#ffe1e1
+    style Qdrant fill:#e1f0ff
+    style LLM fill:#fff4e1

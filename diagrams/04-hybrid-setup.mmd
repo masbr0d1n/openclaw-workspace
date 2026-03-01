@@ -1,0 +1,30 @@
+graph LR
+    subgraph RPi["🍊 Raspberry Pi 4B 8GB"]
+        Qdrant[(Qdrant DB)]
+        Embeddings[Embedding Model]
+        API[Python API]
+    end
+    
+    subgraph M1["🍎 MacBook Pro M1"]
+        LLM[Qwen2.5 LLM]
+        MLX[MLX Framework]
+    end
+    
+    subgraph Users["👥 Users"]
+        U1[User 1]
+        U2[User 2]
+    end
+    
+    U1 & U2 --> API
+    API --> Qdrant
+    API --> Embeddings
+    API -->|HTTP Request| LLM
+    
+    Qdrant -->|Context| API
+    Embeddings -->|Vectors| API
+    LLM -->|Response| API
+    API --> U1 & U2
+    
+    style RPi fill:#ffe1e1
+    style M1 fill:#e1f0ff
+    style Users fill:#e1ffe1

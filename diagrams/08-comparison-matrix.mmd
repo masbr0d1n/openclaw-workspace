@@ -1,0 +1,30 @@
+graph TB
+    subgraph L1["Level 1: Single + Cache"]
+        L1A[1 Server]
+        L1B[Redis Cache]
+        L1C[Qdrant Single]
+        L1D[1 LLM Instance]
+        L1E[10-50 Users]
+    end
+    
+    subgraph L2["Level 2: Multi-Tier"]
+        L2A[3 API Servers]
+        L2B[Redis Sentinel]
+        L2C[Qdrant Single]
+        L2D[LLM API Server]
+        L2E[Celery Workers]
+        L2F[50-500 Users]
+    end
+    
+    subgraph L3["Level 3: Production"]
+        L3A[Auto-scale APIs]
+        L3B[Redis Cluster]
+        L3C[Qdrant Cluster]
+        L3D[Multiple LLMs]
+        L3E[RabbitMQ/Kafka]
+        L3F[500+ Users]
+    end
+    
+    style L1 fill:#c8e6c9
+    style L2 fill:#fff9c4
+    style L3 fill:#ffccbc

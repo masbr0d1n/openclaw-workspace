@@ -1,0 +1,63 @@
+graph TB
+    subgraph Edge["🌐 Edge Layer"]
+        CDN[CDN + WAF]
+    end
+    
+    subgraph LB["⚖️ Load Balancing"]
+        ALB[AWS ALB / Nginx]
+    end
+    
+    subgraph API["🔧 API Servers (Auto-scale)"]
+        API1[API 1]
+        API2[API 2]
+        API3[API N]
+    end
+    
+    subgraph Cache["💾 Cache Cluster"]
+        RMaster[(Redis Master)]
+        RSlave1[(Redis Slave 1)]
+        RSlave2[(Redis Slave 2)]
+        Sentinel[Redis Sentinel]
+    end
+    
+    subgraph VectorDB["🗄️ Qdrant Cluster"]
+        Q1[Qdrant Node 1]
+        Q2[Qdrant Node 2]
+        Q3[Qdrant Node 3]
+    end
+    
+    subgraph LLM["🤖 LLM API Cluster"]
+        L1[LLM Instance 1]
+        L2[LLM Instance 2]
+        L3[LLM Instance N]
+    end
+    
+    subgraph Queue["📬 Message Queue"]
+        RabbitMQ[RabbitMQ / Kafka]
+    end
+    
+    subgraph Workers["⚙️ Worker Pool"]
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker N]
+    end
+    
+    CDN --> ALB
+    ALB --> API1 & API2 & API3
+    
+    API1 & API2 & API3 --> RMaster
+    RMaster --> RSlave1 & RSlave2
+    RSlave1 & RSlave2 --> Sentinel
+    Sentinel --> RMaster
+    
+    API1 & API2 & API3 --> Q1 & Q2 & Q3
+    API1 & API2 & API3 --> RabbitMQ
+    RabbitMQ --> W1 & W2 & W3
+    W1 & W2 & W3 --> L1 & L2 & L3
+    
+    style Edge fill:#e1f5e1
+    style Cache fill:#ffe1e1
+    style VectorDB fill:#e1f0ff
+    style LLM fill:#fff4e1
+    style Queue fill:#f0e1ff
+    style Workers fill:#ffe1f0

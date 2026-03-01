@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Architecture Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .diagram-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        h2 {
+            color: #666;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .diagram {
+            min-height: 300px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+        .download-btn:hover {
+            background: #45a049;
+        }
+        .info {
+            background: #e7f3fe;
+            border-left: 4px solid #2196F3;
+            padding: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 RAG Architecture Diagrams</h1>
+    
+    <div class="info">
+        <strong>💡 Tip:</strong> Right-click on any diagram and select "Save image as..." to download, or use the buttons below each diagram.
+    </div>
+
+    <!-- Diagram 1 -->
+    <div class="diagram-container">
+        <h2>1. Simple Cache Architecture (LEVEL 1 - &lt;50 Users)</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+graph LR
+    User[👤 User] --> API[API Gateway]
+    API --> Redis[(Redis Cache)]
+    
+    Redis -->|Cache HIT| Response[✅ Response]
+    Redis -->|Cache MISS| RAG[RAG Engine]
+    
+    RAG --> Qdrant[(Qdrant DB)]
+    RAG --> LLM[Qwen2.5 LLM]
+    
+    Qdrant --> RAG
+    LLM --> RAG
+    RAG --> Store[Store in Cache]
+    Store --> Response
+    
+    style User fill:#e1f5e1
+    style Redis fill:#ffe1e1
+    style Qdrant fill:#e1f0ff
+    style LLM fill:#fff4e1
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 2 -->
+    <div class="diagram-container">
+        <h2>2. Multi-Tier Architecture (LEVEL 2 - 50-500 Users)</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+graph TB
+    subgraph Clients["👥 Multiple Users"]
+        U1[User 1]
+        U2[User 2]
+        U3[User N]
+    end
+    
+    subgraph LB["⚖️ Load Balancer (Nginx)"]
+        Nginx[Nginx]
+    end
+    
+    subgraph API["🔧 API Servers"]
+        API1[API Server 1]
+        API2[API Server 2]
+        API3[API Server 3]
+    end
+    
+    subgraph Cache["💾 Cache Layer"]
+        Redis[(Redis Cache)]
+    end
+    
+    subgraph DB["🗄️ Vector DB"]
+        Qdrant[(Qdrant)]
+    end
+    
+    subgraph LLM["🤖 LLM Service"]
+        LLM[Qwen2.5 API]
+    end
+    
+    subgraph Queue["📬 Message Queue"]
+        Celery[Celery Workers]
+    end
+    
+    U1 & U2 & U3 --> Nginx
+    Nginx --> API1 & API2 & API3
+    API1 & API2 & API3 --> Redis
+    API1 & API2 & API3 --> Qdrant
+    API1 & API2 & API3 --> Celery
+    Celery --> LLM
+    
+    style LB fill:#fff4e1
+    style Cache fill:#ffe1e1
+    style DB fill:#e1f0ff
+    style LLM fill:#e1ffe1
+    style Queue fill:#f0e1ff
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 3 -->
+    <div class="diagram-container">
+        <h2>3. Production-Ready Architecture (LEVEL 3 - 500+ Users)</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+graph TB
+    subgraph Edge["🌐 Edge Layer"]
+        CDN[CDN + WAF]
+    end
+    
+    subgraph LB["⚖️ Load Balancing"]
+        ALB[AWS ALB / Nginx]
+    end
+    
+    subgraph API["🔧 API Servers (Auto-scale)"]
+        API1[API 1]
+        API2[API 2]
+        API3[API N]
+    end
+    
+    subgraph Cache["💾 Cache Cluster"]
+        RMaster[(Redis Master)]
+        RSlave1[(Redis Slave 1)]
+        RSlave2[(Redis Slave 2)]
+        Sentinel[Redis Sentinel]
+    end
+    
+    subgraph VectorDB["🗄️ Qdrant Cluster"]
+        Q1[Qdrant Node 1]
+        Q2[Qdrant Node 2]
+        Q3[Qdrant Node 3]
+    end
+    
+    subgraph LLM["🤖 LLM API Cluster"]
+        L1[LLM Instance 1]
+        L2[LLM Instance 2]
+        L3[LLM Instance N]
+    end
+    
+    subgraph Queue["📬 Message Queue"]
+        RabbitMQ[RabbitMQ / Kafka]
+    end
+    
+    subgraph Workers["⚙️ Worker Pool"]
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker N]
+    end
+    
+    CDN --> ALB
+    ALB --> API1 & API2 & API3
+    
+    API1 & API2 & API3 --> RMaster
+    RMaster --> RSlave1 & RSlave2
+    RSlave1 & RSlave2 --> Sentinel
+    Sentinel --> RMaster
+    
+    API1 & API2 & API3 --> Q1 & Q2 & Q3
+    API1 & API2 & API3 --> RabbitMQ
+    RabbitMQ --> W1 & W2 & W3
+    W1 & W2 & W3 --> L1 & L2 & L3
+    
+    style Edge fill:#e1f5e1
+    style Cache fill:#ffe1e1
+    style VectorDB fill:#e1f0ff
+    style LLM fill:#fff4e1
+    style Queue fill:#f0e1ff
+    style Workers fill:#ffe1f0
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 4 -->
+    <div class="diagram-container">
+        <h2>4. Hybrid Setup (RPi + M1 Pro)</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+graph LR
+    subgraph RPi["🍊 Raspberry Pi 4B 8GB"]
+        Qdrant[(Qdrant DB)]
+        Embeddings[Embedding Model]
+        API[Python API]
+    end
+    
+    subgraph M1["🍎 MacBook Pro M1"]
+        LLM[Qwen2.5 LLM]
+        MLX[MLX Framework]
+    end
+    
+    subgraph Users["👥 Users"]
+        U1[User 1]
+        U2[User 2]
+    end
+    
+    U1 & U2 --> API
+    API --> Qdrant
+    API --> Embeddings
+    API -->|HTTP Request| LLM
+    
+    Qdrant -->|Context| API
+    Embeddings -->|Vectors| API
+    LLM -->|Response| API
+    API --> U1 & U2
+    
+    style RPi fill:#ffe1e1
+    style M1 fill:#e1f0ff
+    style Users fill:#e1ffe1
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 5 -->
+    <div class="diagram-container">
+        <h2>5. Full RAG Pipeline Flow</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+sequenceDiagram
+    actor U as 👤 User
+    participant API as 🔧 API Gateway
+    participant Cache as 💾 Redis Cache
+    participant Qdrant as 🗄️ Qdrant
+    participant LLM as 🤖 Qwen2.5
+    
+    U->>API: POST /chat {"question": "..."}
+    
+    API->>Cache: Check cache
+    
+    alt Cache HIT
+        Cache-->>API: Return cached response
+        API-->>U: Response (cached)
+    else Cache MISS
+        API->>Qdrant: Search vectors
+        Qdrant-->>API: Top K results
+        
+        API->>LLM: Generate answer
+        LLM-->>API: Response
+        
+        API->>Cache: Store response (TTL: 1h)
+        API-->>U: Response
+    end
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 6 -->
+    <div class="diagram-container">
+        <h2>6. Request Flow with Queue (Multi-User)</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+sequenceDiagram
+    actor U1 as 👤 User 1
+    actor U2 as 👤 User 2
+    participant API as 🔧 API Server
+    participant Queue as 📬 Celery Queue
+    participant Worker as ⚙️ Worker Pool
+    participant LLM as 🤖 Qwen2.5
+    
+    par Parallel Requests
+        U1->>API: POST /chat
+        API->>Queue: Submit Task 1
+        API-->>U1: Task ID: abc123
+    and
+        U2->>API: POST /chat
+        API->>Queue: Submit Task 2
+        API-->>U2: Task ID: def456
+    end
+    
+    Queue->>Worker: Process Task 1
+    Worker->>LLM: Generate
+    LLM-->>Worker: Response
+    Worker->>Queue: Store Result
+    
+    U1->>API: GET /result/abc123
+    API->>Queue: Check status
+    Queue-->>API: Complete
+    API-->>U1: Response
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 7 -->
+    <div class="diagram-container">
+        <h2>7. Document Upload Flow</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+graph TB
+    subgraph Upload["📤 Document Upload"]
+        File[PDF/DOCX/TXT]
+    end
+    
+    subgraph Process["⚙️ Processing"]
+        Extract[Extract Text]
+        Chunk[Split into Chunks]
+        Embed[Generate Embeddings]
+    end
+    
+    subgraph Storage["💾 Storage"]
+        Qdrant[(Qdrant)]
+        Meta[(Metadata DB)]
+        Files[File Storage]
+    end
+    
+    File --> Extract
+    Extract --> Chunk
+    Chunk --> Embed
+    Chunk --> Files
+    
+    Embed --> Qdrant
+    Chunk --> Meta
+    
+    style Upload fill:#e1f5e1
+    style Process fill:#fff4e1
+    style Storage fill:#e1f0ff
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <!-- Diagram 8 -->
+    <div class="diagram-container">
+        <h2>8. Architecture Comparison Matrix</h2>
+        <div class="diagram">
+            <pre class="mermaid">
+graph TB
+    subgraph L1["Level 1: Single + Cache"]
+        L1A[1 Server]
+        L1B[Redis Cache]
+        L1C[Qdrant Single]
+        L1D[1 LLM Instance]
+        L1E[10-50 Users]
+    end
+    
+    subgraph L2["Level 2: Multi-Tier"]
+        L2A[3 API Servers]
+        L2B[Redis Sentinel]
+        L2C[Qdrant Single]
+        L2D[LLM API Server]
+        L2E[Celery Workers]
+        L2F[50-500 Users]
+    end
+    
+    subgraph L3["Level 3: Production"]
+        L3A[Auto-scale APIs]
+        L3B[Redis Cluster]
+        L3C[Qdrant Cluster]
+        L3D[Multiple LLMs]
+        L3E[RabbitMQ/Kafka]
+        L3F[500+ Users]
+    end
+    
+    style L1 fill:#c8e6c9
+    style L2 fill:#fff9c4
+    style L3 fill:#ffccbc
+            </pre>
+        </div>
+        <button class="download-btn" onclick="downloadMermaid(this)">Download as SVG</button>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // Download function
+        function downloadMermaid(button) {
+            const container = button.parentElement;
+            const mermaidDiv = container.querySelector('.diagram');
+            const svg = mermaidDiv.querySelector('svg');
+            
+            if (svg) {
+                // Get SVG data
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                
+                // Get diagram title
+                const title = container.querySelector('h2').textContent.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${title}.svg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Print/Save as PDF function
+        function printPage() {
+            window.print();
+        }
+    </script>
+
+    <div style="text-align: center; margin-top: 40px; padding-bottom: 20px;">
+        <button onclick="printPage()" style="background: #2196F3; color: white; padding: 15px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+            📄 Print / Save as PDF
+        </button>
+    </div>
+
+    <div class="info" style="margin-top: 30px;">
+        <strong>📝 Notes:</strong>
+        <ul>
+            <li>All diagrams are rendered using Mermaid.js v10</li>
+            <li>Click "Download as SVG" to save individual diagrams</li>
+            <li>Use "Print / Save as PDF" to save all diagrams at once</li>
+            <li>SVG files can be converted to PNG using any image editor or online tool</li>
+        </ul>
+    </div>
+</body>
+</html>

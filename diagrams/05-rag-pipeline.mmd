@@ -1,0 +1,24 @@
+sequenceDiagram
+    actor U as 👤 User
+    participant API as 🔧 API Gateway
+    participant Cache as 💾 Redis Cache
+    participant Qdrant as 🗄️ Qdrant
+    participant LLM as 🤖 Qwen2.5
+    
+    U->>API: POST /chat {"question": "..."}
+    
+    API->>Cache: Check cache
+    
+    alt Cache HIT
+        Cache-->>API: Return cached response
+        API-->>U: Response (cached)
+    else Cache MISS
+        API->>Qdrant: Search vectors
+        Qdrant-->>API: Top K results
+        
+        API->>LLM: Generate answer
+        LLM-->>API: Response
+        
+        API->>Cache: Store response (TTL: 1h)
+        API-->>U: Response
+    end

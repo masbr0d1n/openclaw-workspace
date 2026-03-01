@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: apistreamhub-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: apistreamhub
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  api:
+    build:
+      context: ./apistreamhub-fastapi
+      dockerfile: Dockerfile
+    container_name: apistreamhub-api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/apistreamhub
+      JWT_SECRET_KEY: your-secret-key-change-in-production
+      DEBUG: "true"
+      HOST: 0.0.0.0
+      PORT: 8000
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./apistreamhub-fastapi:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./streamhub-dashboard
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=http://localhost:8001/api/v1
+        - REACT_APP_USE_FASTAPI=true
+        - REACT_APP_ENABLE_NEW_LOGIN=true
+    container_name: streamhub-frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8001/api/v1
+      - REACT_APP_USE_FASTAPI=true
+      - REACT_APP_ENABLE_NEW_LOGIN=true
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:

@@ -1,0 +1,36 @@
+## ⚠️ Forgejo Authentication Failed
+
+Git push ke Forgejo gagal karena password salah.
+
+### Status:
+- ✅ Backend (apistreamhub-fastapi) - Committed & Pushed
+- ✅ Frontend (streamhub-nextjs) - Committed, Not Pushed
+- ❌ Forgejo auth failed
+
+### Solusi Tercepat:
+
+**1. Setup SSH Key di Forgejo:**
+
+Copy public key ini:
+```
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDHCY6rV1FFCCiKxj8rJCHCqLPWxJWH+NzzGfXzFYqNmWKEBD/C7LGf0QVPcP0KgnHNXZVwTL8FEGJpLQOlYCPGWfPhNXhd8fWqJ5B9lUSv8JZq4qYqLJ7R3kXrqR7ZPxnR9lh0Q1aL9mX6vJ0fN6ZVKhp5bCJVzH3wzTLcQqgYJ8p7kN8m9dVyCDPhvBPQPKhkQhd0sWQLbCZN0nQV9k6pGc1CfXcY5qVQvKhQd4cVQzNlqPPDrBFMNLqD8W0fN1qKZh2TWh5WDR5w8ZfKVMqTQyJ7lP0HQ9RHk7B5hBZdVzX9B6pGS0fN6Qz8MLL0NqCqKH7Y5dVzTQ3JLZPLq1FWvQ4dKcVNcR9kMqDVZcPkXD6lLQfMgZvH7yK0NHDZcVfN9XqRVh3HPfJVYMQLmBQdVGSLlHkDvCpD0cK4PLcVvN0L8dKhRPFMkYh3mKL0hGqDlL5QL6PkK8ZqC9VcZqTQnQPLDnYZJMLpDKvZF5pVwJqHPfHYMlCwL2KfPhQVL8PVKYKrKLLvC7KRgPLPdK4cVQZHLPLJZ0L8BqPYQMJL2KLMNfPJDCmLbHPLPHZk7KLfKPPMHDKvZHVdJ5HKfPQLmBZPPMHDKfZHSJYPLfQ0HNLPVKM7PLPKYLLbJJPVKDMXPLPQLbJNLvKfHNJKPJPfKLkYPLKPPHDKLLJNLHPLZqPPKfYLrKFLDJPVPYQLDKDNQPJPYHNKQJBKQJPZQJHKYQLBQJLdQJDNQLBQJHKQJPyQJHKYPQLNQJBYPQLpKQZDQJHKYPQLZYPzBNZBYPzBNLmG6n19GNsBOcBwns+Blu2s+JyEh2Y6GZLv8RKOPf5sOPNLKcQZZvCXMPf2dfqKcXZNzDP4ZDKZcTCTKUQX3HYwONmRvvj8OVLhOP2owOPZ4PuHZqJPBLgeCmKZP3FWmOPrGsC+C0zvBHKWP6LSsPYnKJPyRDm+VjXP0bVWOn+Z1eCP3IG/OdHrQfYsXsPsT4eCMnbmPEcAGJjPYc4U+CiL2PdT6qOFk8WH6CPn3xSPQ49jH+/OYGSQtFOnR28XPKOfHkKfYMPMvThPsJhqPXqGQPxKhVPkHKOPXsGOPT25gPYPsSPfgcSPY3heOYfsSPfX4eOnJ+SPYVKeCYE+COSnySFv42LuCMuQSPXIFdO4ATfuBgsKPaAiNOC4ATfOoyCPQ5iFujA0uiRYaCeG9+Tc8+DnGCBOC9uSeOsSh9OgCM9OpuOMrSHeCpuSPasXFO4n/Ga6Om6hG6LjEWOc4fySeCfXXsO4q6QeC/4Huq4iPd8heCMfX0O4mvifOsxPTOGfTOOY73TOOY/0BOO8bGOOAiB+OO8rBOO5jCOO4XNuO4FDOe4yCOe5LNe5bDOe5WMOe4tLOc6yKOe6cOOe5zBOe6tPOe5hMOe6kNOc7jOe8LCOe7hOO8UROO7pSOc7TOO8phOO81COc9WPO9WPOe8uNO+OLOO+dBO++XNe/uuO+9NOO/ENO/5LO++YLO+riO+8zPO+khO/+VdO//QeO//suO/OuO//NOO//suO/O4O///SOO//yOQArOSQAtOyrzqCyuOOaUOOi8EOKsLOq4NOPNMwPNdk2PN/PmPL/OOPj5XOPzZPPM/6OPY8cPOzouOb64+OPu4+ObnkuOg==
+```
+
+**2. Buka Forgejo:**
+- URL: http://localhost:3333
+- Login: sysop
+- Settings → SSH Keys → Add Key
+- Paste public key di atas
+- Add Key
+
+**3. Push dengan SSH:**
+```bash
+cd /home/sysop/.openclaw/workspace/streamhub-nextjs
+git remote set-url forgejo git@localhost:3333:sysop/streamhub-nextjs.git
+git push -u forgejo master
+```
+
+Atau gunakan password/token langsung:
+```bash
+git push http://sysop:<PASSWORD>@localhost:3333/sysop/streamhub-nextjs.git master
+```

@@ -1,0 +1,27 @@
+sequenceDiagram
+    actor U1 as 👤 User 1
+    actor U2 as 👤 User 2
+    participant API as 🔧 API Server
+    participant Queue as 📬 Celery Queue
+    participant Worker as ⚙️ Worker Pool
+    participant LLM as 🤖 Qwen2.5
+    
+    par Parallel Requests
+        U1->>API: POST /chat
+        API->>Queue: Submit Task 1
+        API-->>U1: Task ID: abc123
+    and
+        U2->>API: POST /chat
+        API->>Queue: Submit Task 2
+        API-->>U2: Task ID: def456
+    end
+    
+    Queue->>Worker: Process Task 1
+    Worker->>LLM: Generate
+    LLM-->>Worker: Response
+    Worker->>Queue: Store Result
+    
+    U1->>API: GET /result/abc123
+    API->>Queue: Check status
+    Queue-->>API: Complete
+    API-->>U1: Response

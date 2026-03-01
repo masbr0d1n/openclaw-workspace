@@ -1,0 +1,13 @@
+[Unit]
+Description=Disk Usage Monitor Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=sysop
+ExecStart=/home/sysop/.openclaw/workspace/scripts/disk-monitor.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

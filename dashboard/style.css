@@ -1,0 +1,540 @@
+/* Modern Dashboard Styles */
+
+:root {
+    --primary: #00d9ff;
+    --secondary: #6c757d;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --light: #f8f9fa;
+    --gray: #6c757d;
+    
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, var(--bg-color) 0%, #0c0f1e 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00d9ff 0%, #00b4d6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+}
+
+.datetime {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.icon {
+    font-size: 1.5rem;
+}
+
+.card-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.metric {
+    margin-bottom: 12px;
+}
+
+.value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+/* Progress Bars */
+.bar-container {
+    background: var(--dark);
+    border-radius: 8px;
+    height: 12px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease;
+    background: linear-gradient(90deg, var(--success) 0%, var(--success) 100%);
+}
+
+/* CPU, RAM, Storage, Temp Cards */
+#cpu-bar { background: linear-gradient(90deg, #00d9ff 0%, #00b4d6 100%); }
+#ram-bar { background: linear-gradient(90deg, #8b5cf6 0%, #06b6d4 100%); }
+#storage-bar { background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); }
+#cpu-temp { color: var(--success); }
+
+/* Battery Card */
+.battery-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.battery-level {
+    position: relative;
+    height: 60px;
+    background: var(--dark);
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+.battery-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--danger) 0%, var(--warning) 50%, var(--success) 100%);
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.battery-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.battery-status {
+    display: grid;
+    gap: 8px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.status-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Network Card */
+.network-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.network-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--dark);
+    border-radius: 8px;
+}
+
+.network-icon {
+    font-size: 1.5rem;
+}
+
+.network-type-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--success);
+}
+
+.network-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Apps Card */
+.apps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.app-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--dark);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.app-item.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .grid, .grid-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+}
+
+/* =============================================
+   MUSIC TAB STYLES
+   ============================================= */
+
+/* Now Playing Card */
+.now-playing {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid var(--card-border);
+}
+
+.now-playing-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+    background: var(--dark);
+    border-radius: 12px;
+}
+
+#music-status {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.track-info {
+    text-align: center;
+    flex: 1;
+}
+
+.artist {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.album {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Progress Bar */
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px 20px 20px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--dark);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00d9ff 0%, #00b4d6 100%);
+    transition: width 0.3s ease;
+}
+
+/* Controls Card */
+.controls {
+    background: var(--card-bg);
+}
+
+.playback-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.control-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 24px;
+    background: var(--dark);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.control-btn:hover {
+    background: var(--card-border);
+    transform: scale(1.05);
+}
+
+.control-btn.primary {
+    background: linear-gradient(135deg, #00d9ff 0%, #00b4d6 100%);
+    border-color: #00d9ff;
+}
+
+.control-btn.primary:hover {
+    background: linear-gradient(135deg, #00b4d6 0%, #0096b4 100%);
+}
+
+.btn-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Volume Controls */
+.volume-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.volume-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.volume-btn {
+    font-size: 1.5rem;
+    padding: 12px;
+    background: var(--dark);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-btn:hover {
+    background: var(--card-border);
+}
+
+.volume-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.volume-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--dark);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.volume-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    transition: width 0.3s ease;
+}
+
+.volume-slider-container {
+    padding: 0 12px;
+}
+
+.volume-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--dark);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #00d9ff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #00d9ff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.mute-btn {
+    font-size: 1.5rem;
+    padding: 12px;
+    background: var(--dark);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mute-btn:hover {
+    background: var(--card-border);
+}
+
+/* Instructions Card */
+.instructions {
+    background: var(--card-bg);
+}
+
+.instructions h3 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+}
+
+.instructions p {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.instructions-list {
+    margin: 12px 0;
+    padding-left: 20px;
+}
+
+.instructions-list li {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.install-cmd {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--dark);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.install-cmd code {
+    color: #00d9ff;
+    font-family: 'Courier New', monospace;
+}

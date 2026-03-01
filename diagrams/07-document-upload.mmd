@@ -1,0 +1,28 @@
+graph TB
+    subgraph Upload["📤 Document Upload"]
+        File[PDF/DOCX/TXT]
+    end
+    
+    subgraph Process["⚙️ Processing"]
+        Extract[Extract Text]
+        Chunk[Split into Chunks]
+        Embed[Generate Embeddings]
+    end
+    
+    subgraph Storage["💾 Storage"]
+        Qdrant[(Qdrant)]
+        Meta[(Metadata DB)]
+        Files[File Storage]
+    end
+    
+    File --> Extract
+    Extract --> Chunk
+    Chunk --> Embed
+    Chunk --> Files
+    
+    Embed --> Qdrant
+    Chunk --> Meta
+    
+    style Upload fill:#e1f5e1
+    style Process fill:#fff4e1
+    style Storage fill:#e1f0ff

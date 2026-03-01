@@ -1,0 +1,290 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║          ✅ YOUTUBE AUTO-DOWNLOAD & REFERENCE - IMPLEMENTED ✅               ║
+║                                                                              ║
+║   Add Content → Auto Download • Reference Modal • No Views Column             ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+🎯 IMPLEMENTED FEATURES:
+
+1️⃣  REMOVE DURATION INPUT FROM ADD CONTENT
+   ✅ Duration field removed from Add Content form
+   ✅ Duration auto-extracted during download
+   ✅ No manual input needed
+
+2️⃣  AUTO-DOWNLOAD YOUTUBE VIDEO
+   ✅ After clicking "Add Content", server downloads video
+   ✅ Extracts thumbnail from video (at 1 second or mid-point)
+   ✅ Extracts duration using FFmpeg
+   ✅ Saves with UUID filename (e.g., 546ed002-a0eb-4c13-be4e-2a75f9161594.mp4)
+   ✅ Stores in /uploads/videos/ with persistent volume
+   ✅ Video plays offline from local storage
+
+3️⃣  REFERENCE MENU (NEW)
+   ✅ "Reference" button in Content page header
+   ✅ Modal search YouTube videos by keyword
+   ✅ Filter by category
+   ✅ Preview videos (thumbnail, title, channel, views, duration)
+   ✅ "Import" button to download and add to library
+   ✅ Shows search results with video info
+
+4️⃣  REMOVE VIEWS COLUMN
+   ✅ Views column removed from All Content table
+   ✅ Cleaner table layout
+
+
+📁 FILES CREATED:
+
+BACKEND:
+─────────────────────────────────────────────────────────────────────────────
+app/services/youtube_downloader.py
+  • YouTubeDownloader class
+  • download_and_process(): Download video, extract metadata, generate thumbnail
+  • search_videos(): Search YouTube by query/category
+  • get_video_info(): Get video info without downloading
+
+app/api/v1/youtube.py
+  • POST /youtube/download - Download and process YouTube video
+  • POST /youtube/search - Search YouTube videos
+  • GET /youtube/info - Get video info
+
+app/api/v1/youtube/__init__.py
+  • YouTube router setup
+
+FRONTEND:
+─────────────────────────────────────────────────────────────────────────────
+src/components/reference-modal.tsx
+  • Reference modal component
+  • Search YouTube videos
+  • Preview results
+  • Import button to download
+
+src/app/api/youtube/search/route.ts
+  • Next.js proxy for YouTube search
+
+src/app/api/youtube/download/route.ts
+  • Next.js proxy for YouTube download
+
+src/app/dashboard/content/page.tsx
+  • Removed duration input from Add Content form
+  • Removed views column from table
+  • Added Reference button
+  • Added Reference modal integration
+  • Updated handleAddContent to support YouTube download
+
+
+🔧 FLOW DIAGRAMS:
+
+ADD CONTENT FLOW (YouTube):
+─────────────────────────────
+User fills form → Click "Add Content"
+  ↓
+Frontend: Check if YouTube ID provided
+  ↓
+Backend: POST /youtube/download
+  ↓
+YouTubeDownloader.download_and_process()
+  ├─ yt-dlp: Download video
+  ├─ Save as UUID.mp4
+  ├─ FFmpeg: Generate thumbnail
+  ├─ FFmpeg: Extract duration
+  └─ Return: video_url, thumbnail_url, duration
+  ↓
+Database: Create video record
+  ↓
+Frontend: Refresh video list
+  ↓
+Video appears in All Content table
+  ↓
+Click View → Plays OFFLINE from local file
+
+REFERENCE FLOW:
+───────────────
+User clicks "Reference" button
+  ↓
+Reference Modal opens
+  ↓
+User enters search query + category
+  ↓
+Frontend: POST /youtube/search
+  ↓
+Backend: yt-dlp search
+  ↓
+Display results (thumbnail, title, channel, views, duration)
+  ↓
+User clicks "Import" on video
+  ↓
+Backend: POST /youtube/download (same flow as Add Content)
+  ↓
+Video added to library
+  ↓
+Modal closes, refresh list
+
+
+🔑 KEY IMPLEMENTATION DETAILS:
+
+UUID FILENAME:
+──────────────
+import uuid
+video_uuid = str(uuid.uuid4())  # e.g., 546ed002-a0eb-4c13-be4e-2a75f9161594
+video_path = f"{video_uuid}.mp4"
+
+THUMBNAIL GENERATION:
+──────────────────────
+• FFmpeg extracts frame at 1 second (or mid-point if shorter)
+• Saves as /uploads/thumbnails/{uuid}.jpg
+• Resizes to 320x180 (16:9 aspect ratio)
+• JPEG quality 85%
+
+DURATION EXTRACTION:
+──────────────────────
+• FFmpeg probe extracts exact duration
+• Stored in database as float (seconds)
+• Displayed as "Xm Ys" format (e.g., "3m 45s")
+
+OFFLINE PLAYBACK:
+────────────────
+• Video stored in /app/uploads/videos/
+• Served via Next.js proxy: /api/videos/file/uploads/videos/{uuid}.mp4
+• No YouTube API calls during playback
+• Works without internet connection
+
+YOUTUBE SEARCH:
+───────────────
+• yt-dlp search with query + category filter
+• Returns up to 10 results (configurable)
+• Includes: title, description, thumbnail, duration, channel, views
+
+
+🌐 DEPLOYMENT:
+
+Backend:
+  Container: apistreamhub-api
+  Image: apistreamhub-api:youtube-download
+  Port: 8001
+  Volume: apistreamhub-uploads (persistent)
+
+Frontend:
+  Container: streamhub-test
+  Image: streamhub-frontend:youtube-reference
+  Port: 3000
+
+API Endpoints:
+  POST /api/v1/youtube/download
+  POST /api/v1/youtube/search
+  GET /api/v1/youtube/info?url={url}
+
+Frontend Proxy:
+  POST /api/youtube/download
+  POST /api/youtube/search
+
+
+🧪 TESTING:
+
+1. ADD CONTENT (YouTube):
+   http://192.168.8.117:3000/dashboard/content
+   → Click "Add Content"
+   → Title: "Test Video"
+   → YouTube ID: "dQw4w9WgXcQ"
+   → Category: "Entertainment"
+   → Click "Add Content"
+   → Wait for download (toast notification)
+   → Video appears in table
+   → Click View → Plays offline
+
+2. REFERENCE MODAL:
+   → Click "Reference" button (YouTube icon)
+   → Enter search query: "music video"
+   → Select category: "Entertainment"
+   → Click "Search"
+   → Browse results
+   → Click "Import" on any video
+   → Download starts
+   → Video added to library
+
+3. CHECK VIDEO FILES:
+   docker exec apistreamhub-api ls -lh /app/uploads/videos/
+   → See UUID filenames (e.g., 546ed002-a0eb-4c13-be4e-2a75f9161594.mp4)
+
+4. CHECK THUMBNAILS:
+   docker exec apistreamhub-api ls -lh /app/uploads/thumbnails/
+   → See thumbnail files
+
+5. CHECK DATABASE:
+   docker exec apistreamhub-api python -c "
+   from app.database import SessionLocal
+   from app.models.video import Video
+   db = SessionLocal()
+   videos = db.query(Video).all()
+   for v in videos[:5]:
+       print(f'{v.id}: {v.title} - {v.video_url} - {v.duration}s')
+   "
+
+
+📊 BEFORE vs AFTER:
+
+BEFORE:
+  • Add Content form has duration input (manual)
+  • YouTube videos only embedded (no offline playback)
+  • No Reference menu
+  • Views column in table
+
+AFTER:
+  • Add Content form NO duration input (auto-extracted)
+  • YouTube videos downloaded and stored offline
+  • Reference modal for searching YouTube
+  • NO Views column (cleaner table)
+  • UUID filenames
+  • Auto-generated thumbnails
+  • Offline playback
+
+
+⚙️ TECHNICAL STACK:
+
+Backend:
+  • yt-dlp - YouTube download & search
+  • FFmpeg - Thumbnail generation & metadata extraction
+  • UUID - Unique filenames
+  • PIL - Image processing
+
+Frontend:
+  • Next.js API Routes - Proxy to backend
+  • Reference Modal - Search & import
+  • Content Page - Updated forms & table
+
+
+🎯 USER BENEFITS:
+
+1. NO MANUAL WORK:
+   • No duration input needed
+   • No thumbnail upload needed
+   • No manual file naming
+
+2. OFFLINE PLAYBACK:
+   • Videos play from local storage
+   • No YouTube API quota issues
+   • Faster playback (no buffering)
+
+3. EASY DISCOVERY:
+   • Search YouTube from app
+   • Preview before importing
+   • Filter by category
+
+4. CLEAN INTERFACE:
+   • No confusing views column
+   • Auto-populated metadata
+   • Professional presentation
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║         🚀 YOUTUBE AUTO-DOWNLOAD & REFERENCE - PRODUCTION READY 🚀            ║
+║                                                                              ║
+║   Auto Download • UUID Files • Reference Search • Offline Playback             ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Test at: http://192.168.8.117:3000/dashboard/content
+
+Click "Reference" to search YouTube videos!

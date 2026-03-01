@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tab Navigation -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('dashboard')">🖥️ Dashboard</button>
+        <button class="tab-button" onclick="switchTab('music')">🎵 Musik</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div id="dashboard-tab" class="tab-content active">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <h1>🖥️ System Dashboard</h1>
+                <div class="datetime" id="datetime"></div>
+            </div>
+
+            <!-- System Overview Grid -->
+            <div class="grid">
+                <!-- CPU Card -->
+                <div class="card cpu">
+                    <div class="card-header">
+                        <span class="icon">⚡</span>
+                        <h3>CPU</h3>
+                    </div>
+                    <div class="metric">
+                        <span id="cpu-usage" class="value">--%</span>
+                        <div class="bar-container">
+                            <div class="bar" id="cpu-bar"></div>
+                        </div>
+                    </div>
+                    <div class="label">Utilisasi</div>
+                </div>
+
+                <!-- RAM Card -->
+                <div class="card ram">
+                    <div class="card-header">
+                        <span class="icon">🧠</span>
+                        <h3>RAM</h3>
+                    </div>
+                    <div class="metric">
+                        <span id="ram-usage" class="value">-- / -- MB</span>
+                        <div class="bar-container">
+                            <div class="bar" id="ram-bar"></div>
+                        </div>
+                    </div>
+                    <div class="label" id="ram-percent">--%</div>
+                </div>
+
+                <!-- Storage Card -->
+                <div class="card storage">
+                    <div class="card-header">
+                        <span class="icon">💾</span>
+                        <h3>Penyimpanan</h3>
+                    </div>
+                    <div class="metric">
+                        <span id="storage-usage" class="value">-- / --</span>
+                        <div class="bar-container">
+                            <div class="bar" id="storage-bar"></div>
+                        </div>
+                    </div>
+                    <div class="label" id="storage-percent">--%</div>
+                </div>
+
+                <!-- Temperature Card -->
+                <div class="card temp">
+                    <div class="card-header">
+                        <span class="icon">🌡️</span>
+                        <h3>Suhu</h3>
+                    </div>
+                    <div class="metric">
+                        <span id="cpu-temp" class="value">--°C</span>
+                    </div>
+                    <div class="label">Suhu CPU</div>
+                </div>
+            </div>
+
+            <!-- Battery & Network Row -->
+            <div class="grid-row">
+                <!-- Battery Card -->
+                <div class="card battery">
+                    <div class="card-header">
+                        <span class="icon">🔋</span>
+                        <h3>Baterai</h3>
+                    </div>
+                    <div class="battery-info">
+                        <div class="battery-level">
+                            <div class="battery-bar" id="battery-bar">
+                                <span id="battery-percent" class="battery-text">--%</span>
+                            </div>
+                        </div>
+                        <div class="battery-status">
+                            <div class="status-item">
+                                <span class="status-label">Status:</span>
+                                <span id="battery-status" class="status-value">--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Kesehatan:</span>
+                                <span id="battery-health" class="status-value">--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Suhu:</span>
+                                <span id="battery-temp" class="status-value">--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Cycles:</span>
+                                <span id="battery-cycles" class="status-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Card -->
+                <div class="card network">
+                    <div class="card-header">
+                        <span class="icon">🌐</span>
+                        <h3>Jaringan</h3>
+                    </div>
+                    <div class="network-info">
+                        <div class="network-type">
+                            <span class="network-icon" id="network-icon">📡</span>
+                            <span id="network-type" class="network-type-text">--</span>
+                        </div>
+                        <div class="network-stats">
+                            <div class="stat">
+                                <span class="stat-label">Download:</span>
+                                <span id="net-rx" class="stat-value">-- MB</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Upload:</span>
+                                <span id="net-tx" class="stat-value">-- MB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Apps -->
+            <div class="card apps">
+                <div class="card-header">
+                    <span class="icon">📊</span>
+                    <h3>Top 10 Aplikasi (Penggunaan RAM)</h3>
+                </div>
+                <div class="apps-list" id="apps-list">
+                    <div class="app-item loading">Memuat...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Music Tab -->
+    <div id="music-tab" class="tab-content">
+        <div class="container">
+            <div class="header">
+                <h1>🎵 Musik Kontrol</h1>
+            </div>
+
+            <!-- Now Playing -->
+            <div class="card now-playing">
+                <div class="now-playing-header">
+                    <span id="music-status">⏸ Paused</span>
+                    <div class="track-info">
+                        <div class="artist" id="music-artist">Loading...</div>
+                        <div class="title" id="music-title">Loading...</div>
+                        <div class="album" id="music-album">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <span id="music-position">0:00</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="music-progress"></div>
+                    </div>
+                    <span id="music-length">0:00</span>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="card controls">
+                <!-- Playback Controls -->
+                <div class="playback-controls">
+                    <button class="control-btn" onclick="prevTrack()">
+                        <span>⏮</span>
+                        <span class="btn-label">Previous</span>
+                    </button>
+                    <button class="control-btn primary" onclick="playPause()">
+                        <span id="play-btn-icon">▶️</span>
+                        <span class="btn-label" id="play-btn-text">Play</span>
+                    </button>
+                    <button class="control-btn" onclick="nextTrack()">
+                        <span>⏭</span>
+                        <span class="btn-label">Next</span>
+                    </button>
+                </div>
+
+                <!-- Volume Controls -->
+                <div class="volume-controls">
+                    <div class="volume-display">
+                        <button class="volume-btn" onclick="volumeDown()">🔉</button>
+                        <div class="volume-bar-container">
+                            <span id="volume-value">50%</span>
+                            <div class="volume-bar">
+                                <div class="volume-fill" id="volume-bar"></div>
+                            </div>
+                        </div>
+                        <button class="volume-btn" onclick="volumeUp()">🔊</button>
+                    </div>
+                    <div class="volume-slider-container">
+                        <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+                    </div>
+                    <button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊</button>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="card instructions">
+                <h3>📝 Informasi</h3>
+                <p>Music Controller:</p>
+                <p id="controller-info">Loading...</p>
+                <p class="install-cmd">Install: <code>sudo pacman -S playerctl mpc</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="music.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Docker Compose for Frontend Only
+# Use this if backend is already running
+
+version: '3.8'
+
+services:
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./streamhub-nextjs
+      dockerfile: Dockerfile
+    container_name: streamhub-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://host.docker.internal:8001/api/v1
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
