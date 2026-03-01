@@ -22,14 +22,32 @@ git add -A
 # Commit with timestamp
 git commit -m "agent: workspace update $(date '+%Y-%m-%d %H:%M:%S')"
 
-# Push to remote
+# Push to remote(s)
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if git push origin "$BRANCH" 2>/dev/null; then
-    echo "✅ Workspace committed & pushed to origin/$BRANCH"
+
+# Check if we have multiple push URLs configured
+PUSH_URLS=$(git remote get-url --push origin 2>/dev/null | wc -l)
+
+if [ "$PUSH_URLS" -gt 1 ]; then
+    # Multiple push URLs configured
+    echo "📤 Pushing to multiple remotes..."
+    if git push origin "$BRANCH" 2>/dev/null; then
+        echo "✅ Workspace pushed to all remotes (origin/$BRANCH)"
+    else
+        echo "⚠️  Push had issues, but commit is saved locally"
+    fi
 else
-    # Try simple push if the above fails
-    git push 2>/dev/null && echo "✅ Workspace pushed"
-    echo "⚠️  Push had issues, but commit is saved locally"
+    # Single remote or no remote
+    if git push origin "$BRANCH" 2>/dev/null; then
+        echo "✅ Workspace committed & pushed to origin/$BRANCH"
+    elif git push "$BRANCH" 2>/dev/null; then
+        echo "✅ Workspace pushed to $BRANCH"
+    else
+        echo "ℹ️  No remote configured. Commit saved locally only."
+        echo "   To setup multi-remote push, run:"
+        echo "   git remote set-url --add --push origin <url1>"
+        echo "   git remote set-url --add --push origin <url2>"
+    fi
 fi
 
 # Show summary
