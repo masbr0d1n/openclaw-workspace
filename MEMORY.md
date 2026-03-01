@@ -2,6 +2,43 @@
 
 ## Development Automation
 
+### Database Permission Fix (CRITICAL)
+
+**Issue:** `permission denied for table <table_name>` errors occur frequently after database changes.
+
+**Root Cause:** Tables/sequences owned by `postgres` user instead of `apistreamhub`.
+
+**Check Script:**
+```bash
+bash /home/sysop/.openclaw/workspace/scripts/check-db-permissions.sh
+```
+
+**Fix Script:**
+```bash
+bash /home/sysop/.openclaw/workspace/scripts/fix-db-permissions.sh
+```
+
+**When to Run:**
+- After database initialization
+- After migrations
+- After database restore
+- After creating new tables
+- When permission errors appear
+
+**Verification:**
+```bash
+docker exec apistreamhub-db psql -U postgres -d apistreamhub -c "
+SELECT tablename, tableowner FROM pg_tables WHERE schemaname = 'public';
+"
+# All should show: tableowner = apistreamhub
+```
+
+**Documentation:** `/home/sysop/.openclaw/workspace/DATABASE_PERMISSION_FIX.md`
+
+**CRITICAL:** Always check permissions after ANY database work!
+
+---
+
 ### Git Workflow Automation
 
 **Auto-Commit & Push System (Active):**
