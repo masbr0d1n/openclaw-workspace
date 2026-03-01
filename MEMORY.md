@@ -1,5 +1,66 @@
 # MEMORY.md - Long-term Memory
 
+## Development Automation
+
+### Git Workflow Automation
+
+**Auto-Commit & Push System (Active):**
+
+Setup: 2026-03-01
+
+**1. Pre-Commit Hook (Database Backup)**
+- Script: `.git/hooks/pre-commit`
+- Triggers: Every `git commit`
+- Action: Automatically backs up PostgreSQL database
+- Location: `backups/database/`
+- Retention: Last 10 backups per project
+- Format: `apistreamhub_<branch>_<timestamp>.sql.gz`
+
+**2. Post-Commit Hook (Auto-Push)**
+- Script: `.git/hooks/post-commit`
+- Triggers: After every `git commit`
+- Action: Automatically pushes to Forgejo
+- Remote: `forgejo` (http://localhost:3333 or git@localhost:2222)
+- Branch: Current branch
+
+**3. Auto-Commit Script**
+- Location: `/home/sysop/.openclaw/workspace/scripts/auto-commit-push.sh`
+- Usage: `./scripts/auto-commit-push.sh` or `./scripts/auto-commit-push.sh "commit message"`
+- Action: Adds all changes, commits, and pushes
+
+**4. Setup Scripts**
+- Pre-commit backup: `./scripts/setup-pre-commit-hook.sh`
+- Auto-push: `./scripts/setup-auto-push.sh`
+
+**Workflow:**
+```bash
+# After completing any task:
+git add .
+git commit -m "feat: description"
+# → Database backup runs (pre-commit)
+# → Changes committed
+# → Auto-push to Forgejo (post-commit)
+# → Done!
+```
+
+**Skip Hooks (if needed):**
+```bash
+git commit --no-verify -m "quick commit without backup/push"
+```
+
+**Projects with Auto-Commit & Push:**
+- apistreamhub-fastapi (backend)
+- streamhub-nextjs (frontend)
+
+**Automation Benefits:**
+- ✅ No manual database backups needed
+- ✅ No manual git push needed
+- ✅ Automatic sync to Forgejo
+- ✅ Complete history preservation
+- ✅ Disaster recovery ready
+
+---
+
 ## Memory System Configuration
 
 **Current Setup:** Memory integration via **qmd @openklaubot**
