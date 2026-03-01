@@ -16,6 +16,10 @@ if [ -z "$(git status --porcelain)" ]; then
     exit 0
 fi
 
+# Sync MEMORY files to database (Level 3)
+echo "💾 Syncing memory to database..."
+python3 /home/sysop/.openclaw/workspace/scripts/memory-system.py sync 2>&1 | grep -E "^✅|Sync complete" || true
+
 # Add all changes
 git add -A
 
@@ -49,6 +53,14 @@ else
         echo "   git remote set-url --add --push origin <url2>"
     fi
 fi
+
+# Backup to SSD (Level 2)
+echo "💾 Backing up to SSD..."
+bash /home/sysop/.openclaw/workspace/scripts/backup-workspace.sh 2>&1 | grep -E "^✅|📦" || true
+
+# Backup database to SSD (Level 3)
+echo "💾 Backing up memory database..."
+python3 /home/sysop/.openclaw/workspace/scripts/memory-system.py backup 2>&1 | grep "^✅" || true
 
 # Show summary
 echo ""
