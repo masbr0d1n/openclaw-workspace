@@ -1,0 +1,11 @@
+# Update Video Model - Add Missing Fields
+
+# Add these fields to the Video model in app/models/video.py
+
+# After the existing fields, add:
+
+# tags: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True)  # JSON array for PostgreSQL
+# expiry_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)  # Expiry date
+# content_type: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)  # 'video' or 'image'
+
+# Note: Need to import List from typing and date from datetime
