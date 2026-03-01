@@ -1,0 +1,14 @@
+# OpenClaw Automated Backup Cron Jobs
+# Generated: 2026-03-01
+
+# Hourly memory sync to database
+# Runs at minute 0 of every hour
+0 * * * * /home/sysop/.openclaw/workspace/scripts/cron-hourly-sync.sh >> /home/sysop/.openclaw/workspace/logs/cron-hourly.log 2>&1
+
+# Daily full backup (workspace + database)
+# Runs at 2:00 AM every day
+0 2 * * * /home/sysop/.openclaw/workspace/scripts/cron-daily-backup.sh >> /home/sysop/.openclaw/workspace/logs/cron-daily.log 2>&1
+
+# Weekly cleanup (remove old backups, compress)
+# Runs at 3:00 AM every Sunday
+0 3 * * 0 /home/sysop/.openclaw/workspace/scripts/cron-weekly-cleanup.sh >> /home/sysop/.openclaw/workspace/logs/cron-weekly.log 2>&1
