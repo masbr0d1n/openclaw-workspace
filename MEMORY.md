@@ -2,6 +2,78 @@
 
 ## Development Automation
 
+### FFmpeg Thumbnail Generation (CRITICAL)
+
+**Issue:** `FFmpeg exit code 234` - Invalid frame size error when generating thumbnails
+
+**Error Message:**
+```
+[vost#0:0/mjpeg @ 0x5569d95f82c0] Invalid frame size: 320x-1.
+Error opening output files: Invalid argument
+```
+
+**Root Cause:** 
+The `-s 320x-1` parameter not parsing `-1` as "auto height" correctly in some FFmpeg versions/builds.
+
+**Solution:**
+Use video filter (`-vf`) with scale filter instead of size parameter (`-s`):
+
+```python
+# ❌ WRONG - Causes exit code 234
+cmd = ["ffmpeg", "-i", video_path, "-ss", "1", "-vframes", "1",
+       "-s", "320x-1", output_path, "-y"]
+
+# ✅ CORRECT - Reliable
+cmd = ["ffmpeg", "-i", video_path, "-ss", "1", "-vframes", "1",
+       "-vf", "scale=320:-1", output_path, "-y"]
+```
+
+**Implementation:** `/home/sysop/.openclaw/workspace/apistreamhub-fastapi/app/services/ffmpeg_service.py`
+
+**Key Points:**
+- `-vf "scale=320:-1"` → Width 320px, height auto-calculated maintaining aspect ratio
+- File output instead of pipe (more reliable for binary data)
+- Base64 encoding for database storage
+- Return None on failure (graceful degradation)
+
+**Verification:**
+```bash
+# Test thumbnail generation
+bash /home/sysop/.openclaw/workspace/test-ffmpeg-v2.sh
+
+# Puppeteer test
+node /home/sysop/.openclaw/workspace/streamhub-nextjs/tests/puppeteer/test-thumbnail-display.js
+```
+
+**Frontend Display:**
+- Thumbnails stored as base64 in `thumbnail_data` column
+- Fallback: Blue gradient placeholder "VID" for videos without thumbnails
+- Fallback: Green gradient placeholder "IMG" for images without thumbnails
+- File: `/home/sysop/.openclaw/workspace/streamhub-nextjs/src/app/dashboard/content/page.tsx`
+
+**When This Breaks:**
+- After FFmpeg upgrade/downgrade
+- Different FFmpeg build configurations
+- Container image changes
+
+**How to Fix:**
+1. Check backend logs: `docker logs apistreamhub-api --tail 50 | grep -i thumbnail`
+2. Test FFmpeg command manually in container
+3. Verify scale filter syntax: `ffmpeg -i input.mp4 -vf "scale=320:-1" output.jpg`
+4. Update `app/services/ffmpeg_service.py` if needed
+
+**Test Results (2026-03-01):**
+- ✅ Thumbnail generation working
+- ✅ Puppeteer test: 2 videos with thumbnails
+- ✅ Frontend: Thumbnails displaying correctly
+- ✅ Fallback placeholders working
+
+**Documentation:** `/home/sysop/.openclaw/workspace/VIDEO_UPLOAD_THUMBNAIL_SUCCESS.md`
+
+**CRITICAL:** Always test thumbnail generation after any FFmpeg or container changes!
+
+---
+
 ### Database Permission Fix (CRITICAL)
 
 **Issue:** `permission denied for table <table_name>` errors occur frequently after database changes.
