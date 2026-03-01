@@ -207,6 +207,45 @@ Think of it like a human reviewing their journal and updating their mental model
 
 The goal: Be helpful without being annoying. Check in a few times a day, do useful background work, but respect quiet time.
 
+## 🔄 Auto-Commit After Tasks
+
+**IMPORTANT:** After completing ANY task that modifies files in this workspace, you MUST commit and push changes.
+
+**When to commit:**
+
+- After editing configuration files (MEMORY.md, TOOLS.md, AGENTS.md, etc.)
+- After creating/modifying scripts (weather, twitter-scraper, etc.)
+- After any project work (streamhub-nextjs, dashboard, etc.)
+- After memory updates (memory/YYYY-MM-DD.md)
+
+**How to commit:**
+
+```bash
+bash /home/sysop/.openclaw/workspace/commit-workspace.sh
+```
+
+This script will:
+- Check for changes
+- Add all modified files
+- Commit with timestamp
+- Push to remote repository
+
+**Example workflow:**
+
+1. Edit files (write/edit tools)
+2. Complete the task
+3. Run: `bash /home/sysop/.openclaw/workspace/commit-workspace.sh`
+4. Verify: "✅ Workspace committed & pushed"
+
+**Why this matters:**
+
+- Keeps your workspace synced to GitHub
+- Provides backup and version history
+- Allows recovery from mistakes
+- Maintains continuity between sessions
+
+---
+
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
