@@ -1,127 +1,52 @@
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                                                                              ║
-║              ✅ ROLLBACK COMPLETE - BACK TO PRE-YOUTUBE STATE ✅            ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+# ROLLBACK COMPLETE
 
-🔄 ROLLBACK EXECUTED:
+## What Was Rolled Back
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**From:** `8a74b35` - fix: modal layout issues - text clipping and stacking
+**To:** `f49faf6` - feat: add video playback in View Details modal
 
-BACKEND (apistreamhub-fastapi):
+## Commits Removed
 
-Files Deleted:
-  ❌ app/services/youtube_downloader.py
-  ❌ app/api/v1/youtube.py
+- `8a74b35` - fix: modal layout issues (broken)
+- `83815d6` - feat: implement new modern Content Details modal design (caused UX issues)
 
-Files Restored (via git checkout):
-  ✅ app/main.py (removed YouTube router import)
-  ✅ requirements.txt (removed yt-dlp, ffmpeg-python, Pillow)
+## Current State
 
-Status: YouTube integration completely removed
-Git status: Back to commit 7676d58 (feat: FastAPI + PostgreSQL PoC)
+**Commit:** `f49faf6`
+**Branch:** `master`
+**Status:** Working video playback in modal
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## Features in Current Version (f49faf6)
 
-FRONTEND (streamhub-nextjs):
+✅ Video playback in View Details modal
+✅ Conditional rendering (video/image based on content_type)
+✅ Working thumbnail display
+✅ Fallback placeholders
+✅ API route proxy fixed (no trailing slash)
 
-Files Deleted:
-  ❌ src/components/reference-modal.tsx
-  ❌ src/types/video.ts
-  ❌ src/app/api/youtube/search/route.ts
-  ❌ src/app/api/youtube/download/route.ts
-  ❌ src/app/api/youtube/search.ts
-  ❌ src/app/api/youtube/download.ts
+## Known Limitations
 
-Files Restored:
-  ✅ src/app/dashboard/content/page.tsx (removed YouTube integration)
-     - Removed: Quick Add from YouTube section
-     - Removed: Open Reference button
-     - Removed: Import progress tracking
-     - Removed: ReferenceModal component import
-     - Restored: Upload Video button (original version)
-     - Restored: Simple Add Content dialog
+- Simpler modal design (before the 2-column layout)
+- Less modern UI
+- But everything works without text clipping or stacking issues
 
-Status: YouTube integration completely removed
-Git status: No commits (files manually restored)
+## Deployment
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+**Container:** `streamhub-test`
+**Image:** `streamhub-frontend:rollback-f49faf6`
+**Port:** 3000
+**Status:** ✅ Running
 
-🌐 DEPLOYMENT STATUS:
+## URL
 
-Backend:
-  Container: apistreamhub-api
-  Image: apistreamhub-api:rollback
-  Port: 8001
-  Status: ✅ Running (pre-YouTube version)
+http://192.168.8.117:3000/dashboard/content
 
-Frontend:
-  Container: streamhub-test
-  Image: streamhub-frontend:rollback
-  Port: 3000
-  Status: ✅ Running (pre-YouTube version)
+## Next Steps
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Test the rollback version
+2. If it works, we can plan a better approach for the modal redesign
+3. Consider incremental changes instead of a complete redesign
 
-📊 CURRENT STATE (After Rollback):
+---
 
-Features Available:
-✅ Upload Video button (upload from device)
-✅ Add Content dialog (manual YouTube ID entry)
-✅ Video list with thumbnails
-✅ Category filter
-✅ Search functionality
-✅ Edit/Delete videos
-
-Features Removed:
-❌ Quick Add from YouTube section
-❌ Reference modal
-❌ YouTube search
-❌ Import from YouTube
-❌ Resolution info
-❌ File size estimation
-❌ Import progress bar
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🎯 POSITION RESTORED:
-
-You are now back at the position where "Backend API Fixed & Deployed" 
-by selma#6603, before any YouTube integration was added.
-
-Current state matches:
-  ✅ FastAPI + PostgreSQL backend working
-  ✅ Next.js frontend working
-  ✅ Upload Video functionality
-  ✅ Manual YouTube ID entry
-  ✅ Video library management
-  ❌ NO YouTube search/import (removed)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🧪 TEST NOW:
-
-1. Backend Health: http://192.168.8.117:8001/health
-2. Frontend: http://192.168.8.117:3000/dashboard/content
-
-Expected behavior:
-  ✅ Upload Video button (left)
-  ✅ Add Content button (right)
-  ✅ Simple Add Content dialog (no Quick Add section)
-  ✅ Manual YouTube ID entry
-  ❌ NO Reference modal
-  ❌ NO YouTube search
-
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                                                                              ║
-║              ✅ ROLLBACK COMPLETE - POSITION RESTORED! ✅                     ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-All YouTube integration files have been removed.
-Both containers rebuilt and deployed with rollback versions.
-Back to the state before YouTube features were added.
-
-Test URLs:
-- Frontend: http://192.168.8.117:3000/dashboard/content
-- Backend: http://192.168.8.117:8001/health
+**Rollback completed:** 2026-03-01 19:40 UTC+7
