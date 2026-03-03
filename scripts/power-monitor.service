@@ -1,0 +1,17 @@
+[Unit]
+Description=Power Monitor - Track laptop power consumption
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/sysop/.openclaw/workspace/scripts/power-monitor.sh
+Restart=always
+RestartSec=60
+User=sysop
+WorkingDirectory=/home/sysop/.openclaw/workspace
+
+# Run every minute via timer, not continuous
+# This is just a template - actual scheduling via systemd timer
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Specs - Alternative Designs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --border: 214.3 31.8% 91.4%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222.2 47.4% 11.2%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        .design-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .design-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .design-label::before {
+            content: '';
+            width: 20px;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        /* Alternative 1: Minimalist Row */
+        .spec-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .spec-row:hover {
+            background-color: #f9fafb;
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .spec-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .spec-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .spec-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Alternative 2: Pill Tags */
+        .spec-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .spec-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .spec-pill:hover {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .spec-pill-icon {
+            width: 20px;
+            height: 20px;
+            color: #6b7280;
+        }
+
+        .spec-pill-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .spec-pill-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Alternative 3: Progress Bar Style */
+        .spec-bar {
+            margin-bottom: 20px;
+        }
+
+        .spec-bar:last-child {
+            margin-bottom: 0;
+        }
+
+        .spec-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .spec-bar-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .spec-bar-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .spec-bar-track {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .spec-bar-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease;
+        }
+
+        /* Alternative 4: Grouped Cards */
+        .spec-group {
+            background: linear-gradient(135deg, #fafafa 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .spec-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .spec-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .spec-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spec-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .spec-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .spec-item-label {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .spec-item-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Alternative 5: Tech Dashboard */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: #e5e7eb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tech-cell {
+            background: white;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tech-cell-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .tech-cell-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .tech-cell-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+        }
+    </style>
+</head>
+<body class="p-8 max-w-6xl mx-auto">
+    <h1 class="text-2xl font-bold mb-8 text-zinc-900">Alternative Spec Designs</h1>
+
+    <!-- Alternative 1: Minimalist Rows -->
+    <div class="design-section">
+        <div class="design-label">Alternative 1: Minimalist Row List</div>
+        <div class="mt-4">
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Kategori</div>
+                    <div class="spec-value">Entertainment</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Durasi</div>
+                    <div class="spec-value">1:00</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);">
+                    <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Resolusi</div>
+                    <div class="spec-value">1280 × 720 (HD)</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Video Codec</div>
+                    <div class="spec-value font-mono">H.264 (AVC)</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);">
+                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Audio Codec</div>
+                    <div class="spec-value font-mono">AAC (LC)</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);">
+                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Video Bitrate</div>
+                    <div class="spec-value">2500 kbps</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">Frame Rate</div>
+                    <div class="spec-value">24 fps</div>
+                </div>
+            </div>
+
+            <div class="spec-row">
+                <div class="spec-icon" style="background: linear-gradient(135deg, #f3e8ff 0%, #d8b4fe 100%);">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="spec-label">File Size</div>
+                    <div class="spec-value">18.5 MB</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative 2: Pill Tags -->
+    <div class="design-section">
+        <div class="design-label">Alternative 2: Pill Tags (Compact)</div>
+        <div class="spec-pills mt-4">
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Kategori</div>
+                    <div class="spec-pill-value">Entertainment</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Durasi</div>
+                    <div class="spec-pill-value">1:00</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Resolusi</div>
+                    <div class="spec-pill-value">1280×720</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Codec</div>
+                    <div class="spec-pill-value font-mono">H.264</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Audio</div>
+                    <div class="spec-pill-value font-mono">AAC</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Bitrate</div>
+                    <div class="spec-pill-value">2500 kbps</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">FPS</div>
+                    <div class="spec-pill-value">24</div>
+                </div>
+            </div>
+
+            <div class="spec-pill">
+                <svg class="spec-pill-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+                </svg>
+                <div>
+                    <div class="spec-pill-label">Size</div>
+                    <div class="spec-pill-value">18.5 MB</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative 3: Progress Bar Style -->
+    <div class="design-section">
+        <div class="design-label">Alternative 3: Visual Bar Indicators</div>
+        <div class="mt-4">
+            <div class="spec-bar">
+                <div class="spec-bar-header">
+                    <div class="spec-bar-label">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Durasi
+                    </div>
+                    <div class="spec-bar-value">1:00</div>
+                </div>
+                <div class="spec-bar-track">
+                    <div class="spec-bar-fill" style="width: 5%; background: linear-gradient(90deg, #3b82f6, #2563eb);"></div>
+                </div>
+            </div>
+
+            <div class="spec-bar">
+                <div class="spec-bar-header">
+                    <div class="spec-bar-label">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        Resolusi
+                    </div>
+                    <div class="spec-bar-value">1280 × 720 (HD)</div>
+                </div>
+                <div class="spec-bar-track">
+                    <div class="spec-bar-fill" style="width: 40%; background: linear-gradient(90deg, #8b5cf6, #7c3aed);"></div>
+                </div>
+            </div>
+
+            <div class="spec-bar">
+                <div class="spec-bar-header">
+                    <div class="spec-bar-label">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Video Bitrate
+                    </div>
+                    <div class="spec-bar-value">2500 kbps</div>
+                </div>
+                <div class="spec-bar-track">
+                    <div class="spec-bar-fill" style="width: 65%; background: linear-gradient(90deg, #f59e0b, #d97706);"></div>
+                </div>
+            </div>
+
+            <div class="spec-bar">
+                <div class="spec-bar-header">
+                    <div class="spec-bar-label">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Frame Rate
+                    </div>
+                    <div class="spec-bar-value">24 fps (Cinema)</div>
+                </div>
+                <div class="spec-bar-track">
+                    <div class="spec-bar-fill" style="width: 40%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                </div>
+            </div>
+
+            <div class="spec-bar">
+                <div class="spec-bar-header">
+                    <div class="spec-bar-label">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+                        </svg>
+                        File Size
+                    </div>
+                    <div class="spec-bar-value">18.5 MB</div>
+                </div>
+                <div class="spec-bar-track">
+                    <div class="spec-bar-fill" style="width: 15%; background: linear-gradient(90deg, #ec4899, #db2777);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative 4: Grouped Cards -->
+    <div class="design-section">
+        <div class="design-label">Alternative 4: Grouped by Category</div>
+        <div class="mt-4">
+            <!-- Video Group -->
+            <div class="spec-group">
+                <div class="spec-group-title">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    Video Properties
+                </div>
+                <div class="spec-grid-2">
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Durasi</div>
+                            <div class="spec-item-value">1:00</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Resolusi</div>
+                            <div class="spec-item-value">1280×720</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Frame Rate</div>
+                            <div class="spec-item-value">24 fps</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Bitrate</div>
+                            <div class="spec-item-value">2500 kbps</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Codec Group -->
+            <div class="spec-group">
+                <div class="spec-group-title">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    Codecs
+                </div>
+                <div class="spec-grid-2">
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Video</div>
+                            <div class="spec-item-value font-mono">H.264 (AVC)</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Audio</div>
+                            <div class="spec-item-value font-mono">AAC (LC)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Group -->
+            <div class="spec-group">
+                <div class="spec-group-title">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    General Info
+                </div>
+                <div class="spec-grid-2">
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">Kategori</div>
+                            <div class="spec-item-value">Entertainment</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-item-icon">
+                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="spec-item-content">
+                            <div class="spec-item-label">File Size</div>
+                            <div class="spec-item-value">18.5 MB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative 5: Tech Dashboard -->
+    <div class="design-section">
+        <div class="design-label">Alternative 5: Tech Dashboard Grid</div>
+        <div class="tech-grid mt-4">
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Durasi</div>
+                <div class="tech-cell-value">1:00</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Resolusi</div>
+                <div class="tech-cell-value">1280×720</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Frame Rate</div>
+                <div class="tech-cell-value">24 fps</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Bitrate</div>
+                <div class="tech-cell-value">2500 kbps</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Video Codec</div>
+                <div class="tech-cell-value">H.264</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Audio Codec</div>
+                <div class="tech-cell-value">AAC</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">File Size</div>
+                <div class="tech-cell-value">18.5 MB</div>
+            </div>
+
+            <div class="tech-cell">
+                <div class="tech-cell-icon">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                </div>
+                <div class="tech-cell-label">Kategori</div>
+                <div class="tech-cell-value">Entertainment</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl p-6 shadow-lg">
+        <h3 class="text-lg font-bold mb-3">💡 Rekomendasi</h3>
+        <div class="space-y-2 text-sm">
+            <p><strong>Alternative 1 (Minimalist Rows)</strong> - Terbaik untuk modal dialog, mudah di-scan, hemat space vertikal</p>
+            <p><strong>Alternative 2 (Pill Tags)</strong> - Paling compact, cocok untuk sidebar atau space terbatas</p>
+            <p><strong>Alternative 3 (Visual Bars)</strong> - Paling visual, bagus untuk perbandingan atau quick overview</p>
+            <p><strong>Alternative 4 (Grouped Cards)</strong> - Paling organized, ideal untuk technical users yang butuh detail</p>
+            <p><strong>Alternative 5 (Tech Dashboard)</strong> - Paling modern, cocok untuk dashboard atau admin panel</p>
+        </div>
+    </div>
+</body>
+</html>
