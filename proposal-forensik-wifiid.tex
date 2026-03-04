@@ -1,0 +1,235 @@
+\documentclass{ittelkom_ppi}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{tabularx, ragged2e, lmodern, bigstrut}
+\usepackage[sgvnames, table]{xcolor}
+\newcommand{\blue}{\cellcolor{blue!75}}
+
+
+
+
+\begin{document}
+%Template untuk proposal Proyek pada Industri
+\proposalcapstonecover{5 Maret}{2026}{Forensik Digital Fraud Akses WiFi.ID melalui Analisis Log dan Korelasi OSINT}{Hany Andriyanto}{NIM}{Dr. Nama Pembimbing Akademik}{Nama Pembimbing Lapangan}{PT Telkom Indonesia}
+
+\newpage
+\normalsize
+\tableofcontents
+
+\newpage
+\section{PENDAHULUAN}
+
+\subsection{Latar Belakang} \label{background}
+\justifying
+
+Layanan WiFi.ID yang dikelola oleh PT Telkom Indonesia telah menjadi infrastruktur konektivitas publik yang tersebar luas di berbagai lokasi strategis di Indonesia. Dengan model bisnis berbasis voucher, pengguna dapat membeli paket akses internet untuk durasi tertentu. Model ini ternyata juga menarik perhatian pelaku fraud yang melihat peluang untuk mendapatkan akses tidak sah dan menjualnya kembali dengan harga yang lebih murah.
+
+Fenomena jual beli voucher WiFi.ID secara ilegal telah berkembang menjadi sebuah ekosistem tersendiri. Di berbagai platform marketplace dan media sosial, dengan mudah ditemukan penawaran voucher WiFi.ID dengan harga yang jauh di bawah harga resmi. Modus yang digunakan beragam, mulai dari pembobolan akun pengguna yang sudah terdaftar, eksploitasi celah keamanan pada sistem autentikasi, hingga penggunaan kredensial yang diperoleh dari kebocoran data. Pelaku-pelaku ini kerap menggunakan akun samaran dan berpindah-pindah platform untuk menghindari deteksi.
+
+Dari sisi teknis, setiap percobaan login yang dilakukan oleh pelaku meninggalkan jejak digital berupa authentication log. Log ini mencatat IP address, timestamp, jenis percobaan, hingga informasi perangkat yang digunakan. Namun demikian, data log saja belum cukup untuk mengidentifikasi pelaku secara konkret karena pelaku umumnya menggunakan teknik anonymization seperti VPN, proxy, atau TOR.
+
+Di sinilah pendekatan Open Source Intelligence (OSINT) menjadi relevan. Dengan memanfaatkan informasi yang tersebar di ruang publik digital, mulai dari listing di marketplace, postingan di media sosial, hingga thread di forum-forum diskusi, investigator dapat membangun profil pelaku dan menghubungkannya dengan aktivitas teknis yang tercatat dalam log. Korelasi antara jejak teknis dari sisi infrastruktur dengan jejak sosial dari sisi OSINT membuka peluang untuk identifikasi pelaku yang lebih akurat.
+
+Kombinasi forensik digital konvensional dengan OSINT menjadi pendekatan yang komprehensif untuk mengatasi masalah fraud akses WiFi.ID. PT Telkom Indonesia sebagai pihak yang dirugikan secara langsung berkepentingan untuk memiliki kapabilitas investigasi yang mampu menjangkau tidak hanya aspek teknis, tetapi juga aspek sosial-digital dari aktivitas fraud ini.
+
+
+\subsection{Permasalahan} \label{probstatement}
+\justifying
+
+Berdasarkan analisis awal terhadap fenomena fraud akses WiFi.ID, terdapat beberapa permasalahan yang menjadi fokus proyek ini:
+
+\begin{enumerate}
+    \item \textbf{Keterbatasan identifikasi pelaku dari sisi teknis} -- Authentication log hanya menyediakan informasi seperti IP address dan timestamp, namun pelaku fraud umumnya menggunakan teknik anonymization sehingga identifikasi langsung menjadi sulit.
+    
+    \item \textbf{Ekosistem jual beli voucher ilegal yang terdesentralisasi} -- Aktivitas jual beli voucher WiFi.ID ilegal tersebar di berbagai platform, mulai dari marketplace besar hingga grup tertutup di media sosial, membuat monitoring manual menjadi tidak efisien.
+    
+    \item \textbf{Tantangan korelasi data lintas sumber} -- Informasi dari log infrastruktur dan informasi dari platform OSINT memiliki format dan karakteristik yang berbeda, membutuhkan metodologi khusus untuk menghubungkan keduanya secara valid.
+    
+    \item \textbf{Kebutuhan bukti yang dapat dipertanggungjawabkan} -- Hasil investigasi harus dapat dijadikan dasar untuk tindakan kebijakan internal maupun proses hukum, sehingga metodologi yang digunakan harus memenuhi standar forensik digital.
+    
+    \item \textbf{Dinamika perilaku pelaku} -- Pelaku fraud cenderung beradaptasi dengan cepat, berpindah platform, dan mengubah modus operasinya, menuntut pendekatan investigasi yang juga adaptif.
+\end{enumerate}
+
+
+\subsection{Tujuan} \label{hyp}
+\justifying
+
+Proyek ini bertujuan untuk mengembangkan metodologi investigasi forensik digital yang mengintegrasikan analisis authentication log dengan teknik OSINT untuk mengidentifikasi pelaku fraud akses WiFi.ID. Secara spesifik, tujuan proyek dapat dijabarkan sebagai berikut:
+
+\begin{enumerate}
+    \item Mengembangkan framework pengumpulan dan analisis authentication log untuk mendeteksi pola percobaan login yang mengindikasikan aktivitas fraud.
+    
+    \item Merancang metodologi OSINT untuk identifikasi dan pemetaan aktor-aktor yang terlibat dalam jual beli voucher WiFi.ID ilegal di platform online.
+    
+    \item Membangun model korelasi antara data teknis dari log dengan data sosial dari OSINT untuk mengidentifikasi kecocokan pelaku.
+    
+    \item Mengimplementasikan prototipe sistem yang mengotomatisasi sebagian proses investigasi dengan output berupa laporan forensik yang terstruktur.
+    
+    \item Menyusun prosedur operasional standar untuk tim keamanan PT Telkom Indonesia dalam melakukan investigasi fraud akses menggunakan pendekatan kombinasi ini.
+\end{enumerate}
+
+Mahasiswa berperan sebagai analis forensik digital yang akan bekerja di bawah koordinasi tim keamanan informasi PT Telkom Indonesia dengan fokus pada pengembangan metodologi dan implementasi prototipe.
+
+
+
+\section{IMPLEMENTASI}
+
+\subsection{Dasar Teori}
+\justifying
+
+Pendekatan investigasi dalam proyek ini menggabungkan dua disiplin utama: forensik digital tradisional dan Open Source Intelligence. Kombinasi keduanya membentuk metodologi yang lebih komprehensif untuk identifikasi pelaku fraud digital.
+
+\textbf{Authentication Log Forensics.} Log autentikasi merupakan catatan sistematis dari setiap percobaan akses ke layanan. Dalam konteks WiFi.ID, log ini merekam informasi seperti source IP, timestamp, username yang dicoba, status keberhasilan, dan metadata perangkat. Analisis forensik terhadap log ini melibatkan teknik filtering untuk mengisolasi event-event mencurigakan, statistical analysis untuk mengidentifikasi anomali, dan timeline reconstruction untuk memahami sequence of events.
+
+\textbf{Open Source Intelligence (OSINT).} OSINT didefinisikan sebagai proses pengumpulan dan analisis informasi dari sumber-sumber publik untuk tujuan intelijen. Dalam konteks investigasi siber, OSINT mencakup monitoring media sosial, analisis marketplace, pencarian di forum-forum diskusi, hingga ekstraksi metadata dari konten publik. Teknik-teknik OSINT yang relevan meliputi username enumeration, image reverse search, metadata extraction, dan social network analysis.
+
+\textbf{Attribution dan Correlation Analysis.} Attribution dalam konteks siber merupakan proses mengidentifikasi pelaku di balik suatu aktivitas digital. Pendekatan korelasi menghubungkan berbagai indikator dari sumber yang berbeda untuk membentuk kesimpulan yang lebih kuat. Misalnya, timestamp dari percobaan login fraud dapat dikorelasikan dengan waktu postingan jual voucher di marketplace.
+
+\textbf{Digital Evidence Admissibility.} Agar hasil investigasi dapat digunakan secara formal, proses pengumpulan dan analisis bukti harus mengikuti prinsip chain of custody dan standar forensik. Setiap langkah harus terdokumentasi, integritas data harus terjaga melalui hashing, dan metodologi harus dapat direproduksi oleh pihak lain.
+
+Pemetaan konsep dengan permasalahan dapat dilihat pada Tabel \ref{tab:konsep}.
+
+\begin{table}[h!]
+\caption{Pemetaan Konsep dengan Permasalahan \label{tab:konsep}}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\textbf{Konsep} & \textbf{Penerapan pada Proyek} \\
+\hline
+Log Forensics & Analisis authentication log untuk identifikasi pola percobaan login fraud \\
+\hline
+OSINT & Monitoring dan identifikasi pelaku di marketplace dan media sosial \\
+\hline
+Correlation Analysis & Menghubungkan jejak teknis dengan jejak sosial untuk identifikasi pelaku \\
+\hline
+Evidence Admissibility & Memastikan hasil investigasi memenuhi standar forensik \\
+\hline
+\end{tabularx}
+\end{table}
+
+
+\subsection{Metode}
+\justifying
+
+Pelaksanaan proyek menggunakan pendekatan iteratif dengan dua jalur paralel yang kemudian dikorelasikan:
+
+\textbf{Jalur 1: Authentication Log Analysis}
+\begin{itemize}
+    \item Pengumpulan sampling log autentikasi dari sistem WiFi.ID periode tertentu
+    \item Filtering dan klasifikasi log berdasarkan pola mencurigakan
+    \item Identifikasi IP address dan pola perilaku yang mengindikasikan aktivitas fraud
+    \item Pembuatan timeline kejadian untuk setiap kasus yang teridentifikasi
+\end{itemize}
+
+\textbf{Jalur 2: OSINT Investigation}
+\begin{itemize}
+    \item Mapping platform-platform yang digunakan untuk jual beli voucher WiFi.ID ilegal
+    \item Pengumpulan data listing yang mencurigakan
+    \item Ekstraksi informasi dari listing seperti harga, modus operandi, kontak pelaku
+    \item Analisis pola penjualan dan identifikasi aktor-aktor utama
+\end{itemize}
+
+\textbf{Jalur 3: Correlation dan Attribution}
+\begin{itemize}
+    \item Korelasi temporal antara spike percobaan login fraud dengan peningkatan aktivitas jual voucher
+    \item Pencocokan indikator teknis dengan indikator sosial
+    \item Pembuatan profil pelaku berdasarkan agregasi informasi
+    \item Validasi dan verifikasi hasil korelasi
+\end{itemize}
+
+Format output akhir proyek berupa prototipe sistem deteksi, dokumentasi teknis, dan laporan implementasi yang menyajikan temuan serta rekomendasi.
+
+
+\subsection{Keuntungan Bagi Organisasi}
+\justifying
+
+Implementasi proyek ini memberikan nilai tambah signifikan bagi PT Telkom Indonesia:
+
+\begin{enumerate}
+    \item \textbf{Identifikasi pelaku yang lebih akurat} -- Kombinasi data teknis dan sosial menghasilkan profil pelaku yang lebih lengkap dibandingkan analisis satu sumber saja.
+    
+    \item \textbf{Kapabilitas investigasi yang komprehensif} -- Tim keamanan memperoleh metodologi dan tools untuk menyelidiki fraud dari sudut pandang yang lebih luas.
+    
+    \item \textbf{Bukti yang lebih kuat} -- Hasil korelasi lintas sumber dapat menjadi bukti yang lebih robust untuk keperluan internal maupun hukum.
+    
+    \item \textbf{Deterrence effect} -- Pengetahuan bahwa aktivitas jual beli di platform publik dapat ditelusuri hingga ke pelaku dapat memberikan efek jera.
+    
+    \item \textbf{Rekomendasi mitigasi berbasis temuan} -- Hasil investigasi dapat menghasilkan insight konkret untuk memperkuat postur keamanan sistem autentikasi.
+\end{enumerate}
+
+
+\section{JADWAL}
+\justifying
+
+Berikut adalah rencana penjadwalan pelaksanaan proyek selama satu semester (16 minggu):
+\newline
+
+\begin{table}[h!]
+\caption{Jadwal Pelaksanaan Proyek \label{tab:schedule}}
+\noindent\begin{tabularx}{\linewidth}{|>{\bfseries}l|l|*{7}{>{\centering\arraybackslash}X|}>{\centering\arraybackslash}X<{\bigstrut}|}
+\hline
+\multicolumn{2}{|l|}{}&\multicolumn{8}{c|}{\bfseries MINGGU\bigstrut}\\
+\cline{3-10}
+\multicolumn{2}{|c|}{\bfseries Aktivitas}&1-2&3-4&5-6&7-8&9-10&11-12&13-14&15-16\\
+\hline
+
+1&Koordinasi dengan stakeholder&\blue&&&&&&&\\
+\hline
+2&Requirement dan data gathering&\blue&\blue&&&&&&\\
+\hline
+3&Studi literatur&\blue&\blue&&&&&&\\
+\hline
+4&Analisis authentication log&&\blue&\blue&&&&&\\
+\hline
+5&OSINT investigation&&&\blue&\blue&&&&\\
+\hline
+6&Correlation analysis&&&&\blue&\blue&&&\\
+\hline
+7&Implementasi prototipe&&&&&\blue&\blue&&\\
+\hline
+8&Pengujian dan validasi&&&&&&\blue&\blue&\\
+\hline
+9&Dokumentasi dan pelaporan&&&&&&&\blue&\blue\\
+\hline
+10&Review dan revisi&&&&&&&&\blue\\
+\hline
+
+\end{tabularx}
+\end{table}
+
+
+\newpage
+\section*{Supervisor (I)'s Comments:}
+\fbox {
+    \parbox{\linewidth}{\textbf{Comments about the title}
+    \vspace*{3cm}
+    }
+}
+\fbox {
+    \parbox{\linewidth}{\textbf{Comments about the research method}
+    \vspace*{7cm}
+    }
+}
+\fbox {
+    \parbox{\linewidth}{\textbf{Sign \hfill Date:\hspace*{3cm}\\[1.25cm]}
+    (\underline{\hspace*{5cm}})
+    }
+}
+
+\newpage
+\section*{Supervisor (II)'s Comments:}
+\fbox {
+    \parbox{\linewidth}{\textbf{Comments about the title}
+    \vspace*{3cm}
+    }
+}
+\fbox {
+    \parbox{\linewidth}{\textbf{Comments about the research method}
+    \vspace*{7cm}
+    }
+}
+\fbox {
+    \parbox{\linewidth}{\textbf{Sign \hfill Date:\hspace*{3cm}\\[1.25cm]}
+    (\underline{\hspace*{5cm}})
+    }
+}
+\end{document}
