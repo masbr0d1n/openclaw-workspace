@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/.openclaw/workspace/streamhub-videotron/src/middleware.ts"],"sourcesContent":["/**\n * Middleware - DISABLED\n *\n * We handle authentication on the client side using:\n * - Zustand store with localStorage persistence\n * - Dashboard layout auth check\n * - AuthChecker component\n *\n * Server-side middleware is not needed and causes issues because:\n * - It can't access localStorage (only cookies)\n * - We store tokens in localStorage, not cookies\n * - Client-side auth is sufficient for our use case\n */\n\nimport { NextResponse } from 'next/server';\nimport type { NextRequest } from 'next/server';\n\nexport function middleware(request: NextRequest) {\n  // Middleware is disabled - all auth is handled client-side\n  // Just let all requests pass through\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: [\n    /*\n     * Match all request paths\n     * Auth is handled client-side in dashboard layout\n     */\n    '/((?!api|_next/static|_next/image|favicon.ico).*)',\n  ],\n};\n"],"names":[],"mappings":";;;;;;AAAA;;;;;;;;;;;;CAYC,GAED;AAAA;;AAGO,SAAS,WAAW,OAAoB;IAC7C,2DAA2D;IAC3D,qCAAqC;IACrC,OAAO,qPAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;QACP;;;KAGC,GACD;KACD;AACH"}}]
+}
