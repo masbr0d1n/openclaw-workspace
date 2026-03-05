@@ -1,0 +1,3 @@
+module.exports=[78454,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(24663);a.n(d("[project]/.openclaw/workspace/streamhub-videotron/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},79925,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(24663);a.n(d("[project]/.openclaw/workspace/streamhub-videotron/node_modules/next/dist/client/components/builtin/global-error.js"))},52452,a=>{"use strict";a.i(78454);var b=a.i(79925);a.n(b)}];
+
+//# sourceMappingURL=09ed5_next_dist_client_components_builtin_global-error_b8d1c06a.js.map

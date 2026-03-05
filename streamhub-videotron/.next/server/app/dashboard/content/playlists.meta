@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/content/layout,_N_T_/dashboard/content/playlists/layout,_N_T_/dashboard/content/playlists/page,_N_T_/dashboard/content/playlists"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/dashboard/content/playlists/__PAGE__",
+    "/dashboard/content/playlists",
+    "/dashboard/content",
+    "/dashboard",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -39,6 +39,7 @@
 - [x] **TASK-B3:** Update frontend API config ✅ COMPLETE
 - [x] **TASK-B4:** Test auth flow both products ✅ COMPLETE
 - [x] **TASK-B5:** Test video upload both products ✅ COMPLETE
+- [x] **TASK-B6:** Integrate Screens API to Videotron frontend ✅ COMPLETE
 
 ---
 
@@ -146,6 +147,43 @@
 
 **Status:** ALL DELIVERABLES COMPLETE
 
+### TASK-B6: Integrate Screens API to Videotron Frontend ✅ COMPLETE
+**Assigned to:** Frontend Subagent  
+**Channel:** <#1476052074415394938>  
+**Started:** 2026-03-05 12:04  
+**Completed:** 2026-03-05 13:30  
+
+**Deliverables:**
+- ✅ Screen service created (screen-service.ts)
+- ✅ Screens page updated (API integration)
+- ✅ Screen Groups page updated (API integration)
+- ✅ Screen Card component created
+- ✅ Heartbeat mechanism implemented (auto-refresh 30s)
+- ✅ CRUD operations integrated
+- ✅ screens-integration-report.md created
+- ✅ separation-progress.md updated
+
+**Components Created/Updated:**
+1. **Screen Service** (`src/services/screen-service.ts`) - 8 API functions
+2. **Screens Page** (`src/app/dashboard/screens/page.tsx`) - Complete rewrite
+3. **Screen Groups Page** (`src/app/dashboard/screens/groups/page.tsx`) - Complete rewrite
+4. **Screen Card** (`src/components/screen/ScreenCard.tsx`) - New component
+5. **Screen Types** (`src/types/screen.types.ts`) - Type definitions
+
+**API Endpoints Integrated:**
+- GET /api/v1/screens - List all screens
+- GET /api/v1/screens/:id - Get screen detail
+- POST /api/v1/screens - Create screen
+- PUT /api/v1/screens/:id - Update screen
+- DELETE /api/v1/screens/:id - Delete screen
+- POST /api/v1/screens/:id/heartbeat - Update heartbeat
+- GET /api/v1/screens/groups - List groups
+- POST /api/v1/screens/groups - Create group
+
+**Build Status:** ✅ Successful (No errors)
+
+**Status:** ALL DELIVERABLES COMPLETE
+
 ---
 
 ## 🔄 CURRENT TASKS
@@ -171,12 +209,12 @@
 
 ### Phase 3 (Remaining)
 - [x] **TASK-B2.1:** Screens API (3 hari) 🔴 Critical ✅ COMPLETE
+- [x] **TASK-B2.4:** Screen Groups API (1 hari) 🟡 High ✅ COMPLETE (part of TASK-B2.1)
+- [x] **TASK-B6:** Integrate Screens API to Frontend (1-2 hari) 🟡 High ✅ COMPLETE
 - [ ] **TASK-B2.2:** Layouts API (2 hari) 🔴 Critical
 - [ ] **TASK-B2.3:** Campaigns API (2 hari) 🟡 High
-- [ ] **TASK-B2.4:** Screen Groups API (1 hari) 🟡 High
 - [ ] **TASK-B2.5:** Templates API (1 hari) 🟢 Medium
-- [ ] **TASK-B4:** Test auth flow (0.5 hari)
-- [ ] **TASK-B5:** Test video upload (0.5 hari)
+- [ ] **TASK-B7:** Integrate Layouts API to Frontend (1 hari) 🟡 High
 
 ### Phase 4: Testing & Deploy
 - [ ] **TASK-T1:** Deploy TV Hub (port 3001)
@@ -215,5 +253,5 @@ All at `/home/sysop/.openclaw/workspace/`:
 
 ---
 
-**Last Updated:** 2026-03-05 13:00 WIB  
+**Last Updated:** 2026-03-05 13:30 WIB  
 **Next Update:** After TASK-B2.2/2.3/2.4/2.5 complete

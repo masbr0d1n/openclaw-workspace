@@ -1,0 +1,3 @@
+module.exports=[59231,a=>{"use strict";var b=a.i(64660),c=a.i(19194),d=a.i(53238);function e(){let a=(0,d.useParams)(),e=(0,d.useRouter)(),f=parseInt(a.id)||1;return(0,c.useEffect)(()=>{e.replace(`/dashboard/tenant/${f}/view-all-devices`)},[f,e]),(0,b.jsx)("div",{className:"container mx-auto py-8 px-4",children:(0,b.jsx)("p",{className:"text-center text-gray-500",children:"Redirecting to device list..."})})}a.s(["default",()=>e])}];
+
+//# sourceMappingURL=c111f_streamhub-videotron_src_app_dashboard_screens_devices_page_tsx_832285ef._.js.map
