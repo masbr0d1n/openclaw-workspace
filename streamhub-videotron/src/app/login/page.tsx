@@ -1,5 +1,5 @@
 /**
- * Login Page with Category Dropdown
+ * Login Page - Videotron
  */
 
 'use client';
@@ -11,23 +11,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
-
-type LoginCategory = 'tv_hub' | 'videotron';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, setLoading } = useAuthStore();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [category, setCategory] = useState<LoginCategory>('tv_hub');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -39,8 +29,6 @@ export default function LoginPage() {
     e.preventDefault();
 
     console.log('🚀 Submitting login form...');
-    console.log('📺 Category:', category);
-
     setIsLoading(true);
 
     try {
@@ -58,20 +46,16 @@ export default function LoginPage() {
       const data = await response.json();
       const { access_token, refresh_token, user } = data.data;
 
-      // Store login category in localStorage (save as tv_hub or videotron)
-      localStorage.setItem('login_category', category);
+      // Store login category as videotron
+      localStorage.setItem('login_category', 'videotron');
 
       // Use auth store login
       login(user, access_token, refresh_token);
 
       console.log('✅ Login successful');
 
-      // Redirect based on category
-      if (category === 'videotron') {
-        router.push('/dashboard/tenant');
-      } else {
-        router.push('/dashboard/channels');
-      }
+      // Redirect to Videotron dashboard
+      router.push('/dashboard/screens');
     } catch (error) {
       console.error('❌ Login failed:', error);
       alert(error instanceof Error ? error.message : 'Login failed');
@@ -84,26 +68,13 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
+          <CardTitle className="text-2xl font-bold">Login - Videotron</CardTitle>
           <CardDescription>
-            Enter your credentials to access StreamHub Dashboard
+            Enter your credentials to access StreamHub Videotron
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select value={category} onValueChange={(value: LoginCategory) => setCategory(value)}>
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tv_hub">TV Hub</SelectItem>
-                  <SelectItem value="videotron">Videotron</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input
@@ -146,11 +117,7 @@ export default function LoginPage() {
           
           <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
             <p>Test credentials:</p>
-            <p>Username: <code>testuser2</code> / Password: <code>testpass123</code></p>
-            <p className="mt-2 text-xs">
-              <strong>TV Channel:</strong> Standard dashboard menus<br />
-              <strong>Videotron:</strong> Additional "Tenant" menu
-            </p>
+            <p>Username: <code>sysop@test.com</code> / Password: <code>password123</code></p>
           </div>
         </CardContent>
       </Card>

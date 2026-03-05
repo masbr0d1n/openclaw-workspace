@@ -219,6 +219,127 @@ Content-Type: application/json
 
 ---
 
+### 8. Screens API (Videotron)
+
+**Base Path:** `/api/v1/screens`
+
+| Endpoint | Method | Auth Required | Description |
+|----------|--------|---------------|-------------|
+| `/screens/` | GET | No | List all screens |
+| `/screens/{id}` | GET | No | Get screen by ID |
+| `/screens/` | POST | Yes | Create new screen |
+| `/screens/{id}` | PUT | Yes | Update screen |
+| `/screens/{id}` | DELETE | Yes | Delete screen |
+| `/screens/{id}/heartbeat` | POST | Yes | Update screen heartbeat |
+| `/screens/groups` | GET | No | List screen groups |
+| `/screens/groups` | POST | Yes | Create screen group |
+
+#### Create Screen Request
+
+**Request:**
+```json
+POST /api/v1/screens
+Content-Type: application/json
+
+{
+  "name": "Lobby TV",
+  "device_id": "device-001",
+  "location": "Main Lobby",
+  "resolution": "1920x1080"
+}
+```
+
+#### Create Screen Response
+
+**Response:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
+  "screen": {
+    "id": "uuid-string",
+    "device_id": "device-001",
+    "name": "Lobby TV",
+    "location": "Main Lobby",
+    "resolution": "1920x1080",
+    "status": "offline",
+    "last_heartbeat": null,
+    "api_key": "screen_xxx",
+    "created_at": "2026-03-05T10:00:00Z",
+    "updated_at": "2026-03-05T10:00:00Z"
+  }
+}
+```
+
+#### Update Heartbeat Request
+
+**Request:**
+```json
+POST /api/v1/screens/{id}/heartbeat
+Content-Type: application/json
+
+{
+  "status": "online"
+}
+```
+
+#### Update Heartbeat Response
+
+**Response:**
+```json
+{
+  "success": true,
+  "last_heartbeat": "2026-03-05T10:00:00Z",
+  "message": "Heartbeat updated successfully"
+}
+```
+
+#### List Screens Response
+
+**Response:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
+  "screens": [...],
+  "count": 2
+}
+```
+
+#### Create Screen Group Request
+
+**Request:**
+```json
+POST /api/v1/screens/groups
+Content-Type: application/json
+
+{
+  "name": "Lobby Group",
+  "screen_ids": ["uuid-1", "uuid-2"]
+}
+```
+
+#### Create Screen Group Response
+
+**Response:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
+  "group": {
+    "id": "uuid-string",
+    "name": "Lobby Group",
+    "screen_ids": ["uuid-1", "uuid-2"],
+    "created_at": "2026-03-05T10:00:00Z"
+  }
+}
+```
+
+---
+
 ## 🔐 Authentication
 
 All authenticated endpoints require JWT Bearer token in Authorization header:
@@ -272,6 +393,9 @@ CORS_ORIGINS = [
 - `playlist_items` - Playlist content items
 - `playlist_videos` - Playlist-video relationships
 - `role_presets` - Role-based access presets
+- `screens` - Videotron screen/device management ✅ NEW
+- `screen_groups` - Screen group definitions ✅ NEW
+- `screen_group_items` - Screen-group relationships ✅ NEW
 
 ---
 
@@ -286,7 +410,9 @@ CORS_ORIGINS = [
 ### 2. Product-Specific Endpoints
 - **Channels API:** TV Hub only, not needed for Videotron
 - **Streaming API:** TV Hub only, not needed for Videotron
-- **Screens/Layouts/Campaigns APIs:** Not yet implemented (needed for Videotron)
+- **Screens API:** ✅ IMPLEMENTED (Videotron device management)
+- **Layouts API:** Not yet implemented (needed for Videotron)
+- **Campaigns API:** Not yet implemented (needed for Videotron)
 
 ### 3. API Response Format
 - ✅ Consistent response format across all endpoints
@@ -305,7 +431,6 @@ CORS_ORIGINS = [
 1. **Update CORS configuration** to include ports 3001 and 3002
 2. **Document product-specific endpoints** clearly (TV Hub vs Videotron)
 3. **Implement missing Videotron APIs:**
-   - `/api/screens` - Device management
    - `/api/layouts` - Layout storage
    - `/api/campaigns` - Campaign management
 4. **Add API versioning** for future compatibility
@@ -315,4 +440,4 @@ CORS_ORIGINS = [
 
 **Created:** 2026-03-05  
 **Backend Version:** 0.1.0  
-**Status:** ✅ Shared APIs Verified
+**Status:** ✅ Screens API Implemented
