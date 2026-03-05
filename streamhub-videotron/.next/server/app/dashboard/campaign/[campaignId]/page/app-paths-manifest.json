@@ -1,0 +1,3 @@
+{
+  "/dashboard/campaign/[campaignId]/page": "app/dashboard/campaign/[campaignId]/page.js"
+}

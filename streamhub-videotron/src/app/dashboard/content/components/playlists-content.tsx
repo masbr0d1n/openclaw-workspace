@@ -1,0 +1,1194 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import {
+  ArrowLeft,
+  Clock,
+  Monitor,
+  Settings2,
+  Plus,
+  GripVertical,
+  Trash2,
+  Play,
+  Save,
+  Eye,
+  FileVideo,
+  Edit2
+} from 'lucide-react';
+import Image from 'next/image';
+import { VideoPlayerModal } from '@/components/video-player-modal';
+import type { Video } from '@/types';
+
+// Helper function to format duration as HH:MM:SS
+const formatDuration = (seconds: number): string => {
+  if (!seconds || seconds < 0) return '0:00:00';
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  } else {
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  }
+};
+
+interface MediaItem {
+  id: string;
+  title: string;
+  description?: string;
+  video_url?: string;
+  thumbnail_url?: string;
+  thumbnail_data?: string;
+  duration?: number;
+  content_type?: 'video' | 'image';
+  width?: number;
+  height?: number;
+  created_at: string;
+}
+
+interface PlaylistItem {
+  id: string;
+  media_id: string;
+  name: string;
+  duration: number;
+  order: number;
+  media_type?: string;
+  thumbnail_data?: string;
+  thumbnail_url?: string;
+}
+
+interface PublishedPlaylist {
+  id: string;
+  name: string;
+  items_count: number;
+  total_duration: string;
+  loop: boolean;
+  used_in: number;
+  created_at: string;
+}
+
+interface DraftPlaylist {
+  id: string;
+  name: string;
+  items_count: number;
+  total_duration: string;
+  loop: boolean;
+  created_at: string;
+  items?: PlaylistItem[];
+}
+
+interface DragItem {
+  id: string;
+  type: 'media' | 'playlist';
+  data: MediaItem | PlaylistItem;
+}
+
+export default function PlaylistsContent() {
+  const [view, setView] = useState<'list' | 'create' | 'edit'>('list');
+  const [mediaLibrary, setMediaLibrary] = useState<MediaItem[]>([]);
+  const [playlistItems, setPlaylistItems] = useState<PlaylistItem[]>([]);
+  const [selectedMedia, setSelectedMedia] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
+  const [draggedItem, setDraggedItem] = useState<DragItem | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [editingPlaylistId, setEditingPlaylistId] = useState<string | null>(null);
+
+  // Video player modal state
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+
+  // Published and Draft playlists
+  const [publishedPlaylists, setPublishedPlaylists] = useState<PublishedPlaylist[]>([]);
+  const [draftPlaylists, setDraftPlaylists] = useState<DraftPlaylist[]>([]);
+  const [viewingDraft, setViewingDraft] = useState<DraftPlaylist | null>(null);
+
+  // Properties state
+  const [properties, setProperties] = useState({
+    name: '',
+    description: '',
+    defaultDuration: 10,
+    transition: 'fade',
+    loop: true,
+  });
+
+  // Fetch media library from backend
+  useEffect(() => {
+    fetchMediaLibrary();
+    fetchPublishedPlaylists();
+    fetchDraftPlaylists();
+  }, []);
+
+  const fetchMediaLibrary = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/videos');
+      if (!response.ok) throw new Error('Failed to fetch media library');
+      
+      const result = await response.json();
+      const mediaData = result.data || result.videos || result || [];
+      setMediaLibrary(Array.isArray(mediaData) ? mediaData : []);
+    } catch (error) {
+      console.error('Error fetching media library:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPublishedPlaylists = async () => {
+    try {
+      const response = await fetch('/api/playlists?published_only=true');
+      if (!response.ok) return;
+      
+      const result = await response.json();
+      const playlists = result.data || result || [];
+      
+      setPublishedPlaylists(playlists.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        items_count: p.items_count || 0,
+        total_duration: p.total_duration || '0m 0s',
+        loop: p.loop || false,
+        used_in: p.used_in || 0,
+        created_at: p.created_at,
+      })));
+    } catch (error) {
+      console.error('Error fetching published playlists:', error);
+    }
+  };
+
+  const fetchDraftPlaylists = async () => {
+    try {
+      const response = await fetch('/api/playlists?published_only=false');
+      if (!response.ok) return;
+      
+      const result = await response.json();
+      const playlists = result.data || result || [];
+      
+      const drafts = playlists.filter((p: any) => !p.is_published);
+      
+      setDraftPlaylists(drafts.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        items_count: p.items_count || 0,
+        total_duration: p.total_duration || '0m 0s',
+        loop: p.loop || false,
+        created_at: p.created_at,
+      })));
+    } catch (error) {
+      console.error('Error fetching draft playlists:', error);
+    }
+  };
+
+  const handleCreatePlaylist = () => {
+    setView('create');
+    setEditingPlaylistId(null);
+    setProperties({
+      name: '',
+      description: '',
+      defaultDuration: 10,
+      transition: 'fade',
+      loop: true,
+    });
+    setPlaylistItems([]);
+  };
+
+  const handleEditDraft = async (draft: DraftPlaylist) => {
+    setView('edit');
+    setEditingPlaylistId(draft.id);
+    
+    setProperties({
+      name: draft.name,
+      description: '',
+      defaultDuration: 10,
+      transition: 'fade',
+      loop: draft.loop,
+    });
+    
+    try {
+      const response = await fetch(`/api/playlists/${draft.id}`);
+      if (!response.ok) throw new Error('Failed to fetch playlist items');
+      
+      const result = await response.json();
+      const playlistData = result.data || result;
+      
+      const items = playlistData.items || playlistData.playlist_items || [];
+      const parsedItems: PlaylistItem[] = items.map((item: any, index: number) => ({
+        id: item.id || `item-${Date.now()}-${index}`,
+        media_id: item.media_id || item.video_id?.toString() || '',
+        name: item.name || item.title || `Item ${index + 1}`,
+        duration: item.duration || 10,
+        order: item.order || index + 1,
+        media_type: item.media_type || 'video',
+        thumbnail_data: item.thumbnail_data || null,
+        thumbnail_url: item.thumbnail_url || null,
+      }));
+      
+      setPlaylistItems(parsedItems);
+      console.log(`Loaded ${parsedItems.length} items for draft:`, draft.name);
+    } catch (error) {
+      console.error('Error loading playlist items:', error);
+      setPlaylistItems([]);
+    }
+  };
+
+  const handleBackToList = () => {
+    setView('list');
+    setEditingPlaylistId(null);
+  };
+
+  const handleDragStart = (e: React.DragEvent, item: DragItem) => {
+    setDraggedItem(item);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', JSON.stringify(item));
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDragEnter = (e: React.DragEvent, index?: number) => {
+    e.preventDefault();
+    if (index !== undefined) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+  };
+
+  const handleDropOnTimeline = (e: React.DragEvent, targetIndex?: number) => {
+    e.preventDefault();
+    
+    if (!draggedItem) return;
+
+    if (draggedItem.type === 'media') {
+      const media = draggedItem.data as MediaItem;
+      const newItem: PlaylistItem = {
+        id: `item-${Date.now()}-${Math.random()}`,
+        media_id: String(media.id),
+        name: media.title,
+        duration: media.duration || properties.defaultDuration,
+        order: playlistItems.length + 1,
+        media_type: media.content_type || 'video',
+        thumbnail_data: media.thumbnail_data,
+        thumbnail_url: media.thumbnail_url,
+      };
+
+      if (targetIndex !== undefined && targetIndex >= 0) {
+        const newItems = [...playlistItems];
+        newItems.splice(targetIndex, 0, newItem);
+        newItems.forEach((item, idx) => item.order = idx + 1);
+        setPlaylistItems(newItems);
+      } else {
+        setPlaylistItems([...playlistItems, newItem]);
+      }
+    }
+
+    setDraggedItem(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDropOnItem = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!draggedItem || draggedItem.type !== 'playlist') return;
+
+    const draggedPlaylistItem = draggedItem.data as PlaylistItem;
+    const items = [...playlistItems];
+    const draggedIndex = items.findIndex(item => item.id === draggedPlaylistItem.id);
+    
+    if (draggedIndex === targetIndex) return;
+
+    items.splice(draggedIndex, 1);
+    items.splice(targetIndex, 0, draggedPlaylistItem);
+    items.forEach((item, idx) => item.order = idx + 1);
+    
+    setPlaylistItems(items);
+    setDraggedItem(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragOverIndex(null);
+  };
+
+  const handleMediaClick = (mediaId: string) => {
+    const newSelected = new Set(selectedMedia);
+    if (newSelected.has(mediaId)) {
+      newSelected.delete(mediaId);
+    } else {
+      newSelected.add(mediaId);
+    }
+    setSelectedMedia(newSelected);
+  };
+
+  const handleAddToTimeline = () => {
+    const newItems: PlaylistItem[] = [];
+    let order = playlistItems.length + 1;
+
+    selectedMedia.forEach((mediaId) => {
+      const media = mediaLibrary.find((m) => String(m.id) === mediaId);
+      if (media) {
+        newItems.push({
+          id: `item-${Date.now()}-${Math.random()}`,
+          media_id: String(media.id),
+          name: media.title,
+          duration: media.duration || properties.defaultDuration,
+          order: order++,
+          media_type: media.content_type || 'video',
+          thumbnail_data: media.thumbnail_data,
+          thumbnail_url: media.thumbnail_url,
+        });
+      }
+    });
+
+    setPlaylistItems([...playlistItems, ...newItems]);
+    setSelectedMedia(new Set());
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    setPlaylistItems(playlistItems.filter((item) => item.id !== itemId));
+  };
+
+  const handleViewVideo = async (mediaId: string) => {
+    try {
+      const response = await fetch(`/api/videos/${mediaId}`);
+      if (!response.ok) throw new Error('Failed to fetch video');
+
+      const result = await response.json();
+      const video: Video = result.data || result;
+
+      setSelectedVideo(video);
+      setVideoModalOpen(true);
+    } catch (error) {
+      console.error('Error fetching video:', error);
+      alert('Failed to load video');
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    try {
+      // Check if editing existing draft or creating new one
+      const isEditing = editingPlaylistId !== null;
+      const url = isEditing ? `/api/playlists/${editingPlaylistId}` : '/api/playlists';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...properties,
+          items: playlistItems,
+          draft: true,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to save draft');
+
+      const result = await response.json();
+      console.log('Draft saved:', result);
+      alert(isEditing ? 'Draft updated successfully!' : 'Draft saved successfully!');
+
+      await fetchDraftPlaylists();
+      setView('list');
+      setEditingPlaylistId(null);  // Clear editing state
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      alert('Failed to save draft');
+    }
+  };
+
+  const handlePublish = async () => {
+    try {
+      const response = await fetch('/api/playlists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...properties,
+          items: playlistItems,
+          is_published: true,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to publish playlist');
+
+      const result = await response.json();
+      console.log('Playlist published:', result);
+      alert('Playlist published successfully!');
+      
+      await fetchPublishedPlaylists();
+      await fetchDraftPlaylists();
+      setView('list');
+    } catch (error) {
+      console.error('Error publishing playlist:', error);
+      alert('Failed to publish playlist');
+    }
+  };
+
+  const handleDeleteDraft = async (draftId: string, draftName: string) => {
+    console.log('🗑️ [DELETE] Starting delete operation:', { draftId, draftName });
+    
+    // TEMPORARY: Removed confirm dialog for testing
+    // Browser's confirm() seems to be blocked, causing early return
+    // TODO: Replace with custom modal component
+    // if (!confirm(`Are you sure you want to delete draft "${draftName}"?`)) {
+    //   return;
+    // }
+
+    try {
+      console.log('🗑️ [DELETE] Sending DELETE request to:', `/api/playlists/${draftId}`);
+      
+      const response = await fetch(`/api/playlists/${draftId}`, {
+        method: 'DELETE',
+      });
+
+      console.log('🗑️ [DELETE] Response status:', response.status);
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Failed to delete draft' }));
+        
+        if (response.status === 404) {
+          alert('Draft not found. It may have been already deleted.\nPlease refresh the page.');
+          await fetchDraftPlaylists();
+          return;
+        }
+        
+        throw new Error(error.message || 'Failed to delete draft');
+      }
+
+      alert('Draft deleted successfully!');
+      await fetchDraftPlaylists();
+    } catch (error) {
+      console.error('Error deleting draft:', error);
+      alert(error instanceof Error ? error.message : 'Failed to delete draft');
+    }
+  };
+
+  const handleViewDraft = async (draft: DraftPlaylist) => {
+    try {
+      const response = await fetch(`/api/playlists/${draft.id}`);
+      if (!response.ok) throw new Error('Failed to fetch draft details');
+      
+      const result = await response.json();
+      const playlistData = result.data || result;
+      
+      const items = playlistData.items || playlistData.playlist_items || [];
+      const parsedItems: PlaylistItem[] = items.map((item: any, index: number) => ({
+        id: item.id || `item-${Date.now()}-${index}`,
+        media_id: item.media_id || item.video_id?.toString() || '',
+        name: item.name || item.title || `Item ${index + 1}`,
+        duration: item.duration || 10,
+        order: item.order || index + 1,
+        media_type: item.media_type || 'video',
+      }));
+      
+      setViewingDraft({
+        ...draft,
+        items: parsedItems,
+      });
+    } catch (error) {
+      console.error('Error viewing draft:', error);
+      alert('Failed to load draft details');
+    }
+  };
+
+  const handleClosePreview = () => {
+    setViewingDraft(null);
+  };
+
+  const calculateTotalDuration = () => {
+    const totalSeconds = playlistItems.reduce((sum, item) => sum + item.duration, 0);
+    return formatDuration(totalSeconds);
+  };
+
+  const formatLoopStatus = (loop: boolean) => {
+    return loop ? 'Loop' : 'No Loop';
+  };
+
+  const DraftPreviewModal = () => {
+    if (!viewingDraft) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                {viewingDraft.name}
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                Draft Preview • {viewingDraft.items_count} items • {viewingDraft.total_duration}
+              </p>
+            </div>
+            <button
+              onClick={handleClosePreview}
+              className="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="p-6 overflow-y-auto max-h-[60vh]">
+            <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">Total Duration:</span>
+                  <span className="ml-2 font-semibold text-slate-900 dark:text-white">{viewingDraft.total_duration}</span>
+                </div>
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">Items:</span>
+                  <span className="ml-2 font-semibold text-slate-900 dark:text-white">{viewingDraft.items_count}</span>
+                </div>
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">Loop:</span>
+                  <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                    viewingDraft.loop
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                      : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-400'
+                  }`}>
+                    {viewingDraft.loop ? 'Yes' : 'No'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">Created:</span>
+                  <span className="ml-2 font-semibold text-slate-900 dark:text-white">
+                    {new Date(viewingDraft.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Timeline Items</h4>
+            
+            {!viewingDraft.items || viewingDraft.items.length === 0 ? (
+              <div className="text-center py-12 text-slate-500 dark:text-slate-400">
+                <FileVideo className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No items in this draft</p>
+                <p className="text-sm mt-1">Edit this draft to add items</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {viewingDraft.items.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-900 dark:text-white">
+                        {item.name}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                        <Clock className="w-4 h-4" />
+                        {item.duration}s
+                        <span className="text-slate-300">•</span>
+                        <span className="uppercase">{item.media_type || 'video'}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-end gap-3">
+            <button
+              onClick={handleClosePreview}
+              className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
+            >
+              Close
+            </button>
+            <button
+              onClick={() => {
+                handleClosePreview();
+                handleEditDraft(viewingDraft);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Edit2 className="w-4 h-4" />
+              Edit Draft
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (view === 'list') {
+    return (
+      <>
+        <DraftPreviewModal />
+        
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Playlists</h2>
+              <p className="text-slate-600 dark:text-slate-400 mt-1">
+                Manage and organize your content playlists
+              </p>
+            </div>
+            <button
+              onClick={handleCreatePlaylist}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Create Playlist
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <Monitor className="w-5 h-5 text-blue-600" />
+                Published Playlists
+              </h3>
+            </div>
+            
+            {publishedPlaylists.length === 0 ? (
+              <div className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                <FileVideo className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No published playlists yet</p>
+                <p className="text-sm mt-1">Create and publish your first playlist</p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Items
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Total Duration
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Play
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Used In
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                  {publishedPlaylists.map((playlist) => (
+                    <tr
+                      key={playlist.id}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-slate-900 dark:text-white">
+                          {playlist.name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                        {playlist.items_count}
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                        {playlist.total_duration}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
+                          playlist.loop
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                            : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-400'
+                        }`}>
+                          {formatLoopStatus(playlist.loop)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                          <Monitor className="w-4 h-4" />
+                          {playlist.used_in} screens
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <Save className="w-5 h-5 text-orange-600" />
+                Saved Drafts
+              </h3>
+            </div>
+            
+            {draftPlaylists.length === 0 ? (
+              <div className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                <Save className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No saved drafts</p>
+                <p className="text-sm mt-1">Your draft playlists will appear here</p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Items
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Total Duration
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Play
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                  {draftPlaylists.map((draft) => (
+                    <tr
+                      key={draft.id}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-slate-900 dark:text-white">
+                          {draft.name}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                        {draft.items_count}
+                      </td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                        {draft.total_duration}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
+                          draft.loop
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                            : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-400'
+                        }`}>
+                          {formatLoopStatus(draft.loop)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleViewDraft(draft)}
+                            className="flex items-center gap-1 px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                            title="View draft"
+                          >
+                            <Eye className="w-4 h-4" />
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleEditDraft(draft)}
+                            className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                            title="Edit draft"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteDraft(draft.id, draft.name)}
+                            className="flex items-center gap-1 px-2 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+                            title="Delete draft"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <button
+          onClick={handleBackToList}
+          className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Playlists
+        </button>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleSaveDraft}
+            className="flex items-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
+          >
+            <Save className="w-4 h-4" />
+            {editingPlaylistId ? 'Update Draft' : 'Save Draft'}
+          </button>
+          <button
+            onClick={handlePublish}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Play className="w-4 h-4" />
+            Publish
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
+        <div className="col-span-1 md:col-span-3 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-slate-900 dark:text-white">Media Library</h3>
+            <span className="text-sm text-slate-500">
+              {selectedMedia.size} selected
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            <input
+              type="text"
+              placeholder="Search media..."
+              className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+            />
+            <select className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+              <option>All Types</option>
+              <option>Video</option>
+              <option>Image</option>
+            </select>
+          </div>
+
+          <div className="space-y-2 max-h-[300px] md:max-h-[500px] overflow-y-auto pr-2">
+            {loading ? (
+              <div className="text-center py-8 text-slate-500">
+                Loading media library...
+              </div>
+            ) : mediaLibrary.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                No media found
+              </div>
+            ) : (
+              mediaLibrary.map((media) => {
+                const isSelected = selectedMedia.has(String(media.id));
+                const thumbnailSrc = media.thumbnail_data 
+                  ? `data:image/jpeg;base64,${media.thumbnail_data}`
+                  : media.thumbnail_url 
+                  ? media.thumbnail_url 
+                  : null;
+
+                return (
+                  <div
+                    key={media.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, {
+                      id: String(media.id),
+                      type: 'media',
+                      data: media,
+                    })}
+                    onClick={() => handleMediaClick(String(media.id))}
+                    className={`p-3 rounded-lg border-2 cursor-move transition-all ${
+                      isSelected
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-16 h-12 rounded bg-slate-200 dark:bg-slate-700 flex-shrink-0 overflow-hidden relative">
+                        {thumbnailSrc ? (
+                          <Image
+                            src={thumbnailSrc}
+                            alt={media.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-slate-500 dark:text-slate-400">
+                            {media.content_type === 'image' ? 'IMG' : 'VID'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm text-slate-900 dark:text-white truncate">
+                          {media.title}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-slate-500">
+                            {media.content_type === 'image' ? 'Image' : 'Video'}
+                          </span>
+                          {media.duration && (
+                            <>
+                              <span className="text-slate-300">•</span>
+                              <span className="text-xs text-slate-500">
+                                {formatDuration(media.duration)}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        <div className="col-span-1 md:col-span-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-slate-900 dark:text-white">Playlist Timeline</h3>
+            {selectedMedia.size > 0 && (
+              <button
+                onClick={handleAddToTimeline}
+                className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Add ({selectedMedia.size})
+              </button>
+            )}
+          </div>
+
+          <div
+            className={`border-2 rounded-lg p-4 md:p-6 min-h-[250px] md:min-h-[350px] transition-colors ${
+              draggedItem?.type === 'media'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-dashed border-slate-300 dark:border-slate-600'
+            }`}
+            onDragOver={handleDragOver}
+            onDragEnter={(e) => handleDragEnter(e)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDropOnTimeline(e)}
+          >
+            {playlistItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full py-16 text-slate-500">
+                <GripVertical className="w-12 h-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">No items in playlist</p>
+                <p className="text-sm mt-1">
+                  Drag media from the library or select and click &quot;Add Selected&quot;
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-[250px] md:max-h-[500px] overflow-y-auto pr-2">
+                {playlistItems.map((item, index) => {
+                  const isDragging = draggedItem?.id === item.id;
+                  const isDragOver = dragOverIndex === index;
+
+                  return (
+                    <div
+                      key={item.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, {
+                        id: item.id,
+                        type: 'playlist',
+                        data: item,
+                      })}
+                      onDragOver={handleDragOver}
+                      onDragEnter={(e) => handleDragEnter(e, index)}
+                      onDragLeave={handleDragLeave}
+                      onDrop={(e) => handleDropOnItem(e, index)}
+                      onDragEnd={handleDragEnd}
+                      className={`flex items-center gap-3 p-3 border-2 rounded-lg transition-all ${
+                        isDragging
+                          ? 'opacity-50 border-blue-500'
+                          : isDragOver
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                      }`}
+                    >
+                      <GripVertical className="w-5 h-5 text-slate-400 cursor-move" />
+
+                      {/* Thumbnail */}
+                      <div className="relative w-20 h-12 rounded overflow-hidden bg-slate-200 dark:bg-slate-700 flex-shrink-0">
+                        {item.thumbnail_data || item.thumbnail_url ? (
+                          <Image
+                            src={item.thumbnail_data ? `data:image/jpeg;base64,${item.thumbnail_data}` : item.thumbnail_url!}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
+                            {item.media_type === 'image' ? 'IMG' : 'VID'}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 font-semibold text-sm">
+                        {index + 1}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-slate-900 dark:text-white truncate">
+                          {item.name}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                          <Clock className="w-4 h-4" />
+                          {formatDuration(item.duration)}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {item.media_type === 'video' && (
+                          <button
+                            onClick={() => handleViewVideo(item.media_id)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                            title="View video"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleRemoveItem(item.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          title="Remove item"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
+            <span className="text-slate-600 dark:text-slate-400">Total Duration</span>
+            <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
+              <Clock className="w-5 h-5" />
+              {calculateTotalDuration()}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-span-1 md:col-span-3 space-y-4">
+          <div className="flex items-center gap-2">
+            <Settings2 className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <h3 className="font-semibold text-slate-900 dark:text-white">Properties</h3>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                value={properties.name}
+                onChange={(e) => setProperties({ ...properties, name: e.target.value })}
+                placeholder="Enter playlist name"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Description
+              </label>
+              <textarea
+                value={properties.description}
+                onChange={(e) => setProperties({ ...properties, description: e.target.value })}
+                placeholder="Enter description"
+                rows={3}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Default Duration (seconds)
+              </label>
+              <input
+                type="number"
+                value={properties.defaultDuration}
+                onChange={(e) => setProperties({ ...properties, defaultDuration: parseInt(e.target.value) || 10 })}
+                min={1}
+                max={3600}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Transition
+              </label>
+              <select
+                value={properties.transition}
+                onChange={(e) => setProperties({ ...properties, transition: e.target.value as any })}
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+              >
+                <option value="fade">Fade</option>
+                <option value="slide">Slide</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Loop
+              </label>
+              <button
+                onClick={() => setProperties({ ...properties, loop: !properties.loop })}
+                className={`relative w-12 h-6 rounded-full transition-colors ${
+                  properties.loop ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-600'
+                }`}
+              >
+                <span
+                  className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                    properties.loop ? 'translate-x-6' : ''
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                <div className="flex justify-between py-1">
+                  <span>Items:</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {playlistItems.length}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span>Duration:</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {calculateTotalDuration()}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span>Type:</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    {properties.name ? 'Custom' : 'Draft'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Video Player Modal */}
+    <VideoPlayerModal
+      open={videoModalOpen}
+      onOpenChange={setVideoModalOpen}
+      video={selectedVideo}
+    />
+    </>
+  );
+}

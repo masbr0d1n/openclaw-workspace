@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/screens/layout,_N_T_/dashboard/screens/devices/layout,_N_T_/dashboard/screens/devices/page,_N_T_/dashboard/screens/devices"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/dashboard/screens/devices/__PAGE__",
+    "/dashboard/screens/devices",
+    "/dashboard/screens",
+    "/dashboard",
+    "/_index",
+    "/_head"
+  ]
+}
