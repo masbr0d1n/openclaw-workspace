@@ -1,0 +1,212 @@
+# Videotron Files - Repository Separation
+
+**Product:** StreamHub Videotron  
+**Purpose:** Digital signage network management  
+**Repository:** `streamhub-videotron`  
+
+---
+
+## 📁 DIRECTORY STRUCTURE (src/app/dashboard)
+
+```
+dashboard/
+├── page.tsx (Videotron version - screen network overview)
+├── screens/            ✅ Videotron Core
+├── content/            ✅ Videotron (media library)
+├── layouts/            ✅ Videotron Core (composer)
+├── composer/           ✅ Videotron Core
+├── schedules/          ✅ Videotron (playback schedule)
+├── campaigns/          ✅ Videotron Core
+├── analytics/          ✅ Videotron (device stats)
+├── integrations/       ⚠️ Shared
+├── notifications/      ✅ Shared
+├── settings/           ✅ Shared
+├── users/              ✅ Shared
+└── layout.tsx          ✅ Shared (Videotron menu)
+```
+
+---
+
+## 🎯 VIDEOTRON CORE FEATURES
+
+### Screen/Device Management
+- `src/app/dashboard/screens/page.tsx`
+- `src/app/dashboard/screens/groups/page.tsx`
+- `src/app/dashboard/screens/devices/page.tsx`
+- `src/components/screen/ScreenCard.tsx`
+- `src/components/screen/DeviceStatus.tsx`
+- API: `/api/screens` (NEEDS IMPLEMENTATION)
+
+### Content Library
+- `src/app/dashboard/content/page.tsx`
+- `src/app/dashboard/content/media/page.tsx`
+- `src/components/video/` (reuse for media)
+- API: `/api/videos` (shared)
+
+### Layout Composer
+- `src/app/dashboard/composer/page.tsx`
+- `src/app/dashboard/composer/[id]/edit/page.tsx`
+- `src/app/dashboard/layouts/page.tsx`
+- `src/components/composer/LayoutBuilder.tsx`
+- `src/components/composer/Canvas.tsx`
+- `src/components/composer/LayerPanel.tsx`
+- `src/components/composer/Toolbar.tsx`
+- API: `/api/layouts` (NEEDS IMPLEMENTATION)
+
+### Playback Schedule
+- `src/app/dashboard/schedules/page.tsx`
+- `src/components/schedule/`
+- API: `/api/schedules` (adapt for signage)
+
+### Campaigns
+- `src/app/dashboard/campaign/page.tsx`
+- `src/app/dashboard/campaign/[campaignId]/page.tsx`
+- `src/app/dashboard/campaign/[campaignId]/composer/page.tsx`
+- `src/components/campaign/`
+- API: `/api/campaigns` (NEEDS IMPLEMENTATION)
+
+### Analytics (Device Stats)
+- `src/app/dashboard/analytics/page.tsx`
+- Focus: Screen uptime, playback count, device health
+
+---
+
+## 🔧 SHARED COMPONENTS (Keep)
+
+### Authentication
+- `src/app/login/page.tsx`
+- `src/hooks/useAuth.ts`
+- `src/services/auth-service.ts`
+
+### Layout
+- `src/app/dashboard/layout.tsx` (adapt for Videotron menu)
+- `src/components/layout/Sidebar.tsx`
+- `src/components/layout/Header.tsx`
+
+### UI Components
+- `src/components/ui/` (shadcn/ui - keep all)
+- `src/lib/` (utilities - keep all)
+
+### Services
+- `src/services/api.ts`
+- `src/services/video-service.ts`
+- `src/services/playlist-service.ts` (adapt for campaigns)
+
+### Stores
+- `src/stores/auth-store.ts`
+- `src/stores/video-store.ts`
+- `src/stores/playlist-store.ts` (adapt)
+
+### Types
+- `src/types/` (keep relevant types)
+
+---
+
+## ❌ REMOVE (TV Hub Features)
+
+### Channels
+- `src/app/dashboard/channels/` ❌
+
+### TV-Specific
+- Remove TV Guide specific features from schedules ❌
+
+---
+
+## 📝 MENU STRUCTURE (Videotron)
+
+```
+┌─────────────────────────────────────────┐
+│ [Logo] StreamHub Videotron   [Profile] │
+├─────────────────────────────────────────┤
+│  Dashboard                              │
+│  Screens                                │
+│  Screen Groups                          │
+│  Content Library                        │
+│  Layouts (Composer)                     │
+│  Schedules (Playback)                   │
+│  Campaigns                              │
+│  Analytics                              │
+│  ─────────────────                      │
+│  Users                                  │
+│  Settings                               │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 🔗 API ENDPOINTS (Videotron)
+
+### Auth
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/refresh`
+
+### Videos (Shared)
+- `GET /api/videos`
+- `POST /api/videos/upload`
+- `GET /api/videos/[id]`
+- `DELETE /api/videos/[id]`
+- `GET /api/videos/file/[...path]`
+
+### Screens (NEW - Needs Implementation)
+- `GET /api/screens`
+- `POST /api/screens`
+- `GET /api/screens/[id]`
+- `PUT /api/screens/[id]`
+- `DELETE /api/screens/[id]`
+- `POST /api/screens/[id]/heartbeat`
+- `GET /api/screens/groups`
+- `POST /api/screens/groups`
+
+### Layouts (NEW - Needs Implementation)
+- `GET /api/layouts`
+- `POST /api/layouts`
+- `GET /api/layouts/[id]`
+- `PUT /api/layouts/[id]`
+- `DELETE /api/layouts/[id]`
+
+### Campaigns (NEW - Needs Implementation)
+- `GET /api/campaigns`
+- `POST /api/campaigns`
+- `GET /api/campaigns/[id]`
+- `PUT /api/campaigns/[id]`
+- `DELETE /api/campaigns/[id]`
+
+### Schedules (Adapt for signage)
+- `GET /api/schedules`
+- `POST /api/schedules`
+- `PUT /api/schedules/[id]`
+- `DELETE /api/schedules/[id]`
+
+### Users (Shared)
+- `GET /api/v1/users`
+- `POST /api/v1/users`
+- `PUT /api/v1/users/[id]`
+- `DELETE /api/v1/users/[id]`
+
+---
+
+## 🎨 BRANDING
+
+**Name:** StreamHub Videotron  
+**Tagline:** "Digital Signage Network Platform"  
+**Primary Color:** Purple (#7C3AED)  
+**Icon:** 🖥️  
+
+---
+
+## ⚠️ BACKEND GAPS (Need Implementation)
+
+The following APIs need to be implemented in `apistreamhub-fastapi`:
+
+1. **Screens API** - Device management, heartbeat
+2. **Layouts API** - Layout storage (currently frontend-only)
+3. **Campaigns API** - Campaign management
+4. **Screen Groups API** - Bulk device management
+
+**Priority:** CRITICAL for Videotron to function
+
+---
+
+**Created:** 2026-03-05  
+**Reference:** BUSINESS_ANALYSIS_REPORT.md

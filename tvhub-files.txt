@@ -1,0 +1,180 @@
+# TV Hub Files - Repository Separation
+
+**Product:** StreamHub TV Hub  
+**Purpose:** Channel streaming & playlist management  
+**Repository:** `streamhub-tvhub`  
+
+---
+
+## 📁 DIRECTORY STRUCTURE (src/app/dashboard)
+
+```
+dashboard/
+├── page.tsx (TV Hub version - channel overview)
+├── channels/           ✅ TV Hub Core
+├── videos/             ✅ TV Hub Core
+├── content/
+│   └── playlists/      ✅ TV Hub Core
+├── schedules/          ✅ TV Hub (TV Guide)
+├── analytics/          ✅ TV Hub (viewer stats)
+├── integrations/       ⚠️ Shared (YouTube import)
+├── notifications/      ✅ Shared
+├── settings/           ✅ Shared
+├── users/              ✅ Shared
+└── layout.tsx          ✅ Shared (TV Hub menu)
+```
+
+---
+
+## 🎯 TV Hub CORE FEATURES
+
+### Channels Management
+- `src/app/dashboard/channels/page.tsx`
+- `src/components/channel/` (create if needed)
+- API: `/api/channels`
+
+### Video Library
+- `src/app/dashboard/videos/page.tsx`
+- `src/components/video/`
+- API: `/api/videos`
+
+### Playlists
+- `src/app/dashboard/content/playlists/page.tsx`
+- `src/components/playlist/`
+- API: `/api/playlists`
+
+### TV Schedule (TV Guide)
+- `src/app/dashboard/schedules/page.tsx`
+- `src/components/schedule/`
+- API: `/api/schedules`
+
+### Analytics (Viewer Stats)
+- `src/app/dashboard/analytics/page.tsx`
+- Focus: Channel views, viewer count, watch time
+
+---
+
+## 🔧 SHARED COMPONENTS (Keep)
+
+### Authentication
+- `src/app/login/page.tsx`
+- `src/hooks/useAuth.ts`
+- `src/services/auth-service.ts`
+
+### Layout
+- `src/app/dashboard/layout.tsx` (adapt for TV Hub menu)
+- `src/components/layout/Sidebar.tsx`
+- `src/components/layout/Header.tsx`
+
+### UI Components
+- `src/components/ui/` (shadcn/ui - keep all)
+- `src/lib/` (utilities - keep all)
+
+### Services
+- `src/services/api.ts`
+- `src/services/video-service.ts`
+- `src/services/playlist-service.ts`
+
+### Stores
+- `src/stores/auth-store.ts`
+- `src/stores/video-store.ts`
+- `src/stores/playlist-store.ts`
+
+### Types
+- `src/types/` (keep relevant types)
+
+---
+
+## ❌ REMOVE (Videotron Features)
+
+### Layout Composer
+- `src/app/dashboard/composer/` ❌
+- `src/app/dashboard/layouts/` ❌
+- `src/components/composer/` ❌
+
+### Screen Management
+- `src/app/dashboard/screens/` ❌
+- `src/components/screen/` ❌
+
+### Campaigns
+- `src/app/dashboard/campaign/` ❌
+- `src/components/campaign/` ❌
+
+### Videotron-specific
+- `src/app/dashboard/subscription/` ❌ (or adapt for TV Hub)
+- `src/app/dashboard/tenant/` ❌ (or keep if multi-tenant needed)
+
+---
+
+## 📝 MENU STRUCTURE (TV Hub)
+
+```
+┌─────────────────────────────────────────┐
+│ [Logo] StreamHub TV          [Profile] │
+├─────────────────────────────────────────┤
+│  Dashboard                              │
+│  Channels                               │
+│  Videos                                 │
+│  Playlists                              │
+│  Schedule (TV Guide)                    │
+│  Analytics                              │
+│  Integrations (YouTube)                 │
+│  ─────────────────                      │
+│  Users                                  │
+│  Settings                               │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 🔗 API ENDPOINTS (TV Hub)
+
+### Auth
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/refresh`
+
+### Videos
+- `GET /api/videos`
+- `POST /api/videos/upload`
+- `GET /api/videos/[id]`
+- `DELETE /api/videos/[id]`
+- `GET /api/videos/file/[...path]`
+
+### Channels
+- `GET /api/channels`
+- `POST /api/channels`
+- `PUT /api/channels/[id]`
+- `DELETE /api/channels/[id]`
+
+### Playlists
+- `GET /api/playlists`
+- `POST /api/playlists`
+- `PUT /api/playlists/[id]`
+- `DELETE /api/playlists/[id]`
+
+### Schedules (TV Guide)
+- `GET /api/schedules`
+- `POST /api/schedules`
+- `PUT /api/schedules/[id]`
+- `DELETE /api/schedules/[id]`
+
+### Users
+- `GET /api/v1/users`
+- `POST /api/v1/users`
+- `PUT /api/v1/users/[id]`
+- `DELETE /api/v1/users/[id]`
+
+---
+
+## 🎨 BRANDING
+
+**Name:** StreamHub TV Hub  
+**Tagline:** "Your Channel Streaming Platform"  
+**Primary Color:** Blue (#2563EB)  
+**Icon:** 📺  
+
+---
+
+**Created:** 2026-03-05  
+**Reference:** BUSINESS_ANALYSIS_REPORT.md

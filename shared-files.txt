@@ -1,0 +1,283 @@
+# Shared Files - Repository Separation
+
+**Purpose:** Files/components shared by both TV Hub & Videotron  
+**Strategy:** Copy to both repositories, maintain separately  
+
+---
+
+## 🔧 SHARED INFRASTRUCTURE
+
+### Authentication (Both need)
+```
+src/app/login/page.tsx
+src/hooks/useAuth.ts
+src/services/auth-service.ts
+src/stores/auth-store.ts
+src/middleware.ts
+```
+
+### Layout Components (Both need, different menu)
+```
+src/app/dashboard/layout.tsx (adapt menu per product)
+src/components/layout/Sidebar.tsx
+src/components/layout/Header.tsx
+src/components/layout/DashboardShell.tsx
+```
+
+### UI Components (shadcn/ui - Both need)
+```
+src/components/ui/
+├── accordion.tsx
+├── alert-dialog.tsx
+├── alert.tsx
+├── aspect-ratio.tsx
+├── avatar.tsx
+├── badge.tsx
+├── button.tsx
+├── calendar.tsx
+├── card.tsx
+├── checkbox.tsx
+├── collapsible.tsx
+├── command.tsx
+├── context-menu.tsx
+├── dialog.tsx
+├── dropdown-menu.tsx
+├── form.tsx
+├── hover-card.tsx
+├── input.tsx
+├── label.tsx
+├── menubar.tsx
+├── navigation-menu.tsx
+├── popover.tsx
+├── progress.tsx
+├── radio-group.tsx
+├── scroll-area.tsx
+├── select.tsx
+├── separator.tsx
+├── sheet.tsx
+├── skeleton.tsx
+├── slider.tsx
+├── sonner.tsx
+├── switch.tsx
+├── table.tsx
+├── tabs.tsx
+├── textarea.tsx
+├── toast.tsx
+├── toaster.tsx
+├── toggle-group.tsx
+├── toggle.tsx
+├── tooltip.tsx
+└── index.ts
+```
+
+### Utilities (Both need)
+```
+src/lib/
+├── utils.ts (cn helper)
+├── api-client.ts
+└── constants.ts
+```
+
+### Services (Both need)
+```
+src/services/
+├── api.ts (axios instance)
+├── video-service.ts (shared video upload/fetch)
+└── query-client.ts (React Query setup)
+```
+
+### Stores (Both need)
+```
+src/stores/
+├── auth-store.ts
+└── video-store.ts (shared video library state)
+```
+
+### Types (Both need)
+```
+src/types/
+├── auth.ts
+├── video.ts
+├── user.ts
+├── api.ts
+└── index.ts
+```
+
+### Config (Both need, different values)
+```
+next.config.ts (same config)
+package.json (same dependencies)
+tsconfig.json (same config)
+tailwind.config.ts (same config)
+postcss.config.mjs (same config)
+components.json (shadcn config - same)
+```
+
+### Environment (Both need, different values)
+```
+.env.local (different per product)
+.env.example (template for both)
+```
+
+---
+
+## 🔄 SHARED BACKEND (apistreamhub-fastapi)
+
+### Authentication (Shared)
+```python
+app/routers/auth.py
+app/models/user.py
+app/schemas/auth.py
+app/services/auth_service.py
+```
+
+### Video Service (Shared)
+```python
+app/routers/videos.py
+app/models/video.py
+app/schemas/video.py
+app/services/video_service.py
+```
+
+### Playlist Service (Shared, adapt per product)
+```python
+app/routers/playlists.py
+app/models/playlist.py
+app/schemas/playlist.py
+app/services/playlist_service.py
+```
+
+### User Management (Shared)
+```python
+app/routers/users.py
+app/schemas/user.py
+app/services/user_service.py
+```
+
+### Database (Shared)
+```python
+app/database.py
+app/models/base.py
+alembic/ (migrations)
+```
+
+---
+
+## 📦 PACKAGE.JSON DEPENDENCIES (Same for Both)
+
+```json
+{
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-query": "^5.90.21",
+    "axios": "^1.13.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.575.0",
+    "next": "16.1.6",
+    "next-themes": "^0.4.6",
+    "radix-ui": "^1.4.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-hook-form": "^7.7.2",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "puppeteer": "^24.37.5",
+    "shadcn": "^3.8.5",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "^5"
+  }
+}
+```
+
+---
+
+## 🐳 DOCKER CONFIG (Both need, different ports)
+
+### TV Hub Dockerfile
+```dockerfile
+FROM node:20-alpine
+# ... same build process
+EXPOSE 3001
+```
+
+### Videotron Dockerfile
+```dockerfile
+FROM node:20-alpine
+# ... same build process
+EXPOSE 3002
+```
+
+### TV Hub docker-compose.yml
+```yaml
+services:
+  tvhub:
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_PRODUCT=tvhub
+```
+
+### Videotron docker-compose.yml
+```yaml
+services:
+  videotron:
+    ports:
+      - "3002:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_PRODUCT=videotron
+```
+
+---
+
+## 📝 FILES TO CUSTOMIZE PER PRODUCT
+
+### TV Hub Specific
+- `src/app/dashboard/layout.tsx` - Menu items
+- `src/app/dashboard/page.tsx` - Dashboard content
+- `.env.local` - `NEXT_PUBLIC_PRODUCT=tvhub`
+- `package.json` - `"name": "streamhub-tvhub"`
+- `README.md` - TV Hub documentation
+
+### Videotron Specific
+- `src/app/dashboard/layout.tsx` - Menu items
+- `src/app/dashboard/page.tsx` - Dashboard content
+- `.env.local` - `NEXT_PUBLIC_PRODUCT=videotron`
+- `package.json` - `"name": "streamhub-videotron"`
+- `README.md` - Videotron documentation
+
+---
+
+## 🔗 SHARED API DOCUMENTATION
+
+Both products use the same backend API at `http://localhost:8000`
+
+**Base URL:** `http://localhost:8000`
+
+**Endpoints:**
+- Auth: `/api/v1/auth/*`
+- Videos: `/api/videos/*`
+- Playlists: `/api/playlists/*`
+- Users: `/api/v1/users/*`
+- Channels: `/api/channels/*` (TV Hub only)
+- Screens: `/api/screens/*` (Videotron only)
+- Layouts: `/api/layouts/*` (Videotron only)
+- Campaigns: `/api/campaigns/*` (Videotron only)
+
+---
+
+**Created:** 2026-03-05  
+**Reference:** BUSINESS_ANALYSIS_REPORT.md
