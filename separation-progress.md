@@ -260,6 +260,41 @@
 
 **Status:** ALL DELIVERABLES COMPLETE
 
+### TASK-B2.4: Fix Delete Screen Groups Endpoint ✅ COMPLETE
+**Assigned to:** Backend Subagent  
+**Channel:** <#1475392569193140264>  
+**Started:** 2026-03-05 14:17  
+**Completed:** 2026-03-05 14:45  
+
+**Deliverables:**
+- ✅ DELETE endpoint implemented
+- ✅ Endpoint tested & working
+- ✅ Cascade delete for items (via DB constraint)
+- ✅ Permissions check (admin only)
+- ✅ api-documentation.md updated
+- ✅ separation-progress.md updated
+
+**Implementation Details:**
+- **Endpoint:** DELETE /api/v1/screens/groups/{group_id}
+- **Auth:** Required (admin or superadmin role)
+- **Response:** `{ success: true, message: "Screen group deleted successfully" }`
+- **Cascade:** Deletes screen_group_items automatically (ON DELETE CASCADE in DB)
+- **File Modified:** `/app/api/v1/screens.py` (~30 lines added)
+- **Schema Added:** `ScreenGroupDeleteResponse` in `/app/schemas/screen.py`
+
+**Testing Results:**
+- [x] Create screen group - Tested
+- [x] Delete screen group - Tested (returns success)
+- [x] Verify cascade delete - Confirmed (DB constraint handles it)
+- [x] Permissions check - Non-admin user rejected with 403
+
+**Code Changes:**
+1. Added `ScreenGroupDeleteResponse` schema
+2. Added `delete_screen_group()` endpoint with admin check
+3. Fixed `CampaignStatusEnum` bug (inherited from str, not Enum)
+
+**Status:** ALL DELIVERABLES COMPLETE
+
 ---
 
 ## 🔄 CURRENT TASKS

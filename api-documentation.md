@@ -233,6 +233,7 @@ Content-Type: application/json
 | `/screens/{id}/heartbeat` | POST | Yes | Update screen heartbeat |
 | `/screens/groups` | GET | No | List screen groups |
 | `/screens/groups` | POST | Yes | Create screen group |
+| `/screens/groups/{id}` | DELETE | Yes (admin) | Delete screen group |
 
 #### Create Screen Request
 
@@ -337,6 +338,28 @@ Content-Type: application/json
   }
 }
 ```
+
+#### Delete Screen Group
+
+**Description:** Delete a screen group. Requires admin role. Cascade deletes all associated screen_group_items.
+
+**Request:**
+```http
+DELETE /api/v1/screens/groups/{group_id}
+Authorization: Bearer <admin_token>
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Screen group deleted successfully"
+}
+```
+
+**Error Responses:**
+- `403 Forbidden`: User does not have admin role
+- `404 Not Found`: Screen group not found
 
 ---
 
