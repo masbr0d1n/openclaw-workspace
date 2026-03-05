@@ -1,13 +1,15 @@
 /**
  * Screen Groups Page - Videotron
+ * Screen group management with API integration
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -26,112 +28,105 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Layers, Monitor, Plus, Edit, Trash2, ArrowLeft, MapPin, CheckCircle, XCircle } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Layers, Monitor, Plus, Edit, Trash2, ArrowLeft, MapPin, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-interface ScreenGroup {
-  id: string;
-  name: string;
-  location: string;
-  screenCount: number;
-  tenant: string;
-  status: 'active' | 'inactive';
-}
+import { screenService } from '@/services/screen-service';
+import type { ScreenGroup, Screen } from '@/types';
 
 export default function ScreenGroupsPage() {
   const router = useRouter();
-  const [groups, setGroups] = useState<ScreenGroup[]>([
-    {
-      id: 'main-lobby',
-      name: 'Main Lobby Group',
-      location: 'Main Lobby',
-      screenCount: 15,
-      tenant: 'Mall Central Jakarta',
-      status: 'active',
-    },
-    {
-      id: 'food-court',
-      name: 'Food Court Group',
-      location: 'Food Court',
-      screenCount: 20,
-      tenant: 'Mall Central Jakarta',
-      status: 'active',
-    },
-    {
-      id: 'cinema',
-      name: 'Cinema Area Group',
-      location: 'Cinema Area',
-      screenCount: 10,
-      tenant: 'Mall Central Jakarta',
-      status: 'inactive',
-    },
-  ]);
-
+  const [groups, setGroups] = useState<ScreenGroup[]>([]);
+  const [screens, setScreens] = useState<Screen[]>([]);
+  const [loading, setLoading] = useState(true);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<ScreenGroup | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    location: '',
-    tenant: '',
+    screen_ids: [] as string[],
   });
 
-  const activeCount = groups.filter(g => g.status === 'active').length;
-  const totalScreens = groups.reduce((acc, g) => acc + g.screenCount, 0);
+  // Fetch data from API
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [groupsResponse, screensResponse] = await Promise.all([
+        screenService.getScreenGroups(),
+        screenService.getScreens(),
+      ]);
+      setGroups(groupsResponse.groups || []);
+      setScreens(screensResponse.screens || []);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+      toast.error('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const handleAddGroup = () => {
-    const newGroup: ScreenGroup = {
-      id: formData.name.toLowerCase().replace(/\s+/g, '-'),
-      name: formData.name,
-      location: formData.location,
-      tenant: formData.tenant,
-      screenCount: 0,
-      status: 'active',
-    };
-    setGroups([...groups, newGroup]);
-    setAddDialogOpen(false);
-    setFormData({ name: '', location: '', tenant: '' });
-    toast.success('Screen group created successfully');
-  };
+  // Initial fetch
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const handleEditGroup = () => {
-    if (selectedGroup) {
-      setGroups(groups.map(g =>
-        g.id === selectedGroup.id
-          ? { ...g, ...formData }
-          : g
-      ));
-      setEditDialogOpen(false);
-      setSelectedGroup(null);
-      setFormData({ name: '', location: '', tenant: '' });
-      toast.success('Screen group updated successfully');
+  // Calculate stats
+  const totalGroups = groups.length;
+  const totalScreensInGroups = groups.reduce((acc, group) => acc + group.screen_ids.length, 0);
+  const uniqueLocations = new Set(screens.map(s => s.location).filter(Boolean)).size;
+
+  // Handle add group
+  const handleAddGroup = async () => {
+    try {
+      await screenService.createScreenGroup({
+        name: formData.name,
+        screen_ids: formData.screen_ids,
+      });
+      toast.success('Screen group created successfully');
+      setAddDialogOpen(false);
+      setFormData({ name: '', screen_ids: [] });
+      fetchData();
+    } catch (error) {
+      console.error('Failed to create group:', error);
+      toast.error('Failed to create screen group');
     }
   };
 
-  const handleDeleteGroup = (id: string) => {
-    setGroups(groups.filter(g => g.id !== id));
-    toast.success('Screen group deleted successfully');
+  // Handle delete group
+  const handleDeleteGroup = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this group?')) return;
+    
+    // Note: Backend doesn't have delete endpoint yet, this is a placeholder
+    toast.info('Delete functionality will be available soon');
+    // await screenService.deleteScreenGroup(id); // TODO: Implement when backend ready
   };
 
-  const toggleStatus = (id: string) => {
-    setGroups(groups.map(g =>
-      g.id === id
-        ? { ...g, status: g.status === 'active' ? 'inactive' as 'inactive' : 'active' as 'active' }
-        : g
-    ));
-    toast.success('Group status toggled');
-  };
-
+  // Open edit dialog
   const openEditDialog = (group: ScreenGroup) => {
     setSelectedGroup(group);
     setFormData({
       name: group.name,
-      location: group.location,
-      tenant: group.tenant,
+      screen_ids: group.screen_ids || [],
     });
     setEditDialogOpen(true);
+  };
+
+  // Handle screen selection
+  const toggleScreenSelection = (screenId: string) => {
+    setFormData({
+      ...formData,
+      screen_ids: formData.screen_ids.includes(screenId)
+        ? formData.screen_ids.filter(id => id !== screenId)
+        : [...formData.screen_ids, screenId],
+    });
   };
 
   return (
@@ -155,52 +150,87 @@ export default function ScreenGroupsPage() {
             </p>
           </div>
         </div>
-        <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Group
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Screen Group</DialogTitle>
-              <DialogDescription>
-                Organize screens into a group
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Group Name</label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g., Main Lobby Group"
-                />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={fetchData} disabled={loading}>
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </Button>
+          <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                New Group
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Screen Group</DialogTitle>
+                <DialogDescription>
+                  Organize screens into a group
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="name">Group Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g., Main Lobby Group"
+                  />
+                </div>
+                <div>
+                  <Label>Select Screens</Label>
+                  <div className="max-h-60 overflow-y-auto border rounded-md p-2 space-y-2">
+                    {screens.length === 0 ? (
+                      <p className="text-sm text-gray-500 text-center py-4">
+                        No screens available. Create screens first.
+                      </p>
+                    ) : (
+                      screens.map((screen) => (
+                        <div
+                          key={screen.id}
+                          className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
+                            formData.screen_ids.includes(screen.id)
+                              ? 'bg-primary/10 border-primary'
+                              : 'hover:bg-gray-100 dark:hover:bg-gray-800 border'
+                          }`}
+                          onClick={() => toggleScreenSelection(screen.id)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                              formData.screen_ids.includes(screen.id)
+                                ? 'bg-primary border-primary'
+                                : 'border-gray-300'
+                            }`}>
+                              {formData.screen_ids.includes(screen.id) && (
+                                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            <span className="text-sm font-medium">{screen.name}</span>
+                          </div>
+                          <Badge variant={screen.status === 'online' ? 'default' : 'secondary'}>
+                            {screen.status}
+                          </Badge>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formData.screen_ids.length} screen(s) selected
+                  </p>
+                </div>
               </div>
-              <div>
-                <label className="text-sm font-medium">Location</label>
-                <Input
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="e.g., Main Lobby"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Tenant</label>
-                <Input
-                  value={formData.tenant}
-                  onChange={(e) => setFormData({ ...formData, tenant: e.target.value })}
-                  placeholder="e.g., Mall Central Jakarta"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleAddGroup}>Create Group</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleAddGroup} disabled={!formData.name || formData.screen_ids.length === 0}>
+                  Create Group
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Stats */}
@@ -211,9 +241,9 @@ export default function ScreenGroupsPage() {
             <Layers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{groups.length}</div>
+            <div className="text-2xl font-bold">{totalGroups}</div>
             <p className="text-xs text-muted-foreground">
-              {activeCount} active
+              Active groups
             </p>
           </CardContent>
         </Card>
@@ -224,7 +254,7 @@ export default function ScreenGroupsPage() {
             <Monitor className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalScreens}</div>
+            <div className="text-2xl font-bold">{totalScreensInGroups}</div>
             <p className="text-xs text-muted-foreground">
               Across all groups
             </p>
@@ -237,9 +267,7 @@ export default function ScreenGroupsPage() {
             <MapPin className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {new Set(groups.map(g => g.location)).size}
-            </div>
+            <div className="text-2xl font-bold">{uniqueLocations}</div>
             <p className="text-xs text-muted-foreground">
               Locations
             </p>
@@ -254,72 +282,69 @@ export default function ScreenGroupsPage() {
           <CardDescription>Manage and organize screen groups</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Group Name</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Tenant</TableHead>
-                <TableHead>Screens</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {groups.map((group) => (
-                <TableRow key={group.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Layers className="h-4 w-4 text-gray-400" />
-                      <span className="font-medium">{group.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{group.location}</TableCell>
-                  <TableCell>{group.tenant}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Monitor className="h-4 w-4 text-gray-400" />
-                      <span>{group.screenCount}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={group.status === 'active' ? 'default' : 'secondary'}>
-                      {group.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleStatus(group.id)}
-                      >
-                        {group.status === 'active' ? (
-                          <XCircle className="h-4 w-4 text-red-500" />
-                        ) : (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditDialog(group)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteGroup(group.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : groups.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <Layers className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No screen groups yet</p>
+              <Button variant="link" onClick={() => setAddDialogOpen(true)}>Create your first group</Button>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Group Name</TableHead>
+                  <TableHead>Screens</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {groups.map((group) => (
+                  <TableRow key={group.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Layers className="h-4 w-4 text-gray-400" />
+                        <span className="font-medium">{group.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Monitor className="h-4 w-4 text-gray-400" />
+                        <span>{group.screen_ids?.length || 0} screens</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-gray-500">
+                        {new Date(group.created_at).toLocaleDateString()}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditDialog(group)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteGroup(group.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
@@ -334,30 +359,59 @@ export default function ScreenGroupsPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Group Name</label>
+              <Label htmlFor="edit-name">Group Name</Label>
               <Input
+                id="edit-name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Location</label>
-              <Input
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Tenant</label>
-              <Input
-                value={formData.tenant}
-                onChange={(e) => setFormData({ ...formData, tenant: e.target.value })}
-              />
+              <Label>Select Screens</Label>
+              <div className="max-h-60 overflow-y-auto border rounded-md p-2 space-y-2">
+                {screens.map((screen) => (
+                  <div
+                    key={screen.id}
+                    className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors ${
+                      formData.screen_ids.includes(screen.id)
+                        ? 'bg-primary/10 border-primary'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-800 border'
+                    }`}
+                    onClick={() => toggleScreenSelection(screen.id)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                        formData.screen_ids.includes(screen.id)
+                          ? 'bg-primary border-primary'
+                          : 'border-gray-300'
+                      }`}>
+                        {formData.screen_ids.includes(screen.id) && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-sm font-medium">{screen.name}</span>
+                    </div>
+                    <Badge variant={screen.status === 'online' ? 'default' : 'secondary'}>
+                      {screen.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {formData.screen_ids.length} screen(s) selected
+              </p>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleEditGroup}>Save Changes</Button>
+            <Button onClick={() => {
+              toast.info('Update functionality will be available soon');
+              setEditDialogOpen(false);
+            }}>
+              Save Changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
