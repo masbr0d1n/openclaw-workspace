@@ -340,6 +340,137 @@ Content-Type: application/json
 
 ---
 
+### 9. Layouts API (Videotron)
+
+**Base Path:** `/api/v1/layouts`
+
+| Endpoint | Method | Auth Required | Description |
+|----------|--------|---------------|-------------|
+| `/layouts/` | GET | No | List all layouts |
+| `/layouts/{id}` | GET | No | Get layout by ID |
+| `/layouts/` | POST | Yes | Create new layout |
+| `/layouts/{id}` | PUT | Yes | Update layout |
+| `/layouts/{id}` | DELETE | Yes | Delete layout |
+| `/layouts/{id}/duplicate` | POST | Yes | Duplicate layout |
+
+#### Create Layout Request
+
+**Request:**
+```json
+POST /api/v1/layouts
+Content-Type: application/json
+
+{
+  "name": "Main Screen Layout",
+  "canvas_config": {
+    "width": 1920,
+    "height": 1080,
+    "orientation": "landscape"
+  },
+  "layers": [
+    {
+      "type": "video",
+      "position": {"x": 0, "y": 0},
+      "size": {"width": 1920, "height": 1080},
+      "properties": {"video_id": "uuid-123"}
+    },
+    {
+      "type": "text",
+      "position": {"x": 100, "y": 100},
+      "size": {"width": 400, "height": 100},
+      "properties": {"content": "Welcome", "fontSize": 24}
+    }
+  ]
+}
+```
+
+#### Create Layout Response
+
+**Response:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
+  "layout": {
+    "id": "uuid-string",
+    "name": "Main Screen Layout",
+    "canvas_config": {
+      "width": 1920,
+      "height": 1080,
+      "orientation": "landscape"
+    },
+    "layers": [
+      {
+        "type": "video",
+        "position": {"x": 0, "y": 0},
+        "size": {"width": 1920, "height": 1080}
+      }
+    ],
+    "created_by": 1,
+    "created_at": "2026-03-05T10:00:00Z",
+    "updated_at": "2026-03-05T10:00:00Z"
+  }
+}
+```
+
+#### List Layouts Response
+
+**Response:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
+  "layouts": [
+    {
+      "id": "uuid-string",
+      "name": "Main Screen Layout",
+      "canvas_config": {...},
+      "layers": [...],
+      "created_by": 1,
+      "created_at": "2026-03-05T10:00:00Z",
+      "updated_at": "2026-03-05T10:00:00Z"
+    }
+  ],
+  "count": 1
+}
+```
+
+#### Duplicate Layout Request
+
+**Request:**
+```json
+POST /api/v1/layouts/{id}/duplicate
+Content-Type: application/json
+
+{
+  "name": "Main Screen Layout (Copy)"
+}
+```
+
+#### Duplicate Layout Response
+
+**Response:**
+```json
+{
+  "status": true,
+  "statusCode": 200,
+  "message": "Success",
+  "layout": {
+    "id": "new-uuid-string",
+    "name": "Main Screen Layout (Copy)",
+    "canvas_config": {...},
+    "layers": [...],
+    "created_by": 1,
+    "created_at": "2026-03-05T10:00:00Z",
+    "updated_at": "2026-03-05T10:00:00Z"
+  }
+}
+```
+
+---
+
 ## 🔐 Authentication
 
 All authenticated endpoints require JWT Bearer token in Authorization header:
@@ -393,9 +524,10 @@ CORS_ORIGINS = [
 - `playlist_items` - Playlist content items
 - `playlist_videos` - Playlist-video relationships
 - `role_presets` - Role-based access presets
-- `screens` - Videotron screen/device management ✅ NEW
-- `screen_groups` - Screen group definitions ✅ NEW
-- `screen_group_items` - Screen-group relationships ✅ NEW
+- `screens` - Videotron screen/device management ✅
+- `screen_groups` - Screen group definitions ✅
+- `screen_group_items` - Screen-group relationships ✅
+- `layouts` - Videotron layout storage ✅ NEW
 
 ---
 
@@ -411,7 +543,7 @@ CORS_ORIGINS = [
 - **Channels API:** TV Hub only, not needed for Videotron
 - **Streaming API:** TV Hub only, not needed for Videotron
 - **Screens API:** ✅ IMPLEMENTED (Videotron device management)
-- **Layouts API:** Not yet implemented (needed for Videotron)
+- **Layouts API:** ✅ IMPLEMENTED (Videotron layout storage)
 - **Campaigns API:** Not yet implemented (needed for Videotron)
 
 ### 3. API Response Format
@@ -431,7 +563,6 @@ CORS_ORIGINS = [
 1. **Update CORS configuration** to include ports 3001 and 3002
 2. **Document product-specific endpoints** clearly (TV Hub vs Videotron)
 3. **Implement missing Videotron APIs:**
-   - `/api/layouts` - Layout storage
    - `/api/campaigns` - Campaign management
 4. **Add API versioning** for future compatibility
 5. **Implement rate limiting** for public endpoints
@@ -440,4 +571,4 @@ CORS_ORIGINS = [
 
 **Created:** 2026-03-05  
 **Backend Version:** 0.1.0  
-**Status:** ✅ Screens API Implemented
+**Status:** ✅ Screens API & Layouts API Implemented
