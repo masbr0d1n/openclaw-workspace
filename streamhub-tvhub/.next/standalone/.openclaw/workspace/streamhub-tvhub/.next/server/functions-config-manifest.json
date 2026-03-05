@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/videos/file/[...path]": {},
+    "/api/videos/upload": {}
+  }
+}

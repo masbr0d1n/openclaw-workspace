@@ -1,0 +1,3 @@
+module.exports=[69817,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(1795);a.n(d("[project]/.openclaw/workspace/streamhub-tvhub/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},15883,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(1795);a.n(d("[project]/.openclaw/workspace/streamhub-tvhub/node_modules/next/dist/client/components/builtin/global-error.js"))},80145,a=>{"use strict";a.i(69817);var b=a.i(15883);a.n(b)}];
+
+//# sourceMappingURL=feb81_next_dist_client_components_builtin_global-error_9844b6ac.js.map
