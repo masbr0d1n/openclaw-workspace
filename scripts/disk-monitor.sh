@@ -110,8 +110,7 @@ check_disk() {
         echo "{\"lastAlert\": $current_time}" > "$STATE_FILE"
         
         # Kirim ke Discord via OpenClaw message tool
-        /home/sysop/.npm-global/bin/openclaw message \
-            --channel discord \
+        /home/sysop/.npm-global/bin/openclaw message send \
             --target "$DISCORD_CHANNEL" \
             --message "$alert_message"
         
