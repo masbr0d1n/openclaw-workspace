@@ -18,6 +18,7 @@ import {
   Image as ImageIcon, Video, Clock, Cloud, Layers, Monitor, Play, Pause,
   SkipForward, ChevronDown, ChevronRight, Edit3, Palette, Settings,
   Plus, ArrowLeft, Calendar, MoreVertical, Edit as EditIcon, Undo, Redo,
+  Loader2,
 } from 'lucide-react';
 import type { Layout, Layer, CanvasConfig } from '@/types';
 
