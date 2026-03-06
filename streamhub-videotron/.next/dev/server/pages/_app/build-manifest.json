@@ -1,0 +1,23 @@
+{
+  "devFiles": [],
+  "ampDevFiles": [],
+  "polyfillFiles": [],
+  "lowPriorityFiles": [],
+  "rootMainFiles": [],
+  "pages": {
+    "/_app": [
+      "static/chunks/09ed5_next_dist_compiled_0496b5c8._.js",
+      "static/chunks/09ed5_next_dist_shared_lib_a6c432b1._.js",
+      "static/chunks/09ed5_next_dist_client_4bc53d09._.js",
+      "static/chunks/09ed5_next_dist_fb92607d._.js",
+      "static/chunks/09ed5_next_app_af49058b.js",
+      "static/chunks/[next]_entry_page-loader_ts_689fc2f3._.js",
+      "static/chunks/09ed5_react-dom_8ba9f5c7._.js",
+      "static/chunks/09ed5_dd427f35._.js",
+      "static/chunks/[root-of-the-server]__e0f7a668._.js",
+      "static/chunks/_openclaw_workspace_streamhub-videotron_pages__app_2da965e7._.js",
+      "static/chunks/turbopack-_openclaw_workspace_streamhub-videotron_pages__app_699ade02._.js"
+    ]
+  },
+  "ampFirstPages": []
+}

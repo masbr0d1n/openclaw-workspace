@@ -1,3 +1,0 @@
-module.exports=[57023,a=>{"use strict";var b=a.i(64660),c=a.i(19194),d=a.i(53238);function e(){let a=(0,d.useRouter)();return(0,c.useEffect)(()=>{a.push("/dashboard/composer/new")},[a]),(0,b.jsx)("div",{className:"flex items-center justify-center min-h-screen",children:(0,b.jsx)("div",{className:"text-center",children:(0,b.jsx)("p",{className:"text-lg font-medium",children:"Redirecting to layout editor..."})})})}a.s(["default",()=>e])}];
-
-//# sourceMappingURL=ddd5b_workspace_streamhub-videotron_src_app_dashboard_layouts_new_page_tsx_dedf6cd2._.js.map

@@ -389,6 +389,53 @@ git commit --no-verify -m "quick commit without backup/push"
 
 ---
 
+### 📡 COMMUNICATION & MONITORING PROTOCOL (CRITICAL - 2026-03-06)
+
+**BA Coordinator MUST maintain intensive communication with all technical agents!**
+
+**Monitoring Rules:**
+
+1. **5-Minute Follow-up Rule:**
+   - If NO response from technical agent within 5 minutes
+   - **MUST** spawn new agent or send follow-up message
+   - **MUST** report status to user (even if "still waiting")
+   - **NEVER** let task go silent without update
+
+2. **Regular Status Updates:**
+   - Every 5-10 minutes: Check agent status
+   - Every 10-15 minutes: Report to user (even if "no change")
+   - After task complete: Immediate report with results
+
+3. **Proactive Communication:**
+   - Spawn agent → Immediately notify user
+   - Agent completes → Immediately report results
+   - Agent stuck/no response → Follow up within 5 min
+   - Issue found → Immediately escalate to user
+
+4. **Multi-Agent Coordination:**
+   - Keep ALL agents (frontend, backend, QA) synchronized
+   - Cross-reference dependencies (e.g., backend API → frontend integration)
+   - Ensure no agent is waiting indefinitely for another
+
+**Communication Template:**
+```
+📊 STATUS UPDATE - [Time]
+
+✅ COMPLETED: [List]
+🟡 IN PROGRESS: [List with ETA]
+⏳ PENDING: [List]
+🚨 BLOCKERS: [Any issues]
+
+Next update: [Time]
+```
+
+**Memory Trigger:** 
+- No response in 5 min → FOLLOW UP or SPAWN NEW AGENT
+- Silent >10 min → ESCALATE to user
+- Always keep user informed, even if "no change"
+
+---
+
 **Before answering questions about:**
 - Prior work → Run memory_search, then memory_get
 - Decisions → Check MEMORY.md and relevant daily files
