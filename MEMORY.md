@@ -357,6 +357,38 @@ git commit --no-verify -m "quick commit without backup/push"
 
 ## Workflow
 
+### 🎯 CHANNEL DELEGATION (CRITICAL - 2026-03-06)
+
+**For technical tasks, ALWAYS delegate to technical channels:**
+
+| Task Type | Delegate To | Channel ID |
+|-----------|-------------|------------|
+| **Frontend Development** | Frontend Team | <#1476052074415394938> |
+| **Backend Development** | Backend Team | <#1475392569193140264> |
+| **QA/Testing** | QA Team | <#1479087649804521524> |
+| **Business Analysis** | BA Coordinator | <#1478868518958137415> (current) |
+
+**Workflow:**
+1. **BA Coordinator** receives task from user
+2. **BA Coordinator** spawns appropriate technical channel
+3. **Technical channel** executes the task
+4. **BA Coordinator** monitors and reports progress to user
+5. **NEVER** execute technical tasks directly in BA channel!
+
+**Examples:**
+- ❌ WRONG: BA fixes CSS code directly
+- ✅ RIGHT: BA spawns frontend channel to fix CSS
+
+- ❌ WRONG: BA runs Puppeteer tests directly
+- ✅ RIGHT: BA spawns QA channel to run tests
+
+- ❌ WRONG: BA implements API endpoints
+- ✅ RIGHT: BA spawns backend channel to implement APIs
+
+**Memory Trigger:** When user asks for technical work → SPAWN technical channel!
+
+---
+
 **Before answering questions about:**
 - Prior work → Run memory_search, then memory_get
 - Decisions → Check MEMORY.md and relevant daily files
