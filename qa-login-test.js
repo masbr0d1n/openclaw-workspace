@@ -1,84 +1,59 @@
 const puppeteer = require('puppeteer');
 
-async function testLoginPage(url, name) {
-  const browser = await puppeteer.launch({ 
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+(async () => {
+  const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox']});
   const page = await browser.newPage();
-  
-  // Capture console errors
-  const errors = [];
+
+  // Capture console logs
+  const logs = [];
   page.on('console', msg => {
-    if (msg.type() === 'error') {
-      errors.push(msg.text());
-    }
+    logs.push(msg.text());
+    console.log('PAGE LOG:', msg.text());
   });
-  
-  // Navigate to page
-  await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-  
-  // Check CSS loaded
-  const cssLoaded = await page.evaluate(() => {
-    const stylesheets = Array.from(document.styleSheets);
-    const hasStyles = stylesheets.length > 0;
-    const hasTailwind = stylesheets.some(s => {
-      try {
-        return Array.from(s.cssRules || []).some(rule => 
-          rule.cssText && (rule.cssText.includes('tailwind') || rule.cssText.includes('gradient'))
-        );
-      } catch { return false; }
-    });
-    return { hasStyles, hasTailwind };
-  });
-  
-  // Check shadcn/ui components
-  const hasShadcn = await page.evaluate(() => {
-    return {
-      hasCard: document.querySelector('[class*="card"]') !== null,
-      hasButton: document.querySelector('[class*="button"]') !== null,
-      hasInput: document.querySelector('[class*="input"]') !== null,
-      hasGradient: document.querySelector('[class*="gradient"]') !== null,
-      hasRounded: document.querySelector('[class*="rounded"]') !== null
-    };
-  });
-  
-  // Check for hydration errors
-  const hasHydrationError = errors.some(e => e.includes('hydrat'));
-  
-  // Screenshot
-  const screenshotPath = `/tmp/qa-${name}-login-${Date.now()}.png`;
-  await page.screenshot({ path: screenshotPath, fullPage: true });
-  
-  // Test login form
-  const formWorking = await page.evaluate(() => {
-    const usernameInput = document.querySelector('input[type="text"], input[type="email"]');
-    const passwordInput = document.querySelector('input[type="password"]');
-    const submitButton = document.querySelector('button[type="submit"]');
-    return usernameInput !== null && passwordInput !== null && submitButton !== null;
-  });
-  
-  await browser.close();
-  
-  return {
-    url,
-    name,
-    cssLoaded,
-    hasShadcn,
-    hasHydrationError,
-    formWorking,
-    errors: errors.slice(0, 5),
-    screenshot: screenshotPath
-  };
-}
 
-async function runTests() {
-  // Test both pages
-  const tvhub = await testLoginPage('http://localhost:3001/login', 'tvhub');
-  const videotron = await testLoginPage('http://localhost:3002/login', 'videotron');
+  try {
+    // Clear localStorage
+    await page.goto('http://localhost:3002/login');
+    await page.evaluate(() => localStorage.clear());
 
-  console.log('TV Hub:', JSON.stringify(tvhub, null, 2));
-  console.log('Videotron:', JSON.stringify(videotron, null, 2));
-}
+    // Login
+    await page.type('input[type="text"]', 'sysop@test.com');
+    await page.type('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
 
-runTests().catch(console.error);
+    // Wait for navigation (might take longer due to /me call)
+    await page.waitForNavigation({waitUntil: 'networkidle0', timeout: 15000});
+
+    // Check results
+    const url = page.url();
+    const user = await page.evaluate(() => localStorage.getItem('user'));
+    const token = await page.evaluate(() => localStorage.getItem('access_token'));
+
+    console.log('URL:', url);
+    console.log('User:', user);
+    console.log('Token:', !!token);
+
+    // Verify
+    const success = url.includes('/dashboard') && user && user !== 'undefined' && user.includes('email') && token;
+    console.log('✅ SUCCESS:', success);
+
+    // Screenshot
+    await page.screenshot({path: '/tmp/qa-login-me-fix.png', fullPage: true});
+    await browser.close();
+
+    // Output summary
+    console.log('\n=== QA TEST SUMMARY ===');
+    console.log('Screenshot: /tmp/qa-login-me-fix.png');
+    console.log('Success:', success ? 'YES' : 'NO');
+    console.log('URL:', url);
+    console.log('User data:', user);
+    console.log('Token present:', !!token);
+    console.log('Console logs:', logs);
+
+    process.exit(success ? 0 : 1);
+  } catch (error) {
+    console.error('TEST ERROR:', error.message);
+    await browser.close();
+    process.exit(1);
+  }
+})();
