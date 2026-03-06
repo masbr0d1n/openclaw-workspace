@@ -71,21 +71,21 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/.openclaw/workspace/streamhub-videotron/node_modules/zustand/esm/middleware.mjs [app-client] (ecmascript)");
 ;
 ;
-const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["persist"])((set, get)=>({
+const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["persist"])((set1, get)=>({
         user: null,
         accessToken: null,
         isAuthenticated: false,
         isLoading: true,
         setUser: (user)=>{
             console.log('📝 Setting user:', user);
-            set({
+            set1({
                 user,
                 isAuthenticated: !!user
             });
         },
         setAccessToken: (accessToken)=>{
             console.log('🎫 Setting access token:', !!accessToken);
-            set({
+            set1({
                 accessToken
             });
         },
@@ -94,19 +94,27 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
             console.log('👤 User:', user);
             console.log('🎫 Access token:', !!accessToken);
             console.log('🔄 Refresh token:', !!refreshToken);
+            // Clear any corrupted data first
+            if ("TURBOPACK compile-time truthy", 1) {
+                localStorage.removeItem('auth-storage');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('user');
+                console.log('🗑️ Cleared any existing auth data');
+            }
             // Store in Zustand
-            set({
+            set1({
                 user,
                 accessToken,
                 isAuthenticated: true,
                 isLoading: false
             });
-            // Also store in localStorage for API client
+            // Then persist fresh data to localStorage for API client
             if ("TURBOPACK compile-time truthy", 1) {
                 localStorage.setItem('access_token', accessToken);
                 localStorage.setItem('refresh_token', refreshToken);
                 localStorage.setItem('user', JSON.stringify(user));
-                console.log('💾 Saved to localStorage');
+                console.log('💾 Saved fresh auth data to localStorage');
             }
             console.log('✅ Auth state updated');
             console.log('📊 Current state:', {
@@ -118,7 +126,7 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
         },
         logout: ()=>{
             console.log('🚪 Logout action called');
-            set({
+            set1({
                 user: null,
                 accessToken: null,
                 isAuthenticated: false,
@@ -134,7 +142,7 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
         },
         setLoading: (isLoading)=>{
             console.log('⏳ Setting isLoading:', isLoading);
-            set({
+            set1({
                 isLoading
             });
         }
@@ -144,7 +152,34 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
             user: state.user,
             accessToken: state.accessToken,
             isAuthenticated: state.isAuthenticated
-        })
+        }),
+    onRehydrateStorage: ()=>(state, error)=>{
+            console.log('🔄 Rehydration:', {
+                state,
+                error
+            });
+            // Check if user data is valid
+            if (state?.user && typeof state.user === 'object') {
+                // Valid user data, proceed
+                console.log('✅ Valid user data found');
+            } else {
+                // Invalid/corrupted user data, clear and reset
+                console.warn('⚠️ Corrupted or missing user data, clearing storage');
+                if ("TURBOPACK compile-time truthy", 1) {
+                    localStorage.removeItem('auth-storage');
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    localStorage.removeItem('user');
+                }
+                // Reset state
+                set({
+                    user: null,
+                    accessToken: null,
+                    isAuthenticated: false,
+                    isLoading: false
+                });
+            }
+        }
 }));
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);

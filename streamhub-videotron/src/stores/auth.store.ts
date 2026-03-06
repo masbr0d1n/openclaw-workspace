@@ -45,6 +45,15 @@ export const useAuthStore = create<AuthState>()(
         console.log('🎫 Access token:', !!accessToken);
         console.log('🔄 Refresh token:', !!refreshToken);
         
+        // Clear any corrupted data first
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth-storage');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('user');
+          console.log('🗑️ Cleared any existing auth data');
+        }
+        
         // Store in Zustand
         set({ 
           user, 
@@ -53,12 +62,12 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false 
         });
         
-        // Also store in localStorage for API client
+        // Then persist fresh data to localStorage for API client
         if (typeof window !== 'undefined') {
           localStorage.setItem('access_token', accessToken);
           localStorage.setItem('refresh_token', refreshToken);
           localStorage.setItem('user', JSON.stringify(user));
-          console.log('💾 Saved to localStorage');
+          console.log('💾 Saved fresh auth data to localStorage');
         }
         
         console.log('✅ Auth state updated');
@@ -102,6 +111,31 @@ export const useAuthStore = create<AuthState>()(
         // Don't persist isLoading - it should reset on page load
         // isLoading: state.isLoading,
       }),
+      onRehydrateStorage: () => (state, error) => {
+        console.log('🔄 Rehydration:', { state, error });
+        
+        // Check if user data is valid
+        if (state?.user && typeof state.user === 'object') {
+          // Valid user data, proceed
+          console.log('✅ Valid user data found');
+        } else {
+          // Invalid/corrupted user data, clear and reset
+          console.warn('⚠️ Corrupted or missing user data, clearing storage');
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('auth-storage');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+          }
+          // Reset state
+          set({ 
+            user: null, 
+            accessToken: null, 
+            isAuthenticated: false, 
+            isLoading: false 
+          });
+        }
+      },
     }
   )
 );

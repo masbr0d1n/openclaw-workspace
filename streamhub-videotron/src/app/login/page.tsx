@@ -45,13 +45,48 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      const { access_token, refresh_token, user } = data.data;
+      console.log('📦 API Response:', data);
+      
+      // Backend returns: { status, statusCode, message, data: { access_token, refresh_token } }
+      const responseData = data.data || data;
+      const access_token = responseData.access_token;
+      const refresh_token = responseData.refresh_token;
+      
+      console.log('🎫 Tokens received:', !!access_token, !!refresh_token);
+
+      if (!access_token) {
+        throw new Error('Invalid response from server: missing access token');
+      }
+
+      // Fetch user data with the token
+      console.log('👤 Fetching user data...');
+      const userResponse = await fetch('/api/v1/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
+      });
+      
+      if (!userResponse.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      
+      const userData = await userResponse.json();
+      console.log('📦 User Response:', userData);
+      
+      const user = userData.data || userData;
+      
+      if (!user) {
+        throw new Error('Invalid user data received');
+      }
+
+      console.log('✅ User data received:', user);
 
       // Store login category as videotron
       localStorage.setItem('login_category', 'videotron');
 
-      // Use auth store login
+      // Use auth store login with validated data
       login(user, access_token, refresh_token);
+      console.log('✅ Auth store login called with user:', !!user);
 
       console.log('✅ Login successful');
 

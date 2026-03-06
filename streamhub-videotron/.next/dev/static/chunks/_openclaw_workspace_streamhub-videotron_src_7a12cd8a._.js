@@ -13,21 +13,21 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/.openclaw/workspace/streamhub-videotron/node_modules/zustand/esm/middleware.mjs [app-client] (ecmascript)");
 ;
 ;
-const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["persist"])((set, get)=>({
+const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])()((0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$zustand$2f$esm$2f$middleware$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["persist"])((set1, get)=>({
         user: null,
         accessToken: null,
         isAuthenticated: false,
         isLoading: true,
         setUser: (user)=>{
             console.log('📝 Setting user:', user);
-            set({
+            set1({
                 user,
                 isAuthenticated: !!user
             });
         },
         setAccessToken: (accessToken)=>{
             console.log('🎫 Setting access token:', !!accessToken);
-            set({
+            set1({
                 accessToken
             });
         },
@@ -36,19 +36,27 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
             console.log('👤 User:', user);
             console.log('🎫 Access token:', !!accessToken);
             console.log('🔄 Refresh token:', !!refreshToken);
+            // Clear any corrupted data first
+            if ("TURBOPACK compile-time truthy", 1) {
+                localStorage.removeItem('auth-storage');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('user');
+                console.log('🗑️ Cleared any existing auth data');
+            }
             // Store in Zustand
-            set({
+            set1({
                 user,
                 accessToken,
                 isAuthenticated: true,
                 isLoading: false
             });
-            // Also store in localStorage for API client
+            // Then persist fresh data to localStorage for API client
             if ("TURBOPACK compile-time truthy", 1) {
                 localStorage.setItem('access_token', accessToken);
                 localStorage.setItem('refresh_token', refreshToken);
                 localStorage.setItem('user', JSON.stringify(user));
-                console.log('💾 Saved to localStorage');
+                console.log('💾 Saved fresh auth data to localStorage');
             }
             console.log('✅ Auth state updated');
             console.log('📊 Current state:', {
@@ -60,7 +68,7 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
         },
         logout: ()=>{
             console.log('🚪 Logout action called');
-            set({
+            set1({
                 user: null,
                 accessToken: null,
                 isAuthenticated: false,
@@ -76,7 +84,7 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
         },
         setLoading: (isLoading)=>{
             console.log('⏳ Setting isLoading:', isLoading);
-            set({
+            set1({
                 isLoading
             });
         }
@@ -86,7 +94,34 @@ const useAuthStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openc
             user: state.user,
             accessToken: state.accessToken,
             isAuthenticated: state.isAuthenticated
-        })
+        }),
+    onRehydrateStorage: ()=>(state, error)=>{
+            console.log('🔄 Rehydration:', {
+                state,
+                error
+            });
+            // Check if user data is valid
+            if (state?.user && typeof state.user === 'object') {
+                // Valid user data, proceed
+                console.log('✅ Valid user data found');
+            } else {
+                // Invalid/corrupted user data, clear and reset
+                console.warn('⚠️ Corrupted or missing user data, clearing storage');
+                if ("TURBOPACK compile-time truthy", 1) {
+                    localStorage.removeItem('auth-storage');
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    localStorage.removeItem('user');
+                }
+                // Reset state
+                set({
+                    user: null,
+                    accessToken: null,
+                    isAuthenticated: false,
+                    isLoading: false
+                });
+            }
+        }
 }));
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
@@ -467,11 +502,37 @@ function LoginPage() {
                 throw new Error(error.message || 'Login failed');
             }
             const data = await response.json();
-            const { access_token, refresh_token, user } = data.data;
+            console.log('📦 API Response:', data);
+            // Backend returns: { status, statusCode, message, data: { access_token, refresh_token } }
+            const responseData = data.data || data;
+            const access_token = responseData.access_token;
+            const refresh_token = responseData.refresh_token;
+            console.log('🎫 Tokens received:', !!access_token, !!refresh_token);
+            if (!access_token) {
+                throw new Error('Invalid response from server: missing access token');
+            }
+            // Fetch user data with the token
+            console.log('👤 Fetching user data...');
+            const userResponse = await fetch('/api/v1/auth/me', {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`
+                }
+            });
+            if (!userResponse.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            const userData = await userResponse.json();
+            console.log('📦 User Response:', userData);
+            const user = userData.data || userData;
+            if (!user) {
+                throw new Error('Invalid user data received');
+            }
+            console.log('✅ User data received:', user);
             // Store login category as videotron
             localStorage.setItem('login_category', 'videotron');
-            // Use auth store login
+            // Use auth store login with validated data
             login(user, access_token, refresh_token);
+            console.log('✅ Auth store login called with user:', !!user);
             console.log('✅ Login successful');
             // Redirect to Videotron dashboard
             router.push('/dashboard/screens');
@@ -489,7 +550,7 @@ function LoginPage() {
                 className: "absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                lineNumber: 71,
+                lineNumber: 106,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -499,7 +560,7 @@ function LoginPage() {
                         className: "h-2 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600"
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                        lineNumber: 75,
+                        lineNumber: 110,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -514,12 +575,12 @@ function LoginPage() {
                                             className: "w-8 h-8 text-white"
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                            lineNumber: 81,
+                                            lineNumber: 116,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 80,
+                                        lineNumber: 115,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -529,7 +590,7 @@ function LoginPage() {
                                                 children: "Videotron"
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 84,
+                                                lineNumber: 119,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -537,19 +598,19 @@ function LoginPage() {
                                                 children: "StreamHub Digital Signage"
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 87,
+                                                lineNumber: 122,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 83,
+                                        lineNumber: 118,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                lineNumber: 79,
+                                lineNumber: 114,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -567,14 +628,14 @@ function LoginPage() {
                                                         className: "w-4 h-4 text-purple-500"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 97,
+                                                        lineNumber: 132,
                                                         columnNumber: 17
                                                     }, this),
                                                     "Username"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 96,
+                                                lineNumber: 131,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -592,26 +653,26 @@ function LoginPage() {
                                                         className: "pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 dark:bg-gray-900"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 101,
+                                                        lineNumber: 136,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$mail$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Mail$3e$__["Mail"], {
                                                         className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 112,
+                                                        lineNumber: 147,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 100,
+                                                lineNumber: 135,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 95,
+                                        lineNumber: 130,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -625,14 +686,14 @@ function LoginPage() {
                                                         className: "w-4 h-4 text-purple-500"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 118,
+                                                        lineNumber: 153,
                                                         columnNumber: 17
                                                     }, this),
                                                     "Password"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 117,
+                                                lineNumber: 152,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -650,26 +711,26 @@ function LoginPage() {
                                                         className: "pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 dark:bg-gray-900"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 122,
+                                                        lineNumber: 157,
                                                         columnNumber: 17
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$lock$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Lock$3e$__["Lock"], {
                                                         className: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 133,
+                                                        lineNumber: 168,
                                                         columnNumber: 17
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 121,
+                                                lineNumber: 156,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 116,
+                                        lineNumber: 151,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -682,7 +743,7 @@ function LoginPage() {
                                                     className: "mr-2 h-5 w-5 animate-spin"
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                    lineNumber: 144,
+                                                    lineNumber: 179,
                                                     columnNumber: 19
                                                 }, this),
                                                 "Signing in..."
@@ -693,7 +754,7 @@ function LoginPage() {
                                                     className: "mr-2 h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                    lineNumber: 149,
+                                                    lineNumber: 184,
                                                     columnNumber: 19
                                                 }, this),
                                                 "Sign In"
@@ -701,13 +762,13 @@ function LoginPage() {
                                         }, void 0, true)
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 137,
+                                        lineNumber: 172,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                lineNumber: 94,
+                                lineNumber: 129,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -722,20 +783,20 @@ function LoginPage() {
                                                     className: "w-3.5 h-3.5 text-green-500"
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                    lineNumber: 160,
+                                                    lineNumber: 195,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Secure Login"
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                    lineNumber: 161,
+                                                    lineNumber: 196,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                            lineNumber: 159,
+                                            lineNumber: 194,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -745,31 +806,31 @@ function LoginPage() {
                                                     className: "w-3.5 h-3.5 text-green-500"
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                    lineNumber: 164,
+                                                    lineNumber: 199,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     children: "Encrypted"
                                                 }, void 0, false, {
                                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                    lineNumber: 165,
+                                                    lineNumber: 200,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                            lineNumber: 163,
+                                            lineNumber: 198,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                    lineNumber: 158,
+                                    lineNumber: 193,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                lineNumber: 157,
+                                lineNumber: 192,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -782,14 +843,14 @@ function LoginPage() {
                                                 className: "w-3.5 h-3.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 173,
+                                                lineNumber: 208,
                                                 columnNumber: 15
                                             }, this),
                                             "Test credentials:"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 172,
+                                        lineNumber: 207,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -803,13 +864,13 @@ function LoginPage() {
                                                         children: "sysop@test.com"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 177,
+                                                        lineNumber: 212,
                                                         columnNumber: 28
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 177,
+                                                lineNumber: 212,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -820,37 +881,37 @@ function LoginPage() {
                                                         children: "password123"
                                                     }, void 0, false, {
                                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                        lineNumber: 178,
+                                                        lineNumber: 213,
                                                         columnNumber: 28
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                                lineNumber: 178,
+                                                lineNumber: 213,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                        lineNumber: 176,
+                                        lineNumber: 211,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                                lineNumber: 171,
+                                lineNumber: 206,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                        lineNumber: 77,
+                        lineNumber: 112,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                lineNumber: 73,
+                lineNumber: 108,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -859,18 +920,18 @@ function LoginPage() {
                     children: "© 2026 StreamHub Videotron. All rights reserved."
                 }, void 0, false, {
                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                    lineNumber: 186,
+                    lineNumber: 221,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-                lineNumber: 185,
+                lineNumber: 220,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/login/page.tsx",
-        lineNumber: 69,
+        lineNumber: 104,
         columnNumber: 5
     }, this);
 }
