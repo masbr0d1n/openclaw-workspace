@@ -32,9 +32,10 @@ import {
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, checkAuth } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [loadingTimeout, setLoadingTimeout] = React.useState(false);
 
   // TV Hub Menu - Static (no dynamic switching)
   const navItems = React.useMemo(() => [
@@ -96,19 +97,51 @@ export default function Layout({ children }: { children: ReactNode }) {
     },
   ], []);
 
+  // Detect loading timeout (safety mechanism for infinite loading)
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (isLoading) {
+      // Set a 10-second timeout to detect stuck loading state
+      timeoutId = setTimeout(() => {
+        console.error('⏰ LOADING TIMEOUT: isLoading has been true for 10 seconds!');
+        console.error('  - isAuthenticated:', isAuthenticated);
+        console.error('  - user:', user);
+        setLoadingTimeout(true);
+        
+        // If we have inconsistent state (auth=true, user=null), force re-auth
+        if (isAuthenticated && !user) {
+          console.error('⚠️ Inconsistent state detected, attempting recovery...');
+          checkAuth();
+        }
+      }, 10000);
+    }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isLoading, isAuthenticated, user, checkAuth]);
+
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading && !loadingTimeout) {
+      return;
+    }
+    
+    // If timeout occurred with inconsistent state, force recovery
+    if (loadingTimeout && isAuthenticated && !user) {
+      console.warn('⚠️ Recovery mode: Clearing corrupted state');
+      router.push('/login');
       return;
     }
     
     if (!isAuthenticated) {
       router.push('/login');
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isLoading, isAuthenticated, user, router, loadingTimeout]);
 
   // Show loading while checking auth
-  if (isLoading) {
+  if (isLoading && !loadingTimeout) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-gray-500" />

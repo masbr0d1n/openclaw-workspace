@@ -99,6 +99,8 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
+        // Don't persist isLoading - it should reset on page load
+        // isLoading: state.isLoading,
       }),
     }
   )

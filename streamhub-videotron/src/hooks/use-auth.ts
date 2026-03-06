@@ -146,6 +146,17 @@ export function useAuth() {
    */
   const checkAuth = async () => {
     console.log('🔍 Checking auth...');
+    console.log('  Current state:', { isAuthenticated, user: !!user, isLoading });
+    
+    // DETECT AND FIX INCONSISTENT STATE
+    // If isAuthenticated=true but user=null, this is a corrupted state
+    if (isAuthenticated && !user) {
+      console.warn('⚠️ DETECTED INCONSISTENT STATE: isAuthenticated=true but user=null');
+      console.warn('⚠️ Clearing corrupted auth state and re-authenticating...');
+      // Clear the corrupted state
+      logout();
+      // Continue to check for token and re-authenticate
+    }
     
     // If already authenticated with user data, skip fetch
     if (isAuthenticated && user) {

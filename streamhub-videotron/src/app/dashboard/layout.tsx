@@ -32,9 +32,10 @@ import {
 export default function Layout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, checkAuth } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [loadingTimeout, setLoadingTimeout] = React.useState(false);
   
   // Videotron Menu Items
   const navItems = React.useMemo(() => [
@@ -90,6 +91,31 @@ export default function Layout({ children }: { children: ReactNode }) {
     },
   ], []);
 
+  // Detect loading timeout (safety mechanism for infinite loading)
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (isLoading) {
+      // Set a 10-second timeout to detect stuck loading state
+      timeoutId = setTimeout(() => {
+        console.error('⏰ LOADING TIMEOUT: isLoading has been true for 10 seconds!');
+        console.error('  - isAuthenticated:', isAuthenticated);
+        console.error('  - user:', user);
+        setLoadingTimeout(true);
+        
+        // If we have inconsistent state (auth=true, user=null), force re-auth
+        if (isAuthenticated && !user) {
+          console.error('⚠️ Inconsistent state detected, attempting recovery...');
+          checkAuth();
+        }
+      }, 10000);
+    }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isLoading, isAuthenticated, user, checkAuth]);
+
   // Log mount
   useEffect(() => {
     console.log('🏠 Dashboard layout mounted (Videotron)');
@@ -101,8 +127,15 @@ export default function Layout({ children }: { children: ReactNode }) {
   // Redirect to login if not authenticated
   useEffect(() => {
     // Wait for auth check to complete
-    if (isLoading) {
+    if (isLoading && !loadingTimeout) {
       console.log('⏳ Still loading auth state, waiting...');
+      return;
+    }
+    
+    // If timeout occurred with inconsistent state, force recovery
+    if (loadingTimeout && isAuthenticated && !user) {
+      console.warn('⚠️ Recovery mode: Clearing corrupted state');
+      router.push('/login');
       return;
     }
     
@@ -117,7 +150,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     } else {
       console.log('✅ Authenticated, showing dashboard');
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isLoading, isAuthenticated, user, router, loadingTimeout]);
 
   // Show loading while checking auth
   if (isLoading) {
