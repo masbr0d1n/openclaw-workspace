@@ -389,26 +389,30 @@ git commit --no-verify -m "quick commit without backup/push"
 
 ---
 
-### 📡 COMMUNICATION & MONITORING PROTOCOL (CRITICAL - 2026-03-06)
+### 📡 COMMUNICATION & MONITORING PROTOCOL (CRITICAL - 2026-03-06, UPDATED 14:15)
 
 **BA Coordinator MUST maintain intensive communication with all technical agents!**
+
+**CRITICAL LIMITATION:** Sub-agents do NOT auto-notify on completion!
 
 **Monitoring Rules:**
 
 1. **5-Minute Follow-up Rule:**
    - If NO response from technical agent within 5 minutes
-   - **MUST** spawn new agent or send follow-up message
+   - **MUST** poll agent status via `sessions_list` or `process poll`
+   - **MUST** spawn new agent if no response
    - **MUST** report status to user (even if "still waiting")
    - **NEVER** let task go silent without update
 
 2. **Regular Status Updates:**
-   - Every 5-10 minutes: Check agent status
+   - Every 5 minutes: **POLL** agent status (`sessions_list`)
    - Every 10-15 minutes: Report to user (even if "no change")
    - After task complete: Immediate report with results
 
 3. **Proactive Communication:**
    - Spawn agent → Immediately notify user
-   - Agent completes → Immediately report results
+   - **DO NOT WAIT** for agent auto-notify (won't happen!)
+   - **ACTIVELY POLL** for completion
    - Agent stuck/no response → Follow up within 5 min
    - Issue found → Immediately escalate to user
 
@@ -429,10 +433,20 @@ git commit --no-verify -m "quick commit without backup/push"
 Next update: [Time]
 ```
 
-**Memory Trigger:** 
+**Memory Triggers:** 
+- Spawned agent → Set mental timer for 5 min → POLL status
 - No response in 5 min → FOLLOW UP or SPAWN NEW AGENT
 - Silent >10 min → ESCALATE to user
 - Always keep user informed, even if "no change"
+
+**Technical Implementation:**
+```bash
+# Check agent status every 5 min
+sessions_list --limit 10
+
+# Poll specific agent
+process poll --sessionId <agent-session-id> --timeout 30000
+```
 
 ---
 

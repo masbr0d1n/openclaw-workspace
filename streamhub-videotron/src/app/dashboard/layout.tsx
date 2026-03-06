@@ -144,8 +144,10 @@ export default function Layout({ children }: { children: ReactNode }) {
     console.log('  - isAuthenticated:', isAuthenticated);
     console.log('  - user:', user);
     
-    if (!isAuthenticated) {
-      console.log('❌ Not authenticated, redirecting to login');
+    // CRITICAL FIX: Check both isAuthenticated AND user
+    // isAuthenticated can be true from persisted state, but user might be null
+    if (!isAuthenticated || !user) {
+      console.log('❌ Not authenticated or user is null, redirecting to login');
       router.push('/login');
     } else {
       console.log('✅ Authenticated, showing dashboard');
@@ -162,9 +164,10 @@ export default function Layout({ children }: { children: ReactNode }) {
     );
   }
 
-  // Not authenticated - will redirect
-  if (!isAuthenticated) {
-    console.log('❌ Not authenticated, returning null');
+  // CRITICAL FIX: Check both isAuthenticated AND user
+  // Persisted state might have isAuthenticated=true but user=null
+  if (!isAuthenticated || !user) {
+    console.log('❌ Not authenticated or user is null, returning null (will redirect)');
     return null;
   }
 
