@@ -153,7 +153,7 @@ export function useAuth() {
     if (isAuthenticated && !user) {
       console.warn('⚠️ DETECTED INCONSISTENT STATE: isAuthenticated=true but user=null');
       console.warn('⚠️ Clearing corrupted auth state and re-authenticating...');
-      // Clear the corrupted state
+      // Clear the corrupted state - logout sets isLoading=false
       logout();
       // Continue to check for token and re-authenticate
     }
@@ -191,6 +191,9 @@ export function useAuth() {
       console.error('💥 Error fetching user:', error);
       logout();
     } finally {
+      // CRITICAL: Always ensure isLoading is set to false
+      // This prevents infinite loading loops
+      console.log('🏁 checkAuth finally block - setting isLoading=false');
       setLoading(false);
     }
   };

@@ -842,7 +842,7 @@ function useAuth() {
         if (isAuthenticated && !user) {
             console.warn('⚠️ DETECTED INCONSISTENT STATE: isAuthenticated=true but user=null');
             console.warn('⚠️ Clearing corrupted auth state and re-authenticating...');
-            // Clear the corrupted state
+            // Clear the corrupted state - logout sets isLoading=false
             logout();
         // Continue to check for token and re-authenticate
         }
@@ -875,6 +875,9 @@ function useAuth() {
             console.error('💥 Error fetching user:', error);
             logout();
         } finally{
+            // CRITICAL: Always ensure isLoading is set to false
+            // This prevents infinite loading loops
+            console.log('🏁 checkAuth finally block - setting isLoading=false');
             setLoading(false);
         }
     };
@@ -1672,8 +1675,10 @@ function Layout({ children }) {
         console.log('  - isLoading:', isLoading);
         console.log('  - isAuthenticated:', isAuthenticated);
         console.log('  - user:', user);
-        if (!isAuthenticated) {
-            console.log('❌ Not authenticated, redirecting to login');
+        // CRITICAL FIX: Check both isAuthenticated AND user
+        // isAuthenticated can be true from persisted state, but user might be null
+        if (!isAuthenticated || !user) {
+            console.log('❌ Not authenticated or user is null, redirecting to login');
             router.push('/login');
         } else {
             console.log('✅ Authenticated, showing dashboard');
@@ -1694,18 +1699,19 @@ function Layout({ children }) {
                 className: "h-8 w-8 animate-spin text-gray-500"
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                lineNumber: 160,
+                lineNumber: 162,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-            lineNumber: 159,
+            lineNumber: 161,
             columnNumber: 7
         }, this);
     }
-    // Not authenticated - will redirect
-    if (!isAuthenticated) {
-        console.log('❌ Not authenticated, returning null');
+    // CRITICAL FIX: Check both isAuthenticated AND user
+    // Persisted state might have isAuthenticated=true but user=null
+    if (!isAuthenticated || !user) {
+        console.log('❌ Not authenticated or user is null, returning null (will redirect)');
         return null;
     }
     console.log('✅ Rendering dashboard layout');
@@ -1720,7 +1726,7 @@ function Layout({ children }) {
                         children: "StreamHub Videotron"
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                        lineNumber: 176,
+                        lineNumber: 179,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1731,24 +1737,24 @@ function Layout({ children }) {
                             className: "h-6 w-6"
                         }, void 0, false, {
                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                            lineNumber: 182,
+                            lineNumber: 185,
                             columnNumber: 29
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$menu$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Menu$3e$__["Menu"], {
                             className: "h-6 w-6"
                         }, void 0, false, {
                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                            lineNumber: 182,
+                            lineNumber: 185,
                             columnNumber: 57
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                        lineNumber: 177,
+                        lineNumber: 180,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                lineNumber: 175,
+                lineNumber: 178,
                 columnNumber: 7
             }, this),
             mobileMenuOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1756,7 +1762,7 @@ function Layout({ children }) {
                 onClick: ()=>setMobileMenuOpen(false)
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                lineNumber: 188,
+                lineNumber: 191,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
@@ -1772,7 +1778,7 @@ function Layout({ children }) {
                                     children: "Menu"
                                 }, void 0, false, {
                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                    lineNumber: 203,
+                                    lineNumber: 206,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1783,18 +1789,18 @@ function Layout({ children }) {
                                         className: "h-5 w-5"
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                        lineNumber: 209,
+                                        lineNumber: 212,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                    lineNumber: 204,
+                                    lineNumber: 207,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                            lineNumber: 202,
+                            lineNumber: 205,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -1811,26 +1817,26 @@ function Layout({ children }) {
                                             className: "h-4 w-4 flex-shrink-0"
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                            lineNumber: 230,
+                                            lineNumber: 233,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             children: item.title
                                         }, void 0, false, {
                                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                            lineNumber: 231,
+                                            lineNumber: 234,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, item.href, true, {
                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                    lineNumber: 219,
+                                    lineNumber: 222,
                                     columnNumber: 17
                                 }, this);
                             })
                         }, void 0, false, {
                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                            lineNumber: 213,
+                            lineNumber: 216,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1843,7 +1849,7 @@ function Layout({ children }) {
                                         children: user?.username?.charAt(0).toUpperCase() || 'U'
                                     }, void 0, false, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                        lineNumber: 240,
+                                        lineNumber: 243,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1854,7 +1860,7 @@ function Layout({ children }) {
                                                 children: user?.username || 'User'
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                                lineNumber: 244,
+                                                lineNumber: 247,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1862,47 +1868,47 @@ function Layout({ children }) {
                                                 children: user?.email || ''
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                                lineNumber: 245,
+                                                lineNumber: 248,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                        lineNumber: 243,
+                                        lineNumber: 246,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                lineNumber: 239,
+                                lineNumber: 242,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                            lineNumber: 238,
+                            lineNumber: 241,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                    lineNumber: 201,
+                    lineNumber: 204,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                lineNumber: 195,
+                lineNumber: 198,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "hidden lg:block",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$src$2f$components$2f$layout$2f$dashboard$2d$header$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DashboardHeader"], {}, void 0, false, {
                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                    lineNumber: 254,
+                    lineNumber: 257,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                lineNumber: 253,
+                lineNumber: 256,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1924,26 +1930,26 @@ function Layout({ children }) {
                                                 className: "h-4 w-4 flex-shrink-0"
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                                lineNumber: 281,
+                                                lineNumber: 284,
                                                 columnNumber: 19
                                             }, this),
                                             !sidebarCollapsed && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: item.title
                                             }, void 0, false, {
                                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                                lineNumber: 282,
+                                                lineNumber: 285,
                                                 columnNumber: 41
                                             }, this)
                                         ]
                                     }, item.href, true, {
                                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                        lineNumber: 271,
+                                        lineNumber: 274,
                                         columnNumber: 17
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                lineNumber: 265,
+                                lineNumber: 268,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1954,24 +1960,24 @@ function Layout({ children }) {
                                     className: "h-4 w-4"
                                 }, void 0, false, {
                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                    lineNumber: 294,
+                                    lineNumber: 297,
                                     columnNumber: 15
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$left$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronLeft$3e$__["ChevronLeft"], {
                                     className: "h-4 w-4"
                                 }, void 0, false, {
                                     fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 299,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                                lineNumber: 288,
+                                lineNumber: 291,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                        lineNumber: 259,
+                        lineNumber: 262,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f2e$openclaw$2f$workspace$2f$streamhub$2d$videotron$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -1979,19 +1985,19 @@ function Layout({ children }) {
                         children: children
                     }, void 0, false, {
                         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                        lineNumber: 302,
+                        lineNumber: 305,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-                lineNumber: 257,
+                lineNumber: 260,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/.openclaw/workspace/streamhub-videotron/src/app/dashboard/layout.tsx",
-        lineNumber: 173,
+        lineNumber: 176,
         columnNumber: 5
     }, this);
 }
