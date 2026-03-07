@@ -1,0 +1,79 @@
+=== Backend API Verification ===
+Date: Sat Mar  7 00:17:15 WIB 2026
+Base URL: http://localhost:8001/api/v1
+
+=== AUTH ENDPOINTS ===
+❌ FAIL (expected 201, got 422) | POST /auth/register | 22ms | HTTP 422
+  Response: {"detail":[{"type":"missing","loc":["body","username"],"msg":"Field required","input":{"email":"testuser@example.com","password":"test123","name":"Test User"}},{"type":"missing","loc":["body","full_na
+❌ FAIL (expected 200, got 422) | POST /auth/login | 18ms | HTTP 422
+  Response: {"detail":[{"type":"missing","loc":["body","username"],"msg":"Field required","input":{"email":"testuser@example.com","password":"test123"}}]}
+❌ FAIL (expected 401, got 422) | POST /auth/refresh | 21ms | HTTP 422
+  Response: {"detail":[{"type":"missing","loc":["query","refresh_token"],"msg":"Field required","input":null}]}
+✅ PASS | GET /auth/me | 15ms | HTTP 401
+
+=== VIDEO ENDPOINTS ===
+❌ FAIL (expected 200, got 307) | GET /videos | 15ms | HTTP 307
+  Response: 
+❌ FAIL (expected 201, got 307) | POST /videos | 15ms | HTTP 307
+  Response: 
+❌ FAIL (expected 200, got 404) | GET /videos/1 | 26ms | HTTP 404
+  Response: {"status":false,"statusCode":404,"error":"NotFoundException","message":"Video with ID 1 not found"}
+❌ FAIL (expected 200, got 404) | PUT /videos/1 | 19ms | HTTP 404
+  Response: {"status":false,"statusCode":404,"error":"NotFoundException","message":"Video with ID 1 not found"}
+❌ FAIL (expected 200, got 404) | DELETE /videos/1 | 18ms | HTTP 404
+  Response: {"status":false,"statusCode":404,"error":"NotFoundException","message":"Video with ID 1 not found"}
+
+=== PLAYLIST ENDPOINTS ===
+❌ FAIL (expected 200, got 307) | GET /playlists | 17ms | HTTP 307
+  Response: 
+❌ FAIL (expected 201, got 307) | POST /playlists | 20ms | HTTP 307
+  Response: 
+❌ FAIL (expected 200, got 404) | GET /playlists/1 | 23ms | HTTP 404
+  Response: {"detail":"Playlist not found"}
+❌ FAIL (expected 200, got 404) | PUT /playlists/1 | 23ms | HTTP 404
+  Response: {"detail":"Playlist not found"}
+❌ FAIL (expected 200, got 404) | DELETE /playlists/1 | 21ms | HTTP 404
+  Response: {"detail":"Playlist not found"}
+
+=== LAYOUT ENDPOINTS ===
+❌ FAIL (expected 200, got 307) | GET /layouts | 24ms | HTTP 307
+  Response: 
+❌ FAIL (expected 201, got 307) | POST /layouts | 21ms | HTTP 307
+  Response: 
+❌ FAIL (expected 200, got 500) | GET /layouts/1 | 46ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 500) | PUT /layouts/1 | 30ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 500) | DELETE /layouts/1 | 28ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 201, got 500) | POST /layouts/1/duplicate | 26ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+
+=== CAMPAIGN ENDPOINTS ===
+❌ FAIL (expected 200, got 307) | GET /campaigns | 16ms | HTTP 307
+  Response: 
+❌ FAIL (expected 201, got 307) | POST /campaigns | 17ms | HTTP 307
+  Response: 
+❌ FAIL (expected 200, got 500) | GET /campaigns/1 | 30ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 500) | PUT /campaigns/1 | 26ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 500) | DELETE /campaigns/1 | 26ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+
+=== SCREEN ENDPOINTS ===
+❌ FAIL (expected 200, got 307) | GET /screens | 16ms | HTTP 307
+  Response: 
+❌ FAIL (expected 201, got 307) | POST /screens | 17ms | HTTP 307
+  Response: 
+❌ FAIL (expected 200, got 500) | GET /screens/1 | 36ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 500) | PUT /screens/1 | 26ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 500) | DELETE /screens/1 | 30ms | HTTP 500
+  Response: {"status":false,"statusCode":500,"error":"InternalServerError","message":"(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $1: '1
+❌ FAIL (expected 200, got 422) | POST /screens/1/heartbeat | 17ms | HTTP 422
+  Response: {"detail":[{"type":"missing","loc":["body"],"msg":"Field required","input":null}]}
+
+=== SUMMARY ===
+Total: 31 | Passed: 1 | Failed: 30

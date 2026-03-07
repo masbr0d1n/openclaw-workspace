@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/playlists/${id}`;
 
     const response = await fetch(url, {
@@ -42,7 +42,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/playlists/${id}`;
 
     const response = await fetch(url, {
@@ -75,7 +75,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/playlists/${id}`;
 
     const response = await fetch(url, {

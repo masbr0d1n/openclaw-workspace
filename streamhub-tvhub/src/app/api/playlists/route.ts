@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 // GET /api/playlists - Get all playlists
 export async function GET(request: NextRequest) {
   try {
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/playlists/`;
 
     const response = await fetch(url, {
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     
     // Determine if this is a draft or publish
     const isDraft = body.draft === true;

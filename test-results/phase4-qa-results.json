@@ -1,0 +1,66 @@
+{
+  "tvhub": {
+    "login": {
+      "loginWorks": true,
+      "userDataSaved": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwidXNlcm5hbWUiOiJzeXNvcEB0ZXN0LmNvbSIsImV4cCI6MTc3MzA5MTkyMn0.gri4m2XZBwedBBfC4EI1NMUZYAUDVGxWimKTRWBKRbg",
+      "redirectWorks": true,
+      "sessionPersists": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwidXNlcm5hbWUiOiJzeXNvcEB0ZXN0LmNvbSIsImV4cCI6MTc3MzA5MTkyMn0.gri4m2XZBwedBBfC4EI1NMUZYAUDVGxWimKTRWBKRbg",
+      "errors": []
+    },
+    "pages": {
+      "/dashboard": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/channels": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/videos": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/content/playlists": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/schedules": {
+        "loads": true,
+        "errors": []
+      }
+    },
+    "console": []
+  },
+  "videotron": {
+    "login": {
+      "loginWorks": true,
+      "userDataSaved": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwidXNlcm5hbWUiOiJzeXNvcEB0ZXN0LmNvbSIsImV4cCI6MTc3MzA5MTk5M30.7F3DWvoe4A_Gy2NLEu7zmbw6SMW3wZCXj26zSSmprGk",
+      "redirectWorks": true,
+      "sessionPersists": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwidXNlcm5hbWUiOiJzeXNvcEB0ZXN0LmNvbSIsImV4cCI6MTc3MzA5MTk5M30.7F3DWvoe4A_Gy2NLEu7zmbw6SMW3wZCXj26zSSmprGk",
+      "errors": []
+    },
+    "pages": {
+      "/dashboard": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/screens": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/content": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/layouts": {
+        "loads": true,
+        "errors": []
+      },
+      "/dashboard/campaign": {
+        "loads": true,
+        "errors": []
+      }
+    },
+    "console": []
+  }
+}

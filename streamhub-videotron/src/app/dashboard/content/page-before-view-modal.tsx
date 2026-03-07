@@ -38,7 +38,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://192.168.8.117:8001';
+// ✅ FIXED: Use relative paths through Next.js proxy instead of direct backend calls
+// Video URLs from backend are already relative paths (e.g., /uploads/videos/...)
 
 export default function ContentPage() {
   const [videos, setVideos] = useState<any[]>([]);
@@ -223,10 +224,10 @@ export default function ContentPage() {
     }
   };
 
-  // View video handler
+  // View video handler - Use relative URL through Next.js proxy
   const handleViewVideo = (video: any) => {
     if (video.video_url) {
-      window.open(`${BACKEND_URL}${video.video_url}`, '_blank');
+      window.open(video.video_url, '_blank');
     } else {
       alert('No video URL available');
     }

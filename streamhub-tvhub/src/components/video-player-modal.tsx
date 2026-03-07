@@ -37,13 +37,13 @@ export function VideoPlayerModal({ open, onOpenChange, video }: VideoPlayerModal
     }
   }, [open, video]);
 
-  // Get video URL
+  // Get video URL - Use Next.js proxy (relative path)
   const getVideoUrl = (video: Video) => {
     // For local uploaded videos - check video_url field
     if (video.video_url && video.video_url.includes('/uploads/')) {
       // Extract filename from video_url
       const filename = video.video_url.split('/').pop();
-      return `http://192.168.8.117:3000/uploads/videos/${filename}`;
+      return `/uploads/videos/${filename}`;
     }
     // For YouTube videos - check youtube_id field
     if (video.youtube_id && !video.youtube_id.includes('.mp4')) {
@@ -51,7 +51,7 @@ export function VideoPlayerModal({ open, onOpenChange, video }: VideoPlayerModal
     }
     // Fallback: if youtube_id contains .mp4, treat as local file
     if (video.youtube_id && video.youtube_id.includes('.mp4')) {
-      return `http://192.168.8.117:3000/uploads/videos/${video.youtube_id}`;
+      return `/uploads/videos/${video.youtube_id}`;
     }
     // Default fallback
     return '';
