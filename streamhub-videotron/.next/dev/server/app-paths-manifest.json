@@ -1,9 +1,11 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/api/v1/screens/groups/route": "app/api/v1/screens/groups/route.js",
   "/api/v1/screens/route": "app/api/v1/screens/route.js",
   "/api/videos/route": "app/api/videos/route.js",
   "/dashboard/content/page": "app/dashboard/content/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/dashboard/screens/groups/page": "app/dashboard/screens/groups/page.js",
-  "/dashboard/screens/page": "app/dashboard/screens/page.js"
+  "/dashboard/screens/page": "app/dashboard/screens/page.js",
+  "/login/page": "app/login/page.js"
 }
