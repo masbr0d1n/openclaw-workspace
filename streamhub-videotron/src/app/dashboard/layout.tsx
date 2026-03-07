@@ -12,6 +12,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
 import { useAuth } from '@/hooks/use-auth';
+import { useAuthStore } from '@/stores/auth.store';
 import { Loader2 } from 'lucide-react';
 import {
   LayoutDashboard,
@@ -103,10 +104,20 @@ export default function Layout({ children }: { children: ReactNode }) {
         console.error('  - user:', user);
         setLoadingTimeout(true);
         
+        // If we have valid user data but isLoading is stuck, force it to false
+        if (isAuthenticated && user) {
+          console.error('⚠️ Valid auth state but isLoading stuck, forcing false...');
+          useAuthStore.getState().setLoading(false);
+        }
         // If we have inconsistent state (auth=true, user=null), force re-auth
-        if (isAuthenticated && !user) {
+        else if (isAuthenticated && !user) {
           console.error('⚠️ Inconsistent state detected, attempting recovery...');
           checkAuth();
+        }
+        // If not authenticated but still loading, force false
+        else {
+          console.error('⚠️ Not authenticated but still loading, forcing false...');
+          useAuthStore.getState().setLoading(false);
         }
       }, 10000);
     }
@@ -115,6 +126,12 @@ export default function Layout({ children }: { children: ReactNode }) {
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [isLoading, isAuthenticated, user, checkAuth]);
+
+  // Check auth on mount - CRITICAL FIX for loading timeout!
+  useEffect(() => {
+    console.log('🔍 Checking auth on dashboard mount...');
+    checkAuth();
+  }, []);
 
   // Log mount
   useEffect(() => {

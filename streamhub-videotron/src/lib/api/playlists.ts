@@ -1,10 +1,12 @@
 /**
  * Playlists Frontend Integration
  * Connect Playlists tab to backend API
+ * 
+ * ✅ FIXED: Uses Next.js proxy (/api/v1) instead of direct backend calls
  */
 
-// API Base URL
-const API_BASE = 'http://192.168.8.117:8001';
+// API Base URL - Use Next.js proxy (relative path)
+const API_BASE = '/api/v1';
 
 // Types
 export interface Playlist {
@@ -54,7 +56,7 @@ export const playlistsApi = {
    * Get all playlists
    */
   async getPlaylists(publishedOnly = false): Promise<Playlist[]> {
-    const url = `${API_BASE}/api/v1/playlists/${publishedOnly ? '?published_only=true' : ''}`;
+    const url = `${API_BASE}/playlists/${publishedOnly ? '?published_only=true' : ''}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch playlists');
     return res.json();
@@ -64,7 +66,7 @@ export const playlistsApi = {
    * Get playlist by ID with items
    */
   async getPlaylist(id: string): Promise<Playlist & { items: PlaylistItem[] }> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${id}`);
+    const res = await fetch(`${API_BASE}/playlists/${id}`);
     if (!res.ok) throw new Error('Failed to fetch playlist');
     return res.json();
   },
@@ -73,7 +75,7 @@ export const playlistsApi = {
    * Create playlist
    */
   async createPlaylist(data: Partial<Playlist>): Promise<Playlist> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/`, {
+    const res = await fetch(`${API_BASE}/playlists/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -86,7 +88,7 @@ export const playlistsApi = {
    * Save draft (convenience method)
    */
   async saveDraft(data: Partial<Playlist>): Promise<Playlist> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/draft`, {
+    const res = await fetch(`${API_BASE}/playlists/draft`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...data, is_published: false }),
@@ -99,7 +101,7 @@ export const playlistsApi = {
    * Update playlist
    */
   async updatePlaylist(id: string, data: Partial<Playlist>): Promise<Playlist> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${id}`, {
+    const res = await fetch(`${API_BASE}/playlists/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -112,7 +114,7 @@ export const playlistsApi = {
    * Publish playlist
    */
   async publishPlaylist(id: string): Promise<Playlist> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${id}/publish`, {
+    const res = await fetch(`${API_BASE}/playlists/${id}/publish`, {
       method: 'POST',
     });
     if (!res.ok) throw new Error('Failed to publish playlist');
@@ -123,7 +125,7 @@ export const playlistsApi = {
    * Delete playlist
    */
   async deletePlaylist(id: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${id}`, {
+    const res = await fetch(`${API_BASE}/playlists/${id}`, {
       method: 'DELETE',
     });
     if (!res.ok) throw new Error('Failed to delete playlist');
@@ -135,7 +137,7 @@ export const playlistsApi = {
    * Get playlist items
    */
   async getPlaylistItems(playlistId: string): Promise<PlaylistItem[]> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${playlistId}/items`);
+    const res = await fetch(`${API_BASE}/playlists/${playlistId}/items`);
     if (!res.ok) throw new Error('Failed to fetch playlist items');
     return res.json();
   },
@@ -148,7 +150,7 @@ export const playlistsApi = {
     mediaId: string,
     duration: number
   ): Promise<PlaylistItem> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${playlistId}/items`, {
+    const res = await fetch(`${API_BASE}/playlists/${playlistId}/items`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ media_id: mediaId, duration }),
@@ -166,7 +168,7 @@ export const playlistsApi = {
     data: { duration: number }
   ): Promise<PlaylistItem> {
     const res = await fetch(
-      `${API_BASE}/api/v1/playlists/${playlistId}/items/${itemId}`,
+      `${API_BASE}/playlists/${playlistId}/items/${itemId}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -182,7 +184,7 @@ export const playlistsApi = {
    */
   async removePlaylistItem(playlistId: string, itemId: string): Promise<void> {
     const res = await fetch(
-      `${API_BASE}/api/v1/playlists/${playlistId}/items/${itemId}`,
+      `${API_BASE}/playlists/${playlistId}/items/${itemId}`,
       {
         method: 'DELETE',
       }
@@ -200,7 +202,7 @@ export const playlistsApi = {
     itemOrders: Record<string, number>
   ): Promise<void> {
     const res = await fetch(
-      `${API_BASE}/api/v1/playlists/${playlistId}/items/reorder`,
+      `${API_BASE}/playlists/${playlistId}/items/reorder`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -214,7 +216,7 @@ export const playlistsApi = {
    * Clear all playlist items
    */
   async clearPlaylistItems(playlistId: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/api/v1/playlists/${playlistId}/items`, {
+    const res = await fetch(`${API_BASE}/playlists/${playlistId}/items`, {
       method: 'DELETE',
     });
     if (!res.ok) throw new Error('Failed to clear playlist items');
@@ -226,7 +228,7 @@ export const playlistsApi = {
    * Get all media (videos/images) for Media Library sync
    */
   async getMediaLibrary(): Promise<MediaItem[]> {
-    const res = await fetch(`${API_BASE}/api/v1/videos/`);
+    const res = await fetch(`${API_BASE}/videos/`);
     if (!res.ok) throw new Error('Failed to fetch media library');
     const data = await res.json();
     return data.data || data.videos || data || [];

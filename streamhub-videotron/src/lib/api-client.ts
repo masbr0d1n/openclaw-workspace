@@ -5,7 +5,7 @@
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-// Use Next.js API routes as proxy (same origin)
+// ✅ CORRECT (through Next.js proxy)
 const API_URL = '/api/v1';
 
 // Create axios instance

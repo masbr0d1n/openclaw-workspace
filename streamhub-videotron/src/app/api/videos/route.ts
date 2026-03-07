@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (search) queryParams.append('search', search);
 
     // Backend URL - NO trailing slash!
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/videos?${queryParams.toString()}`;
 
     console.log('Fetching from backend:', url);

@@ -43,7 +43,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://192.168.8.117:8001';
+// ✅ FIXED: Use relative paths through Next.js proxy instead of direct backend calls
+// Video URLs from backend are already relative paths (e.g., /uploads/videos/...)
 
 export function MediaLibraryFull() {
   const [videos, setVideos] = useState<any[]>([]);
@@ -675,7 +676,7 @@ export function MediaLibraryFull() {
                     <div className="relative w-full">
                       <video
                         ref={videoRef}
-                        src={selectedVideo.video_url ? `${BACKEND_URL}${selectedVideo.video_url}` : undefined}
+                        src={selectedVideo.video_url || undefined}
                         className="w-full rounded-lg shadow-lg"
                         controls
                         onPlay={() => setIsPlaying(true)}

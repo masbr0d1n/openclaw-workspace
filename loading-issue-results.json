@@ -1,0 +1,358 @@
+{
+  "timestamp": "2026-03-06T21:50:33.871Z",
+  "consoleLogs": [
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "timestamp": "2026-03-06T21:50:16.980Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 Rehydration: [object Object]",
+      "timestamp": "2026-03-06T21:50:17.088Z"
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ Corrupted or missing user data, clearing storage",
+      "timestamp": "2026-03-06T21:50:17.089Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 Rehydration: [object Object]",
+      "timestamp": "2026-03-06T21:50:17.089Z"
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ Corrupted or missing user data, clearing storage",
+      "timestamp": "2026-03-06T21:50:17.089Z"
+    },
+    {
+      "type": "log",
+      "text": "[HMR] connected",
+      "timestamp": "2026-03-06T21:50:17.114Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2026-03-06T21:50:17.184Z"
+    },
+    {
+      "type": "log",
+      "text": "📍 Login page mounted",
+      "timestamp": "2026-03-06T21:50:17.239Z"
+    },
+    {
+      "type": "log",
+      "text": "⏳ Setting isLoading: false",
+      "timestamp": "2026-03-06T21:50:17.240Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] rebuilding",
+      "timestamp": "2026-03-06T21:50:17.799Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 Rehydration: [object Object]",
+      "timestamp": "2026-03-06T21:50:18.585Z"
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ Corrupted or missing user data, clearing storage",
+      "timestamp": "2026-03-06T21:50:18.586Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 Rehydration: [object Object]",
+      "timestamp": "2026-03-06T21:50:18.586Z"
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ Corrupted or missing user data, clearing storage",
+      "timestamp": "2026-03-06T21:50:18.587Z"
+    },
+    {
+      "type": "log",
+      "text": "📍 Login page mounted",
+      "timestamp": "2026-03-06T21:50:18.602Z"
+    },
+    {
+      "type": "log",
+      "text": "⏳ Setting isLoading: false",
+      "timestamp": "2026-03-06T21:50:18.602Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] done in 887ms",
+      "timestamp": "2026-03-06T21:50:18.627Z"
+    },
+    {
+      "type": "log",
+      "text": "🚀 Submitting login form...",
+      "timestamp": "2026-03-06T21:50:18.694Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 API Response: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.013Z"
+    },
+    {
+      "type": "log",
+      "text": "🎫 Tokens received: true true",
+      "timestamp": "2026-03-06T21:50:19.013Z"
+    },
+    {
+      "type": "log",
+      "text": "👤 Fetching user data...",
+      "timestamp": "2026-03-06T21:50:19.014Z"
+    },
+    {
+      "type": "log",
+      "text": "📦 User Response: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.036Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ User data received: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.037Z"
+    },
+    {
+      "type": "log",
+      "text": "🔐 Login action called",
+      "timestamp": "2026-03-06T21:50:19.037Z"
+    },
+    {
+      "type": "log",
+      "text": "👤 User: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.037Z"
+    },
+    {
+      "type": "log",
+      "text": "🎫 Access token: true",
+      "timestamp": "2026-03-06T21:50:19.039Z"
+    },
+    {
+      "type": "log",
+      "text": "🔄 Refresh token: true",
+      "timestamp": "2026-03-06T21:50:19.039Z"
+    },
+    {
+      "type": "log",
+      "text": "🗑️ Cleared any existing auth data",
+      "timestamp": "2026-03-06T21:50:19.039Z"
+    },
+    {
+      "type": "log",
+      "text": "💾 Saved fresh auth data to localStorage",
+      "timestamp": "2026-03-06T21:50:19.039Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Auth state updated",
+      "timestamp": "2026-03-06T21:50:19.040Z"
+    },
+    {
+      "type": "log",
+      "text": "📊 Current state: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.040Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Auth store login called with user: true",
+      "timestamp": "2026-03-06T21:50:19.040Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Login successful",
+      "timestamp": "2026-03-06T21:50:19.040Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] rebuilding",
+      "timestamp": "2026-03-06T21:50:19.167Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] done in 211ms",
+      "timestamp": "2026-03-06T21:50:19.278Z"
+    },
+    {
+      "type": "requestfailed",
+      "text": "http://localhost:3002/dashboard/screens?_rsc=5c339 - net::ERR_ABORTED",
+      "timestamp": "2026-03-06T21:50:19.336Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] rebuilding",
+      "timestamp": "2026-03-06T21:50:19.437Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] done in 121ms",
+      "timestamp": "2026-03-06T21:50:19.439Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Rendering dashboard layout",
+      "timestamp": "2026-03-06T21:50:19.464Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Rendering dashboard layout",
+      "timestamp": "2026-03-06T21:50:19.467Z"
+    },
+    {
+      "type": "log",
+      "text": "🏠 Dashboard layout mounted (Videotron)",
+      "timestamp": "2026-03-06T21:50:19.652Z"
+    },
+    {
+      "type": "log",
+      "text": "👤 User: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.652Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ isAuthenticated: true",
+      "timestamp": "2026-03-06T21:50:19.652Z"
+    },
+    {
+      "type": "log",
+      "text": "⏳ isLoading: false",
+      "timestamp": "2026-03-06T21:50:19.653Z"
+    },
+    {
+      "type": "log",
+      "text": "🔍 Dashboard auth check:",
+      "timestamp": "2026-03-06T21:50:19.653Z"
+    },
+    {
+      "type": "log",
+      "text": "  - isLoading: false",
+      "timestamp": "2026-03-06T21:50:19.653Z"
+    },
+    {
+      "type": "log",
+      "text": "  - isAuthenticated: true",
+      "timestamp": "2026-03-06T21:50:19.654Z"
+    },
+    {
+      "type": "log",
+      "text": "  - user: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.654Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Authenticated, showing dashboard",
+      "timestamp": "2026-03-06T21:50:19.655Z"
+    },
+    {
+      "type": "log",
+      "text": "🏠 Dashboard layout mounted (Videotron)",
+      "timestamp": "2026-03-06T21:50:19.659Z"
+    },
+    {
+      "type": "log",
+      "text": "👤 User: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.659Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ isAuthenticated: true",
+      "timestamp": "2026-03-06T21:50:19.659Z"
+    },
+    {
+      "type": "log",
+      "text": "⏳ isLoading: false",
+      "timestamp": "2026-03-06T21:50:19.660Z"
+    },
+    {
+      "type": "log",
+      "text": "🔍 Dashboard auth check:",
+      "timestamp": "2026-03-06T21:50:19.660Z"
+    },
+    {
+      "type": "log",
+      "text": "  - isLoading: false",
+      "timestamp": "2026-03-06T21:50:19.661Z"
+    },
+    {
+      "type": "log",
+      "text": "  - isAuthenticated: true",
+      "timestamp": "2026-03-06T21:50:19.661Z"
+    },
+    {
+      "type": "log",
+      "text": "  - user: [object Object]",
+      "timestamp": "2026-03-06T21:50:19.661Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Authenticated, showing dashboard",
+      "timestamp": "2026-03-06T21:50:19.661Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2026-03-06T21:50:19.799Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to fetch screens: AxiosError: Request failed with status code 404",
+      "timestamp": "2026-03-06T21:50:19.819Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "timestamp": "2026-03-06T21:50:19.894Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to fetch screens: AxiosError: Request failed with status code 404",
+      "timestamp": "2026-03-06T21:50:19.896Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] rebuilding",
+      "timestamp": "2026-03-06T21:50:29.727Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Rendering dashboard layout",
+      "timestamp": "2026-03-06T21:50:29.773Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ Rendering dashboard layout",
+      "timestamp": "2026-03-06T21:50:29.777Z"
+    },
+    {
+      "type": "log",
+      "text": "[Fast Refresh] done in 138ms",
+      "timestamp": "2026-03-06T21:50:29.817Z"
+    }
+  ],
+  "localStorage": {
+    "user": "{\"username\":\"sysop@test.com\",\"email\":\"sysop@test.com\",\"full_name\":\"System Operator\",\"role\":\"admin\",\"id\":6,\"is_active\":true,\"is_admin\":true,\"page_access\":null}",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwidXNlcm5hbWUiOiJzeXNvcEB0ZXN0LmNvbSIsImV4cCI6MTc3MzA5MzAxOX0.VP10l-pBk0BMnO7SUOMiZg-kOGcM2Rp4hyNvOOOa9oQ",
+    "auth-storage": "{\"state\":{\"user\":{\"username\":\"sysop@test.com\",\"email\":\"sysop@test.com\",\"full_name\":\"System Operator\",\"role\":\"admin\",\"id\":6,\"is_active\":true,\"is_admin\":true,\"page_access\":null},\"accessToken\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwidXNlcm5hbWUiOiJzeXNvcEB0ZXN0LmNvbSIsImV4cCI6MTc3MzA5MzAxOX0.VP10l-pBk0BMnO7SUOMiZg-kOGcM2Rp4hyNvOOOa9oQ\",\"isAuthenticated\":true},\"version\":0}",
+    "allKeys": [
+      "access_token",
+      "login_category",
+      "user",
+      "auth-storage",
+      "refresh_token"
+    ]
+  },
+  "loadingState": {
+    "loadingElementsCount": 0,
+    "url": "http://localhost:3002/dashboard/screens",
+    "title": "Videotron",
+    "bodyText": "StreamHub Videotron\nMenu\nDashboard\nScreens\nScreen Groups\nContent Library\nLayouts (Composer)\nSchedules (Playback)\nCampaigns\nAnalytics\nUsers\nSettings\nS\n\nsysop@test.com\n\nsysop@test.com\n\nScreens Management\n\nManage devices and screen groups\n\nAdd Device\nTotal Devices\n0\n\n0 online\n\nOnline\n0\n\nActive devices\n\nOffline\n0\n\nNeed attention\n\nMaintenance\n0\n\nUnder maintenance\n\nAll Status\n\nNo screens found\n\nAdd your first screen\nQuick Actions\nDevice List\nScreen Groups\nScreen Groups\nOrganized screen collections\nVie"
+  },
+  "currentUrl": "http://localhost:3002/dashboard/screens",
+  "screenshots": [
+    "/home/sysop/.openclaw/workspace/screenshots/before-login.png",
+    "/home/sysop/.openclaw/workspace/screenshots/after-wait.png"
+  ]
+}

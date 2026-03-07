@@ -17,7 +17,7 @@ export async function GET(
     const { id: videoId } = await params;
 
     // Backend URL
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/videos/${videoId}`;
 
     // Fetch from backend
@@ -56,7 +56,7 @@ export async function PUT(
     const body = await request.json();
 
     // Backend URL
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/videos/${videoId}`;
 
     // Update in backend
@@ -95,7 +95,7 @@ export async function DELETE(
     const { id: videoId } = await params;
 
     // Backend URL
-    const backendUrl = process.env.BACKEND_API_URL || 'http://192.168.8.117:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const url = `${backendUrl}/videos/${videoId}`;
 
     // Delete from backend

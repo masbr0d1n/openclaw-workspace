@@ -1,0 +1,527 @@
+[
+  {
+    "url": "http://localhost:3002/login",
+    "method": "GET",
+    "resourceType": "document",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_globals_1eae11b2.css",
+    "method": "GET",
+    "resourceType": "stylesheet",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_3f65bc44._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_react-dom_1cfb25d7._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_react-server-dom-turbopack_9293d5d2._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_next-devtools_index_329ee549.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_c70c6cb8._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_client_9446acfb._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_cd73e9ac._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_%40swc_helpers_cjs_81e16c24._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_a0ff3932._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/turbopack-_openclaw_workspace_streamhub-videotron_a6eea450._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_03b69f8a._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_client_components_builtin_global-error_035129df.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_5cef361e._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_components_eb6ab888._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_layout_tsx_035129df._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_64b0801a._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_7a12cd8a._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_login_page_tsx_9df91072._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_ea39c5f3._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/favicon.ico",
+    "method": "GET",
+    "resourceType": "other",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/auth/login",
+    "method": "POST",
+    "resourceType": "fetch",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/auth/me",
+    "method": "GET",
+    "resourceType": "fetch",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/dashboard/screens?_rsc=5c339",
+    "method": "GET",
+    "resourceType": "fetch",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_1504d9ac._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_80a04589._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_dashboard_layout_tsx_9df91072._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_0dd3b844._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_51e7efe9._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/ddd5b_workspace_streamhub-videotron_src_app_dashboard_screens_page_tsx_5373bbd4._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_1504d9ac._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_80a04589._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_dashboard_layout_tsx_9df91072._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_0dd3b844._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_51e7efe9._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/ddd5b_workspace_streamhub-videotron_src_app_dashboard_screens_page_tsx_5373bbd4._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:8001/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": false,
+    "isDirect": true
+  },
+  {
+    "url": "http://localhost:8001/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": false,
+    "isDirect": true
+  },
+  {
+    "url": "http://localhost:3002/dashboard/screens",
+    "method": "GET",
+    "resourceType": "document",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_globals_1eae11b2.css",
+    "method": "GET",
+    "resourceType": "stylesheet",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_3f65bc44._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_react-dom_1cfb25d7._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_react-server-dom-turbopack_9293d5d2._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_next-devtools_index_329ee549.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_compiled_c70c6cb8._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_client_9446acfb._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_cd73e9ac._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_%40swc_helpers_cjs_81e16c24._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_a0ff3932._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/turbopack-_openclaw_workspace_streamhub-videotron_a6eea450._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_03b69f8a._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_next_dist_client_components_builtin_global-error_035129df.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_5cef361e._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_components_eb6ab888._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_layout_tsx_035129df._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_1504d9ac._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_80a04589._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_app_dashboard_layout_tsx_9df91072._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/_openclaw_workspace_streamhub-videotron_src_0dd3b844._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/09ed5_51e7efe9._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/ddd5b_workspace_streamhub-videotron_src_app_dashboard_screens_page_tsx_5373bbd4._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_c8c997ce._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_ea39c5f3._.js",
+    "method": "GET",
+    "resourceType": "script",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:3002/api/v1/screens",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": true,
+    "isDirect": false
+  },
+  {
+    "url": "http://localhost:8001/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": false,
+    "isDirect": true
+  },
+  {
+    "url": "http://localhost:8001/api/v1/screens/",
+    "method": "GET",
+    "resourceType": "xhr",
+    "isProxy": false,
+    "isDirect": true
+  }
+]

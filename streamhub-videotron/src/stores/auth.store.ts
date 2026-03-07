@@ -118,6 +118,8 @@ export const useAuthStore = create<AuthState>()(
         if (state?.user && typeof state.user === 'object') {
           // Valid user data, proceed
           console.log('✅ Valid user data found');
+          // CRITICAL FIX: Set isLoading to false after successful rehydration
+          set({ isLoading: false });
         } else {
           // Invalid/corrupted user data, clear and reset
           console.warn('⚠️ Corrupted or missing user data, clearing storage');

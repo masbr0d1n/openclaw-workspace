@@ -56,10 +56,10 @@ export function VideoPreviewCard({ video, category }: VideoPreviewCardProps) {
     return '/placeholder-video.png'; // Fallback
   };
 
-  // Get video URL for preview
+  // Get video URL for preview - Use Next.js proxy (relative path)
   const getVideoUrl = () => {
     if (video.youtube_id && video.youtube_id.includes('.mp4')) {
-      return `http://192.168.8.117:3000/uploads/videos/${video.youtube_id}`;
+      return `/uploads/videos/${video.youtube_id}`;
     }
     return null;
   };
