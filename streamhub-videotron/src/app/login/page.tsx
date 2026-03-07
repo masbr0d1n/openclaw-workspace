@@ -105,7 +105,7 @@ export default function LoginPage() {
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
       
-      <Card className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-0 relative z-10 overflow-hidden">
+      <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border-0 overflow-hidden">
         {/* Gradient Top Border */}
         <div className="h-2 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600"></div>
         
@@ -132,20 +132,17 @@ export default function LoginPage() {
                 <Mail className="w-4 h-4 text-purple-500" />
                 Username
               </Label>
-              <div className="relative">
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  autoComplete="username"
-                  className="pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 dark:bg-gray-900"
-                />
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              </div>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                disabled={isLoading}
+                autoComplete="username"
+                className="h-12 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+              />
             </div>
 
             <div className="space-y-2">
@@ -153,38 +150,25 @@ export default function LoginPage() {
                 <Lock className="w-4 h-4 text-purple-500" />
                 Password
               </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                  className="pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 dark:bg-gray-900"
-                />
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              </div>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+                autoComplete="current-password"
+                className="h-12 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+              />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100" 
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
               disabled={isLoading}
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  <Shield className="mr-2 h-5 w-5" />
-                  Sign In
-                </>
-              )}
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Sign In'}
             </Button>
           </form>
           
