@@ -101,25 +101,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 dark:from-purple-900 dark:via-indigo-900 dark:to-purple-950 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
       
-      <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border-0 overflow-hidden">
+      <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl border-0 overflow-hidden">
         {/* Gradient Top Border */}
-        <div className="h-2 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600"></div>
+        <div className="h-2 bg-gradient-to-r from-red-600 via-red-500 to-red-600"></div>
         
         <CardContent className="p-8 space-y-6">
           {/* Logo & Branding */}
           <div className="text-center space-y-3">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg mb-2">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg mb-2">
               <Zap className="w-8 h-8 text-white" />
             </div>
             <div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <CardTitle className="text-3xl font-bold text-gray-900">
                 Videotron
               </CardTitle>
-              <CardDescription className="text-gray-500 dark:text-gray-400 text-base mt-1">
+              <CardDescription className="text-gray-500 text-base mt-1">
                 StreamHub Digital Signage
               </CardDescription>
             </div>
@@ -128,8 +128,8 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-purple-500" />
+              <Label htmlFor="username" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-red-600" />
                 Username
               </Label>
               <Input
@@ -141,13 +141,13 @@ export default function LoginPage() {
                 required
                 disabled={isLoading}
                 autoComplete="username"
-                className="h-12 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                className="h-12 border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-purple-500" />
+              <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Lock className="w-4 h-4 text-red-600" />
                 Password
               </Label>
               <Input
@@ -159,13 +159,13 @@ export default function LoginPage() {
                 required
                 disabled={isLoading}
                 autoComplete="current-password"
-                className="h-12 border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                className="h-12 border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all duration-300"
               disabled={isLoading}
             >
               {isLoading ? <Loader2 className="animate-spin" /> : 'Sign In'}
@@ -173,8 +173,8 @@ export default function LoginPage() {
           </form>
           
           {/* Trust Indicators */}
-          <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
-            <div className="flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+          <div className="pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="w-3.5 h-3.5 text-green-500" />
                 <span>Secure Login</span>
@@ -187,21 +187,21 @@ export default function LoginPage() {
           </div>
 
           {/* Test Credentials */}
-          <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 border border-purple-100 dark:border-gray-700">
-            <p className="text-xs font-semibold text-purple-700 dark:text-purple-400 mb-2 flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5" />
+          <div className="mt-4 p-4 rounded-xl bg-gray-50 border border-gray-200">
+            <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-red-600" />
               Test credentials:
             </p>
-            <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400 font-mono">
-              <p>Username: <code className="bg-white dark:bg-gray-900 px-2 py-0.5 rounded text-purple-600 dark:text-purple-400">sysop@test.com</code></p>
-              <p>Password: <code className="bg-white dark:bg-gray-900 px-2 py-0.5 rounded text-purple-600 dark:text-purple-400">password123</code></p>
+            <div className="space-y-1.5 text-xs text-gray-600 font-mono">
+              <p>Username: <code className="bg-white px-2 py-0.5 rounded text-red-600">sysop@test.com</code></p>
+              <p>Password: <code className="bg-white px-2 py-0.5 rounded text-red-600">password123</code></p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Footer */}
-      <div className="absolute bottom-4 text-center text-xs text-white/60 dark:text-white/40 z-10">
+      <div className="absolute bottom-4 text-center text-xs text-gray-400 z-10">
         <p>© 2026 StreamHub Videotron. All rights reserved.</p>
       </div>
     </div>
