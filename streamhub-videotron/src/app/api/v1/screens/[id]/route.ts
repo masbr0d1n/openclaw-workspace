@@ -7,7 +7,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
+// Backend base URL (without /api/v1)
+const BACKEND_BASE_URL = process.env.BACKEND_API_URL || 'http://localhost:8001';
 
 // GET screen by ID
 export async function GET(
@@ -17,7 +18,7 @@ export async function GET(
   try {
     const { id } = await params;
     
-    const response = await fetch(`${BACKEND_API_URL}/screens/${id}`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/${id}/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_API_URL}/screens/${id}`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/${id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const response = await fetch(`${BACKEND_API_URL}/screens/${id}`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/${id}/`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
