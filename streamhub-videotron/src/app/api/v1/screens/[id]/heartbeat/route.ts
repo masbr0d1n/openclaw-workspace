@@ -5,7 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
+// Backend base URL (without /api/v1)
+const BACKEND_BASE_URL = process.env.BACKEND_API_URL || 'http://localhost:8001';
 
 // POST heartbeat
 export async function POST(
@@ -16,7 +17,7 @@ export async function POST(
     const { id } = await params;
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_API_URL}/screens/${id}/heartbeat`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/${id}/heartbeat/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

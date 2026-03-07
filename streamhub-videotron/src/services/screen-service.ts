@@ -25,7 +25,7 @@ export const screenService = {
    */
   async getScreens(params?: ScreenListParams): Promise<ScreensResponse> {
     const response = await apiClient.get<ScreensResponse>(
-      '/screens/',
+      '/screens',
       { params }
     );
     return response.data;

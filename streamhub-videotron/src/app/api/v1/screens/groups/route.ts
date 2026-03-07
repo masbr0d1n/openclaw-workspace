@@ -6,12 +6,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
+// Backend base URL (without /api/v1)
+const BACKEND_BASE_URL = process.env.BACKEND_API_URL || 'http://localhost:8001';
 
 // GET all screen groups
 export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/screens/groups`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/groups/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_API_URL}/screens/groups`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/groups/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
