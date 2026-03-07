@@ -6,7 +6,7 @@ type AppRouteHandlerRoutes = "/api/playlists" | "/api/playlists/[id]" | "/api/up
 type PageRoutes = never
 type LayoutRoutes = "/" | "/dashboard"
 type RedirectRoutes = never
-type RewriteRoutes = never
+type RewriteRoutes = "/api/v1/[[...path]]"
 type Routes = AppRoutes | PageRoutes | LayoutRoutes | RedirectRoutes | RewriteRoutes | AppRouteHandlerRoutes
 
 
@@ -15,6 +15,7 @@ interface ParamMap {
   "/api/playlists": {}
   "/api/playlists/[id]": { "id": string; }
   "/api/uploads/[...slug]": { "slug": string[]; }
+  "/api/v1/[[...path]]": { "path"?: string[]; }
   "/api/v1/layouts": {}
   "/api/v1/layouts/[id]": { "id": string; }
   "/api/v1/layouts/[id]/duplicate": { "id": string; }

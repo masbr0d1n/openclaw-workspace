@@ -102,14 +102,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40"></div>
+      {/* Background Pattern - pointer-events-none to allow clicks through */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-40 pointer-events-none"></div>
       
-      <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl border-0 overflow-hidden">
+      <Card className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl border-0 overflow-hidden">
         {/* Gradient Top Border */}
         <div className="h-2 bg-gradient-to-r from-red-600 via-red-500 to-red-600"></div>
         
-        <CardContent className="p-8 space-y-6">
+        <CardContent className="relative z-10 p-8 space-y-6 pointer-events-auto">
           {/* Logo & Branding */}
           <div className="text-center space-y-3">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg mb-2">
@@ -126,7 +126,7 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="relative z-10 space-y-5">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Mail className="w-4 h-4 text-red-600" />
