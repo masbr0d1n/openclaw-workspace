@@ -9,6 +9,18 @@
 
 ---
 
+## Identity Files Location
+```
+discord/channel/1480203687392575518/
+├── IDENTITY.md   — Who am I (Nova, PM Agent)
+├── SOUL.md       — Values & Philosophy
+├── AGENTS.md     — Architecture & Directives
+├── TOOLS.md      — Tool Registry
+└── (future: SKILL.md, etc.)
+```
+
+---
+
 ## Agent Identity
 
 **Name:** Nova
@@ -129,15 +141,6 @@ notes: "Context for assignee"
 ```
 
 ---
-
-## Identity Files Location
-```
-memory/channels/single-pm/
-├── IDENTITY.md
-├── SOUL.md
-├── AGENTS.md
-└── TOOLS.md
-```
 
 ## Status
 🟢 **READY** — Awaiting first requirement
