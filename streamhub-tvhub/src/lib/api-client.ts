@@ -12,21 +12,17 @@ const API_URL = '/api/v1';
 export const apiClient = axios.create({
   baseURL: API_URL,
   timeout: 30000,
+  withCredentials: true, // Include httpOnly cookies
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor - add JWT token
+// Request interceptor - cookies are automatically sent with withCredentials
 apiClient.interceptors.request.use(
   (config) => {
-    // Get token from localStorage (client-side only)
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
+    // httpOnly cookies are automatically included by the browser
+    // No need to manually add Authorization header
     return config;
   },
   (error) => {
@@ -48,33 +44,19 @@ apiClient.interceptors.response.use(
 
       try {
         // Try to refresh token via Next.js API
-        const refreshToken = localStorage.getItem('refresh_token');
-        
-        if (!refreshToken) {
-          throw error;
-        }
-
+        // Refresh token is sent automatically via httpOnly cookie
         const response = await axios.post(
-          `/api/v1/auth/refresh?refresh_token=${refreshToken}`
+          '/api/v1/auth/refresh',
+          {},
+          { withCredentials: true }
         );
 
-        const { access_token, refresh_token: newRefreshToken } = response.data.data;
-
-        // Store new tokens
-        localStorage.setItem('access_token', access_token);
-        if (newRefreshToken) {
-          localStorage.setItem('refresh_token', newRefreshToken);
-        }
-
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        // New tokens are set automatically via httpOnly cookies by the backend
+        // Retry original request
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - clear tokens and logout
+        // Refresh failed - redirect to login
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('user');
           // Redirect to login (but avoid infinite loop)
           if (window.location.pathname !== '/login') {
             window.location.href = '/login';

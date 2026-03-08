@@ -2,13 +2,14 @@
  * Middleware - DISABLED
  *
  * We handle authentication on the client side using:
- * - Zustand store with localStorage persistence
+ * - Zustand store (in-memory, no persistence)
+ * - httpOnly cookies for token storage (set by backend)
  * - Dashboard layout auth check
  * - AuthChecker component
  *
- * Server-side middleware is not needed and causes issues because:
- * - It can't access localStorage (only cookies)
- * - We store tokens in localStorage, not cookies
+ * Server-side middleware is not needed because:
+ * - httpOnly cookies are automatically sent with requests (withCredentials: true)
+ * - Backend validates cookies and sets them on login/refresh
  * - Client-side auth is sufficient for our use case
  */
 

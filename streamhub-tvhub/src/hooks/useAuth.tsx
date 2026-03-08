@@ -21,15 +21,8 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check localStorage for user data
-    const authData = localStorage.getItem('auth_user');
-    if (authData) {
-      try {
-        setUser(JSON.parse(authData));
-      } catch (error) {
-        console.error('Failed to parse auth data:', error);
-      }
-    }
+    // User data is managed by auth store, not localStorage
+    // httpOnly cookies handle token storage
     setLoading(false);
   }, []);
 

@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
         console.log('🎫 Access token:', !!accessToken);
         console.log('🔄 Refresh token:', !!refreshToken);
         
-        // Store in Zustand
+        // Store in Zustand (in-memory only, no persistence)
         set({ 
           user, 
           accessToken, 
@@ -53,15 +53,9 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false 
         });
         
-        // Also store in localStorage for API client
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('access_token', accessToken);
-          localStorage.setItem('refresh_token', refreshToken);
-          localStorage.setItem('user', JSON.stringify(user));
-          console.log('💾 Saved to localStorage');
-        }
-        
-        console.log('✅ Auth state updated');
+        // Tokens are stored in httpOnly cookies by the backend
+        // No client-side storage needed
+        console.log('✅ Auth state updated (httpOnly cookies)');
         console.log('📊 Current state:', {
           user: !!user,
           accessToken: !!accessToken,
@@ -79,13 +73,9 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false 
         });
         
-        // Clear localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('user');
-          console.log('🗑️ Cleared localStorage');
-        }
+        // httpOnly cookies are cleared by the backend via /auth/logout endpoint
+        // No client-side cleanup needed
+        console.log('✅ Auth state cleared (cookies cleared by backend)');
       },
       
       setLoading: (isLoading) => {

@@ -50,12 +50,9 @@ export function useAuth() {
           return false;
         }
         
-        // Save tokens first
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('access_token', access_token);
-          localStorage.setItem('refresh_token', refresh_token);
-          console.log('💾 Tokens saved to localStorage');
-        }
+        // Tokens are stored in httpOnly cookies by the backend
+        // No client-side storage needed
+        console.log('✅ Tokens stored in httpOnly cookies');
         
         // Now fetch user data with the new token
         console.log('🔍 Fetching user data with new token...');
@@ -75,21 +72,13 @@ export function useAuth() {
           } else {
             console.error('❌ Failed to get user data');
             toast.error('Login failed: Could not fetch user profile');
-            // Clear tokens on failure
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('access_token');
-              localStorage.removeItem('refresh_token');
-            }
+            // Backend will clear cookies on failed auth
             return false;
           }
         } catch (error) {
           console.error('💥 Error fetching user:', error);
           toast.error('Login failed: Could not fetch user profile');
-          // Clear tokens on failure
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-          }
+          // Backend will clear cookies on failed auth
           return false;
         }
       } else {
@@ -165,14 +154,9 @@ export function useAuth() {
       return;
     }
     
-    const token = authService.getAccessToken();
-    console.log('🎫 Token from localStorage:', !!token);
-    
-    if (!token) {
-      console.log('❌ No token found, setting isLoading = false');
-      setLoading(false);
-      return;
-    }
+    // Check auth status via /auth/me endpoint
+    // Tokens are in httpOnly cookies, not accessible from JavaScript
+    console.log('🔍 Checking auth via /auth/me endpoint...');
 
     try {
       console.log('🌐 Fetching user from /auth/me...');

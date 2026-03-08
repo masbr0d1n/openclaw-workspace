@@ -147,9 +147,7 @@ export default function VideosPage() {
     mutationFn: async (data: FormData) => {
       const response = await fetch('/api/v1/videos/upload', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
+        credentials: 'include', // Send httpOnly cookies
         body: data,
       });
       

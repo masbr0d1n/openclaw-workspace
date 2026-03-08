@@ -86,61 +86,47 @@ export const authService = {
   },
 
   /**
-   * Logout (client-side only)
+   * Logout - call backend to clear httpOnly cookies
    */
-  logout(): void {
+  async logout(): Promise<void> {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-    }
-  },
-
-  /**
-   * Get stored access token
-   */
-  getAccessToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
-    }
-    return null;
-  },
-
-  /**
-   * Get stored refresh token
-   */
-  getRefreshToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('refresh_token');
-    }
-    return null;
-  },
-
-  /**
-   * Get stored user
-   */
-  getStoredUser(): User | null {
-    if (typeof window !== 'undefined') {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          return JSON.parse(userStr);
-        } catch {
-          return null;
-        }
+      try {
+        await apiClient.post('/auth/logout');
+      } catch (error) {
+        console.error('Logout API call failed:', error);
       }
     }
+  },
+
+  /**
+   * Get stored access token - not used with httpOnly cookies
+   */
+  getAccessToken(): string | null {
+    // Tokens are stored in httpOnly cookies, not accessible from JavaScript
     return null;
   },
 
   /**
-   * Store auth data
+   * Get stored refresh token - not used with httpOnly cookies
+   */
+  getRefreshToken(): string | null {
+    // Tokens are stored in httpOnly cookies, not accessible from JavaScript
+    return null;
+  },
+
+  /**
+   * Get stored user - not used with httpOnly cookies
+   */
+  getStoredUser(): User | null {
+    // User data should be fetched from /auth/me endpoint
+    return null;
+  },
+
+  /**
+   * Store auth data - not used with httpOnly cookies
    */
   storeAuthData(data: AuthResponse): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-    }
+    // Tokens are stored in httpOnly cookies automatically by the backend
+    // No client-side storage needed
   },
 };
