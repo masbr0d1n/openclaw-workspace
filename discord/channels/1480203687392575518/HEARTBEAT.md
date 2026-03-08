@@ -2,72 +2,89 @@
 
 ## Monitoring Rules
 
-**Interval:** Setiap 5 menit saat task belum 100% selesai
+**Interval:** Setiap 5 menit saat ada task belum 100% selesai
 
-### What to Check
+### Current Status Check
 
-1. **Agent Status** — Poll each agent for progress:
-   - UI/UX Designer (<#1480204098685894656>) — TASK-001
-   - Frontend Dev (<#1480203406420217928>) — TASK-002
-   - QA Engineer (<#1480203785530904586>) — TASK-003
+**Project:** PROJ-001 Streaming Portal Landing Page
 
-2. **Blockers** — Check if any agent is blocked:
-   - If blocked → Investigate and resolve autonomously
-   - If need escalation → Notify stakeholder
+| Task ID | Agent | Status | Runtime | Last Update |
+|---------|-------|--------|---------|-------------|
+| TASK-001 | UI/UX Designer | ✅ DONE | 2m | 22:43 |
+| TASK-002 | Frontend Dev | ✅ DONE | 3m | 22:47 |
+| TASK-003 | QA Engineer | 🟡 RUNNING | 19m | 22:50 |
 
-3. **Progress** — Update task status in project file
+**Total Unfinished Tasks: 1**
 
-### Status Check Command
+### Monitoring Checklist
 
-```
-sessions_list → Check active agents
-process poll → Check specific agent status
-```
+**Setiap 5 menit, cek:**
+
+1. **Subagent Status**
+   ```
+   subagents action=list
+   ```
+
+2. **Jika task running > 15 menit:**
+   - ⚠️ Potential blocker
+   - Consider: steer agent atau spawn new agent
+
+3. **Jika task failed:**
+   - Investigate root cause
+   - Iterate sampai tersolusikan
 
 ### Notification Rules
 
 - ✅ **Notify stakeholder ONLY when:**
-  - Product is 100% complete
-  - Critical blocker that needs stakeholder decision
+  - **Produk 100% selesai** — Semua task DONE
+  - **Blocker kritis** — Butuh keputusan stakeholder
 
 - ❌ **DO NOT notify for:**
-  - Minor updates
   - Work in progress
   - Routine status checks
+  - Minor issues (solve autonomously)
 
 ### Heartbeat Response Format
 
-**If tasks complete:**
+**If ALL tasks complete:**
 ```
 ✅ PRODUK TELAH SELESAI
-- [List completed items]
-- Ready for review/deploy
+- TASK-001: ✅ Design
+- TASK-002: ✅ Frontend
+- TASK-003: ✅ QA
+
+Ready for review: [location]
 ```
 
-**If tasks in progress:**
+**If tasks still in progress:**
 ```
 HEARTBEAT_OK
-(Internal: Continue monitoring, no stakeholder notification)
+
+[Internal: Continue monitoring, check again in 5 minutes]
 ```
 
-**If critical blocker:**
+**If blocker detected:**
 ```
 🚨 BLOCKER KRITIS
+- Task: [task_id]
 - Issue: [description]
-- Need: [stakeholder decision]
+- Runtime: [X minutes]
+- Action needed: [decision]
 ```
 
 ---
 
-## Current Project: PROJ-001
+## Project Location
 
-**Tasks:**
-| Task | Agent | Status |
-|------|-------|--------|
-| TASK-001 | UI/UX Designer | 🟡 IN_PROGRESS (Agent spawned) |
-| TASK-002 | Frontend Dev | 🔴 BLOCKED (waiting design) |
-| TASK-003 | QA Engineer | ⏳ PENDING |
+**Landing Page:** `/home/sysop/.openclaw/workspace/streaming-portal/landing-page/`
 
+**To Run:**
+```bash
+cd /home/sysop/.openclaw/workspace/streaming-portal/landing-page
+npm run dev
+```
+
+---
+
+**Last Updated:** 2026-03-08 23:06 GMT+7
 **Heartbeat Active:** ✅
-**Last Check:** 2026-03-08 22:45 GMT+7
-**Agent Session:** aefc3bcb-b902-43d0-a2ca-dfb7d15f4abc
