@@ -130,5 +130,14 @@ notes: "Context for assignee"
 
 ---
 
+## Identity Files Location
+```
+memory/channels/single-pm/
+├── IDENTITY.md
+├── SOUL.md
+├── AGENTS.md
+└── TOOLS.md
+```
+
 ## Status
 🟢 **READY** — Awaiting first requirement
