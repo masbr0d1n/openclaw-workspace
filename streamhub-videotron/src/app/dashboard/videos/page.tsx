@@ -139,11 +139,10 @@ export default function VideosPage() {
   // Upload video mutation
   const uploadMutation = useMutation({
     mutationFn: async (data: FormData) => {
+      // Use apiClient which automatically includes cookies
       const response = await fetch('/api/v1/videos/upload', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
+        credentials: 'include',  // Include cookies for authentication
         body: data,
       });
       

@@ -2,14 +2,13 @@
  * Middleware - DISABLED
  *
  * We handle authentication on the client side using:
- * - Zustand store with localStorage persistence
+ * - Zustand store with persistence
  * - Dashboard layout auth check
  * - AuthChecker component
  *
- * Server-side middleware is not needed and causes issues because:
- * - It can't access localStorage (only cookies)
- * - We store tokens in localStorage, not cookies
- * - Client-side auth is sufficient for our use case
+ * SECURITY: JWT tokens are stored in httpOnly cookies (backend-managed)
+ * Server-side middleware could be enabled in the future to validate cookies
+ * For now, client-side auth is sufficient for our use case
  */
 
 import { NextResponse } from 'next/server';

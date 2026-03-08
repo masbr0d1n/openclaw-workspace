@@ -22,15 +22,8 @@ import { LogOut, User, Settings, Monitor, Building2 } from 'lucide-react';
 
 export function DashboardHeader() {
   const { user, logout } = useAuth();
-  const [loginCategory, setLoginCategory] = useState<'tv_hub' | 'videotron'>('tv_hub');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const category = localStorage.getItem('login_category') as 'tv_hub' | 'videotron' | 'tv_channel';
-      // Convert old 'tv_channel' to 'tv_hub'
-      setLoginCategory(category === 'videotron' ? 'videotron' : 'tv_hub');
-    }
-  }, []);
+  // Determine login category from user data or default to videotron
+  const loginCategory: 'tv_hub' | 'videotron' = 'videotron';
 
   return (
     <header className="sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]">

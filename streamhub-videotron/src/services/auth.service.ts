@@ -86,61 +86,14 @@ export const authService = {
   },
 
   /**
-   * Logout (client-side only)
+   * Logout - calls backend to clear cookies
    */
-  logout(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-    }
-  },
-
-  /**
-   * Get stored access token
-   */
-  getAccessToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
-    }
-    return null;
-  },
-
-  /**
-   * Get stored refresh token
-   */
-  getRefreshToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('refresh_token');
-    }
-    return null;
-  },
-
-  /**
-   * Get stored user
-   */
-  getStoredUser(): User | null {
-    if (typeof window !== 'undefined') {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          return JSON.parse(userStr);
-        } catch {
-          return null;
-        }
-      }
-    }
-    return null;
-  },
-
-  /**
-   * Store auth data
-   */
-  storeAuthData(data: AuthResponse): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+  async logout(): Promise<void> {
+    try {
+      await apiClient.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Continue with client-side logout even if backend call fails
     }
   },
 };

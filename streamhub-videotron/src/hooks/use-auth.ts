@@ -10,11 +10,9 @@ import { toast } from 'sonner';
 export function useAuth() {
   const {
     user,
-    accessToken,
     isAuthenticated,
     isLoading,
     setUser,
-    setAccessToken,
     login,
     logout,
     setLoading,
@@ -22,6 +20,7 @@ export function useAuth() {
 
   /**
    * Login with credentials
+   * Tokens are handled by httpOnly cookies (backend-managed)
    */
   const loginAction = async (credentials: LoginInput) => {
     console.log('🔐 Login attempt:', credentials.username);
@@ -35,61 +34,41 @@ export function useAuth() {
         const data = response.data;
         console.log('📦 Auth response data:', data);
         
-        // Backend returns tokens but NOT user data
-        // We need to call /auth/me to get user
-        const access_token = data.access_token;
-        const refresh_token = data.refresh_token;
+        // Backend returns user data and sets httpOnly cookies for tokens
+        const user = data.user;
         
-        console.log('✅ Tokens received:');
-        console.log('🎫 Access token:', !!access_token);
-        console.log('🔄 Refresh token:', !!refresh_token);
+        console.log('🎫 Cookies set by backend (httpOnly)');
+        console.log('👤 User data:', user);
         
-        if (!access_token) {
-          console.error('❌ Access token is missing!');
-          toast.error('Login failed: No access token received');
+        if (!user) {
+          console.error('❌ User data is missing!');
+          toast.error('Login failed: No user data received');
           return false;
         }
         
-        // Save tokens first
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('access_token', access_token);
-          localStorage.setItem('refresh_token', refresh_token);
-          console.log('💾 Tokens saved to localStorage');
-        }
-        
-        // Now fetch user data with the new token
-        console.log('🔍 Fetching user data with new token...');
+        // Now fetch user data to verify cookies are working
+        console.log('🔍 Verifying auth with /auth/me...');
         try {
           const userResponse = await authService.getCurrentUser();
           console.log('👤 User response:', userResponse);
           
           if (userResponse.status && userResponse.data) {
             const userData = userResponse.data;
-            console.log('✅ User data received:', userData);
+            console.log('✅ User data verified:', userData);
             
-            // Now we have everything - call login action
-            login(userData, access_token, refresh_token);
+            // Call login action with user data only (no tokens)
+            login(userData);
             toast.success('Login successful');
             console.log('✅ Auth state complete, returning true');
             return true;
           } else {
-            console.error('❌ Failed to get user data');
-            toast.error('Login failed: Could not fetch user profile');
-            // Clear tokens on failure
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('access_token');
-              localStorage.removeItem('refresh_token');
-            }
+            console.error('❌ Failed to verify user data');
+            toast.error('Login failed: Could not verify authentication');
             return false;
           }
         } catch (error) {
-          console.error('💥 Error fetching user:', error);
-          toast.error('Login failed: Could not fetch user profile');
-          // Clear tokens on failure
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-          }
+          console.error('💥 Error verifying user:', error);
+          toast.error('Login failed: Could not verify authentication');
           return false;
         }
       } else {
@@ -133,9 +112,15 @@ export function useAuth() {
   };
 
   /**
-   * Logout
+   * Logout - calls backend to clear cookies, then clears local state
    */
-  const logoutAction = () => {
+  const logoutAction = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Continue with client-side logout even if backend call fails
+    }
     logout();
     toast.success('Logged out successfully');
   };
@@ -155,7 +140,7 @@ export function useAuth() {
       console.warn('⚠️ Clearing corrupted auth state and re-authenticating...');
       // Clear the corrupted state - logout sets isLoading=false
       logout();
-      // Continue to check for token and re-authenticate
+      // Continue to check auth and re-authenticate
     }
     
     // If already authenticated with user data, skip fetch
@@ -165,15 +150,8 @@ export function useAuth() {
       return;
     }
     
-    const token = authService.getAccessToken();
-    console.log('🎫 Token from localStorage:', !!token);
-    
-    if (!token) {
-      console.log('❌ No token found, setting isLoading = false');
-      setLoading(false);
-      return;
-    }
-
+    // No token check needed - cookies are automatically sent
+    // Just try to fetch user data
     try {
       console.log('🌐 Fetching user from /auth/me...');
       const response = await authService.getCurrentUser();
@@ -182,9 +160,8 @@ export function useAuth() {
       if (response.status) {
         console.log('✅ User authenticated:', response.data);
         setUser(response.data);
-        setAccessToken(token);
       } else {
-        console.log('❌ Invalid token, logging out');
+        console.log('❌ Not authenticated, logging out');
         logout();
       }
     } catch (error) {
@@ -200,7 +177,6 @@ export function useAuth() {
 
   return {
     user,
-    accessToken,
     isAuthenticated,
     isLoading,
     login: loginAction,

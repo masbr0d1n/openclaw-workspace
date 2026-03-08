@@ -1,6 +1,9 @@
 /**
  * API Client - Using Next.js Route Handlers
  * All requests go through Next.js API routes instead of directly to backend
+ * 
+ * SECURITY: httpOnly cookies are used for JWT tokens (set by backend)
+ * No tokens stored in localStorage - cookies are automatically included
  */
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
@@ -15,18 +18,14 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,  // IMPORTANT: Include cookies in requests
 });
 
-// Request interceptor - add JWT token
+// Request interceptor - tokens are automatically sent via cookies
+// No need to manually add Authorization header
 apiClient.interceptors.request.use(
   (config) => {
-    // Get token from localStorage (client-side only)
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
+    // Cookies are automatically included by browser due to withCredentials: true
     return config;
   },
   (error) => {
@@ -48,33 +47,21 @@ apiClient.interceptors.response.use(
 
       try {
         // Try to refresh token via Next.js API
-        const refreshToken = localStorage.getItem('refresh_token');
-        
-        if (!refreshToken) {
-          throw error;
-        }
-
+        // Backend will use refresh_token cookie to generate new access_token
         const response = await axios.post(
-          `/api/v1/auth/refresh?refresh_token=${refreshToken}`
+          '/api/v1/auth/refresh',
+          {},
+          { withCredentials: true }
         );
 
-        const { access_token, refresh_token: newRefreshToken } = response.data.data;
+        // Cookies are automatically updated by backend response
+        // No need to manually store tokens
 
-        // Store new tokens
-        localStorage.setItem('access_token', access_token);
-        if (newRefreshToken) {
-          localStorage.setItem('refresh_token', newRefreshToken);
-        }
-
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        // Retry original request - new access_token cookie will be used
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - clear tokens and logout
+        // Refresh failed - redirect to login
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('user');
           // Redirect to login (but avoid infinite loop)
           if (window.location.pathname !== '/login') {
             window.location.href = '/login';

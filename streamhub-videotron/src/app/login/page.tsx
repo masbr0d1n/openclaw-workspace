@@ -33,9 +33,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
+      // Use fetch with credentials: 'include' to receive httpOnly cookies
       const response = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',  // IMPORTANT: Include cookies in requests
         body: JSON.stringify({ username, password }),
       });
 
@@ -47,48 +49,25 @@ export default function LoginPage() {
       const data = await response.json();
       console.log('📦 API Response:', data);
       
-      // Backend returns: { status, statusCode, message, data: { access_token, refresh_token } }
+      // Backend returns: { status, statusCode, message, data: { access_token, refresh_token, user } }
+      // Tokens are set as httpOnly cookies automatically
       const responseData = data.data || data;
-      const access_token = responseData.access_token;
-      const refresh_token = responseData.refresh_token;
+      const user = responseData.user;
       
-      console.log('🎫 Tokens received:', !!access_token, !!refresh_token);
+      console.log('🎫 Cookies set by backend (httpOnly)');
+      console.log('👤 User data:', user);
 
-      if (!access_token) {
-        throw new Error('Invalid response from server: missing access token');
-      }
-
-      // Fetch user data with the token
-      console.log('👤 Fetching user data...');
-      const userResponse = await fetch('/api/v1/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${access_token}`
-        }
-      });
-      
-      if (!userResponse.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      
-      const userData = await userResponse.json();
-      console.log('📦 User Response:', userData);
-      
-      const user = userData.data || userData;
-      
       if (!user) {
-        throw new Error('Invalid user data received');
+        throw new Error('Invalid response from server: missing user data');
       }
 
       console.log('✅ User data received:', user);
 
-      // Store login category as videotron
-      localStorage.setItem('login_category', 'videotron');
-
-      // Use auth store login with validated data
-      login(user, access_token, refresh_token);
+      // Use auth store login with validated data (no tokens needed - cookies handle auth)
+      login(user);
       console.log('✅ Auth store login called with user:', !!user);
 
-      console.log('✅ Login successful');
+      console.log('✅ Login successful - cookies set');
 
       // Redirect to Videotron dashboard
       router.push('/dashboard/screens');
