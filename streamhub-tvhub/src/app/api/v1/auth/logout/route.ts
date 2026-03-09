@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
-  const response = await fetch('http://localhost:8001/api/v1/auth/logout', {
+  const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001';
+  const response = await fetch(`${backendUrl}/api/v1/auth/logout`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   })

@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://host.docker.internal:8001/api/v1';
+const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
 
 export async function GET(
   request: NextRequest,

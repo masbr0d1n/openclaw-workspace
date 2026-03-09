@@ -8,7 +8,8 @@ export async function POST(request: NextRequest) {
   // Forward cookies from client request to backend
   const cookie = request.headers.get('cookie') || ''
   
-  const response = await fetch(`http://localhost:8001/api/v1/auth/refresh?refresh_token=${refreshToken}`, {
+  const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001';
+  const response = await fetch(`${backendUrl}/api/v1/auth/refresh?refresh_token=${refreshToken}`, {
     method: 'POST',
     headers: {
       'Cookie': cookie,

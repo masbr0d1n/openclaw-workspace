@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
       afterFiles: [
         {
           source: '/api/v1/:path*',
-          destination: 'http://localhost:8001/api/v1/:path*',
+          // Use environment variable for backend URL, fallback to localhost
+          destination: `${process.env.BACKEND_API_URL || 'http://localhost:8001'}/api/v1/:path*`,
         },
       ],
     };

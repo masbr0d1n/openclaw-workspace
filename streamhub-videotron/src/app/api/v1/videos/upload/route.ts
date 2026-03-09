@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const token = authHeader?.replace('Bearer ', '');
 
     // Forward to backend
-    const backendUrl = process.env.BACKEND_API_URL || 'http://host.docker.internal:8001/api/v1';
+    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const response = await fetch(`${backendUrl}/videos/upload`, {
       method: 'POST',
       headers: {
