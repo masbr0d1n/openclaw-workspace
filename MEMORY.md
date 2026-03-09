@@ -685,6 +685,7 @@ discord/channels/<channel-id>/
 | #single-be | 1480203729549525213 | Forge | `discord/channels/1480203729549525213/` |
 | #single-pm | 1480203687392575518 | Nova | `discord/channels/1480203687392575518/` |
 | #single-design | 1480204098685894656 | Muse | `discord/channels/1480204098685894656/` |
+| **#devops** | **1476059730748248158** | **Ops** | `discord/channels/1476059730748248158/` |
 | software-architect | N/A | Architect | `discord/channels/software-architect/` |
 
 ### How to Add New Agent Identity Files
