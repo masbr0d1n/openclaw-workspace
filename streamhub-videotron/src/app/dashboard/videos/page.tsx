@@ -47,7 +47,7 @@ import {
 } from '@/components/ui/checkbox';
 import { Loader2, Plus, MoreHorizontal, Edit, Trash2, Search, ChevronLeft, ChevronRight, Clock, Upload, Eye } from 'lucide-react';
 import { toast } from 'sonner';
-import { VideoDetailModal } from '@/components/video-detail-modal';
+import { ContentDetailsModal } from '@/components/content-details-modal';
 import { VideoPlayerModal } from '@/components/video-player-modal';
 import { VideoPreviewCard } from '@/components/video-preview-card';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -1065,10 +1065,11 @@ export default function VideosPage() {
       </Dialog>
 
       {/* Video Detail Dialog */}
-      <VideoDetailModal
+      <ContentDetailsModal
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
-        video={selectedVideo}
+        videoId={selectedVideo?.id || null}
+        allVideos={videos}
       />
     </div>
   );

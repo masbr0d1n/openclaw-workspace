@@ -6,8 +6,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-// Backend base URL (without /api/v1)
-const BACKEND_BASE_URL = process.env.BACKEND_API_URL || 'http://localhost:8001';
+// Backend API URL (already includes /api/v1)
+const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
 
 // GET all screens
 export async function GET(request: NextRequest) {
@@ -21,8 +21,7 @@ export async function GET(request: NextRequest) {
     });
 
     const queryString = queryParams.toString();
-    // Backend requires /api/v1/ prefix and trailing slash
-    const url = `${BACKEND_BASE_URL}/api/v1/screens/${queryString ? `?${queryString}` : ''}`;
+    const url = `${BACKEND_API_URL}/screens${queryString ? `?${queryString}` : ''}`;
     console.log('[Screens API] GET:', url);
 
     const response = await fetch(url, {
@@ -49,7 +48,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/screens/`, {
+    const response = await fetch(`${BACKEND_API_URL}/screens`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

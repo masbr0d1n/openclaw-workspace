@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Details Modal - Revamp Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            success: '#10B981',
+            danger: '#EF4444',
+            warning: '#F59E0B',
+            info: '#3B82F6',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+    }
+    .video-player {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    }
+    .spec-card {
+      transition: all 0.2s ease;
+    }
+    .spec-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .related-card {
+      transition: all 0.2s ease;
+    }
+    .related-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .action-btn {
+      transition: all 0.2s ease;
+    }
+    .action-btn:hover {
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+  
+  <!-- Demo Button -->
+  <div class="max-w-4xl mx-auto text-center mb-8">
+    <h1 class="text-3xl font-bold mb-4 text-gray-800">Content Details Modal Revamp</h1>
+    <p class="text-gray-600 mb-6">Interactive Prototype - Click the button below to open the modal</p>
+    <button onclick="toggleModal()" class="bg-primary hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105">
+      <i class="fas fa-video mr-2"></i>
+      Open Content Details Modal
+    </button>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div id="modalOverlay" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="closeModalOnClickOutside(event)">
+    
+    <!-- Modal Content -->
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+      
+      <!-- Header -->
+      <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-start justify-between z-10">
+        <div class="flex-1 pr-8">
+          <div class="flex items-center gap-3 mb-2">
+            <h2 class="text-2xl font-semibold text-gray-900">Amazing Travel Documentary: Exploring Bali</h2>
+            <span class="bg-success text-white px-3 py-1 rounded-full text-xs font-medium">Active</span>
+            <span class="bg-info text-white px-3 py-1 rounded-full text-xs font-medium">HD</span>
+          </div>
+          <p class="text-sm text-gray-600 line-clamp-2">
+            A breathtaking journey through the beautiful landscapes and rich culture of Bali, Indonesia. 
+            Experience the temples, beaches, and local traditions.
+          </p>
+        </div>
+        <button onclick="toggleModal()" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 space-y-6">
+        
+        <!-- Video Player & Metadata Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Video Player -->
+          <div class="lg:col-span-2">
+            <div class="video-player aspect-video rounded-xl overflow-hidden relative group">
+              <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&h=450&fit=crop" 
+                   alt="Video thumbnail" 
+                   class="w-full h-full object-cover opacity-80">
+              
+              <!-- Play Button Overlay -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <button class="bg-primary/90 hover:bg-primary text-white w-20 h-20 rounded-full flex items-center justify-center transition-all transform group-hover:scale-110 shadow-lg">
+                  <i class="fas fa-play text-3xl ml-1"></i>
+                </button>
+              </div>
+              
+              <!-- Video Info Overlay -->
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                <div class="flex items-center gap-4 text-white text-sm">
+                  <span class="flex items-center gap-1">
+                    <i class="fas fa-clock"></i>
+                    12:34
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i class="fas fa-eye"></i>
+                    12,453 views
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <i class="fab fa-youtube"></i>
+                    YouTube
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metadata -->
+          <div class="space-y-4">
+            
+            <!-- Channel Info -->
+            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <img src="https://ui-avatars.com/api/?name=Travel+Channel&background=4F46E5&color=fff" 
+                   alt="Channel logo" 
+                   class="w-12 h-12 rounded-full">
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-gray-900">Travel Channel</h3>
+                <p class="text-xs text-gray-600 line-clamp-2">Exploring the world one destination at a time</p>
+                <a href="#" class="text-xs text-primary hover:underline mt-1 inline-block">View Channel →</a>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center gap-2 text-gray-600 text-xs mb-1">
+                  <i class="fas fa-calendar"></i>
+                  Uploaded
+                </div>
+                <p class="font-medium text-sm text-gray-900">Mar 5, 2026</p>
+              </div>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center gap-2 text-gray-600 text-xs mb-1">
+                  <i class="fas fa-clock"></i>
+                  Duration
+                </div>
+                <p class="font-medium text-sm text-gray-900">12:34</p>
+              </div>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center gap-2 text-gray-600 text-xs mb-1">
+                  <i class="fas fa-eye"></i>
+                  Views
+                </div>
+                <p class="font-medium text-sm text-gray-900">12,453</p>
+              </div>
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center gap-2 text-gray-600 text-xs mb-1">
+                  <i class="fas fa-sync"></i>
+                  Updated
+                </div>
+                <p class="font-medium text-sm text-gray-900">Mar 7, 2026</p>
+              </div>
+            </div>
+
+            <!-- Tags -->
+            <div>
+              <h4 class="text-xs font-medium text-gray-600 mb-2">Tags</h4>
+              <div class="flex flex-wrap gap-2">
+                <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Travel</span>
+                <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Bali</span>
+                <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Documentary</span>
+                <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Indonesia</span>
+                <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">Culture</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <i class="fas fa-microchip text-primary"></i>
+            Technical Specifications
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            
+            <!-- Resolution -->
+            <div class="spec-card p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-tv text-gray-400"></i>
+                <span class="text-xs text-gray-600">Resolution</span>
+              </div>
+              <p class="font-semibold text-gray-900 text-sm">Full HD</p>
+              <p class="text-xs text-gray-500">1920x1080</p>
+            </div>
+
+            <!-- Video Codec -->
+            <div class="spec-card p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-film text-gray-400"></i>
+                <span class="text-xs text-gray-600">Video Codec</span>
+              </div>
+              <p class="font-semibold text-gray-900 text-sm">H.264</p>
+              <p class="text-xs text-gray-500">AVC</p>
+            </div>
+
+            <!-- Video Bitrate -->
+            <div class="spec-card p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-tachometer-alt text-gray-400"></i>
+                <span class="text-xs text-gray-600">Video Bitrate</span>
+              </div>
+              <p class="font-semibold text-gray-900 text-sm">5.2 Mbps</p>
+              <p class="text-xs text-gray-500">High Quality</p>
+            </div>
+
+            <!-- Audio Codec -->
+            <div class="spec-card p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-music text-gray-400"></i>
+                <span class="text-xs text-gray-600">Audio Codec</span>
+              </div>
+              <p class="font-semibold text-gray-900 text-sm">AAC</p>
+              <p class="text-xs text-gray-500">Stereo</p>
+            </div>
+
+            <!-- Audio Bitrate -->
+            <div class="spec-card p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-volume-up text-gray-400"></i>
+                <span class="text-xs text-gray-600">Audio Bitrate</span>
+              </div>
+              <p class="font-semibold text-gray-900 text-sm">192 kbps</p>
+              <p class="text-xs text-gray-500">High Quality</p>
+            </div>
+
+            <!-- Frame Rate -->
+            <div class="spec-card p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-columns text-gray-400"></i>
+                <span class="text-xs text-gray-600">Frame Rate</span>
+              </div>
+              <p class="font-semibold text-gray-900 text-sm">30 fps</p>
+              <p class="text-xs text-gray-500">Standard</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <i class="fas fa-cog text-primary"></i>
+            Actions
+          </h3>
+          <div class="flex flex-wrap gap-3">
+            
+            <!-- Edit Button -->
+            <button class="action-btn bg-primary hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 shadow-md">
+              <i class="fas fa-edit"></i>
+              Edit Details
+            </button>
+
+            <!-- Share Button -->
+            <button class="action-btn bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 shadow-sm">
+              <i class="fas fa-share-alt"></i>
+              Share
+            </button>
+
+            <!-- Download Button -->
+            <button class="action-btn bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 shadow-sm">
+              <i class="fas fa-download"></i>
+              Download
+            </button>
+
+            <!-- Toggle Active -->
+            <button class="action-btn bg-success hover:bg-emerald-600 text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 shadow-md">
+              <i class="fas fa-check-circle"></i>
+              Active
+            </button>
+
+            <!-- Delete Button -->
+            <button class="action-btn bg-white hover:bg-red-50 text-danger border border-gray-300 px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 shadow-sm ml-auto">
+              <i class="fas fa-trash-alt"></i>
+              Delete
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Related Content -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <i class="fas fa-th-large text-primary"></i>
+            Related Content
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            
+            <!-- Related Item 1 -->
+            <div class="related-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200">
+              <div class="aspect-video bg-gray-200 relative">
+                <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=400&h=225&fit=crop" 
+                     alt="Related video" 
+                     class="w-full h-full object-cover">
+                <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">8:45</span>
+              </div>
+              <div class="p-3">
+                <h4 class="font-medium text-sm text-gray-900 line-clamp-2 mb-2">Exploring Ancient Temples in Yogyakarta</h4>
+                <div class="flex items-center justify-between text-xs text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <i class="fas fa-eye"></i>
+                    8.2K
+                  </span>
+                  <span class="bg-info text-white px-2 py-0.5 rounded-full text-[10px]">Travel</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Related Item 2 -->
+            <div class="related-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200">
+              <div class="aspect-video bg-gray-200 relative">
+                <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400&h=225&fit=crop" 
+                     alt="Related video" 
+                     class="w-full h-full object-cover">
+                <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">15:20</span>
+              </div>
+              <div class="p-3">
+                <h4 class="font-medium text-sm text-gray-900 line-clamp-2 mb-2">Sunrise at Borobudur: A Spiritual Journey</h4>
+                <div class="flex items-center justify-between text-xs text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <i class="fas fa-eye"></i>
+                    15.7K
+                  </span>
+                  <span class="bg-info text-white px-2 py-0.5 rounded-full text-[10px]">Travel</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Related Item 3 -->
+            <div class="related-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200">
+              <div class="aspect-video bg-gray-200 relative">
+                <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?w=400&h=225&fit=crop" 
+                     alt="Related video" 
+                     class="w-full h-full object-cover">
+                <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">10:12</span>
+              </div>
+              <div class="p-3">
+                <h4 class="font-medium text-sm text-gray-900 line-clamp-2 mb-2">Traditional Balinese Dance Performance</h4>
+                <div class="flex items-center justify-between text-xs text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <i class="fas fa-eye"></i>
+                    6.1K
+                  </span>
+                  <span class="bg-info text-white px-2 py-0.5 rounded-full text-[10px]">Culture</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Related Item 4 -->
+            <div class="related-card bg-white rounded-lg overflow-hidden shadow-md cursor-pointer border border-gray-200">
+              <div class="aspect-video bg-gray-200 relative">
+                <img src="https://images.unsplash.com/photo-1596401057633-565652b8ddbe?w=400&h=225&fit=crop" 
+                     alt="Related video" 
+                     class="w-full h-full object-cover">
+                <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">6:30</span>
+              </div>
+              <div class="p-3">
+                <h4 class="font-medium text-sm text-gray-900 line-clamp-2 mb-2">Best Beaches in Nusa Penida</h4>
+                <div class="flex items-center justify-between text-xs text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <i class="fas fa-eye"></i>
+                    11.3K
+                  </span>
+                  <span class="bg-info text-white px-2 py-0.5 rounded-full text-[10px]">Travel</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-3 flex items-center justify-between text-xs text-gray-600">
+        <div class="flex items-center gap-4">
+          <span class="flex items-center gap-1">
+            <i class="fas fa-info-circle"></i>
+            Video ID: #12345
+          </span>
+          <span class="flex items-center gap-1">
+            <i class="fas fa-database"></i>
+            Source: YouTube
+          </span>
+        </div>
+        <div class="flex items-center gap-1">
+          <i class="fas fa-sync-alt"></i>
+          Last synced: 2 minutes ago
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    function toggleModal() {
+      const overlay = document.getElementById('modalOverlay');
+      overlay.classList.toggle('hidden');
+      
+      if (!overlay.classList.contains('hidden')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+
+    function closeModalOnClickOutside(event) {
+      if (event.target === document.getElementById('modalOverlay')) {
+        toggleModal();
+      }
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const overlay = document.getElementById('modalOverlay');
+        if (!overlay.classList.contains('hidden')) {
+          toggleModal();
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
