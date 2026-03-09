@@ -1,10 +1,10 @@
 /**
- * Videos Page - YouTube Style Grid Layout
+ * Videos Page - YouTube Style Grid Layout with Virtual Scrolling
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { videoService, channelService } from '@/services';
 import { useAuth } from '@/hooks/use-auth';
@@ -47,13 +47,157 @@ import {
 } from '@/components/ui/checkbox';
 import { Loader2, Plus, MoreHorizontal, Edit, Trash2, Search, ChevronLeft, ChevronRight, Clock, Upload, Eye } from 'lucide-react';
 import { toast } from 'sonner';
-import { VideoDetailModal } from '@/components/video-detail-modal';
-import { VideoPlayerModal } from '@/components/video-player-modal';
+import dynamic from 'next/dynamic';
 import { VideoPreviewCard } from '@/components/video-preview-card';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Video, Channel } from '@/types';
 import { formatDuration, formatDate } from '@/lib/utils';
 
+// Lazy load heavy modal components
+const VideoDetailModal = dynamic(
+  () => import('@/components/video-detail-modal').then((mod) => mod.VideoDetailModal),
+  { 
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    ),
+    ssr: false 
+  }
+);
+
+const VideoPlayerModal = dynamic(
+  () => import('@/components/video-player-modal').then((mod) => mod.VideoPlayerModal),
+  { 
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    ),
+    ssr: false 
+  }
+);
+
 const ITEMS_PER_PAGE = 20; // 5 columns x 4 rows
+const VIRTUAL_ROW_HEIGHT = 280; // Approximate height of each row including gap
+const VIRTUAL_COLS = 5; // Number of columns in grid
+
+/**
+ * VirtualGrid component for efficient rendering of large video lists
+ * Uses @tanstack/react-virtual for virtualization
+ */
+interface VirtualGridProps {
+  videos: Video[];
+  selectedVideos: Set<number>;
+  handleSelectVideo: (videoId: number) => void;
+  openDetailDialog: (video: Video) => void;
+  openEditDialog: (video: Video) => void;
+  openDeleteDialog: (video: Video) => void;
+  getVideoCategory: (video: Video) => string;
+}
+
+function VirtualGrid({
+  videos,
+  selectedVideos,
+  handleSelectVideo,
+  openDetailDialog,
+  openEditDialog,
+  openDeleteDialog,
+  getVideoCategory,
+}: VirtualGridProps) {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  // Virtualize the video list
+  const virtualizer = useVirtualizer({
+    count: videos.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => VIRTUAL_ROW_HEIGHT,
+    overscan: 3, // Render 3 items ahead/behind viewport
+  });
+
+  const virtualItems = virtualizer.getVirtualItems();
+
+  return (
+    <div
+      ref={parentRef}
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+      style={{
+        height: `${virtualizer.getTotalSize()}px`,
+        width: '100%',
+        overflow: 'auto',
+        contain: 'strict',
+      }}
+    >
+      {virtualItems.map((virtualRow) => {
+        const video = videos[virtualRow.index];
+        return (
+          <div
+            key={video.id}
+            data-index={virtualRow.index}
+            ref={virtualizer.measureElement}
+            className={`relative group ${selectedVideos.has(video.id) ? 'ring-2 ring-primary rounded-lg' : ''}`}
+            style={{
+              transform: `translateY(${virtualRow.start}px)`,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+            }}
+          >
+            {/* Selection checkbox */}
+            <div className="absolute top-2 left-2 z-10">
+              <Checkbox
+                checked={selectedVideos.has(video.id)}
+                onCheckedChange={() => handleSelectVideo(video.id)}
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`Select ${video.title}`}
+              />
+            </div>
+
+            {/* Actions menu on hover */}
+            <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-8 w-8 bg-black/80 hover:bg-black text-white"
+                    aria-label="More options"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => openDetailDialog(video)}>
+                    <Eye className="mr-2 h-4 w-4" />
+                    Detail
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => openEditDialog(video)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => openDeleteDialog(video)}
+                    className="text-destructive"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Video Preview Card with hover & click */}
+            <VideoPreviewCard 
+              video={video} 
+              category={getVideoCategory(video)}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function VideosPage() {
   const { isAuthenticated } = useAuth();
@@ -471,7 +615,7 @@ export default function VideosPage() {
         </div>
       ) : (
         <>
-          {/* Videos Grid - YouTube Style */}
+          {/* Videos Grid - YouTube Style with Virtual Scrolling */}
           <div className="space-y-4">
             {/* Select all checkbox */}
             <div className="flex items-center gap-2">
@@ -487,64 +631,16 @@ export default function VideosPage() {
               </label>
             </div>
 
-            {/* Grid - 5 columns x 4 rows per page */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {videos.map((video: Video) => (
-                <div
-                  key={video.id}
-                  className={`relative group ${selectedVideos.has(video.id) ? 'ring-2 ring-primary rounded-lg' : ''}`}
-                >
-                  {/* Selection checkbox */}
-                  <div className="absolute top-2 left-2 z-10">
-                    <Checkbox
-                      checked={selectedVideos.has(video.id)}
-                      onCheckedChange={() => handleSelectVideo(video.id)}
-                      onClick={(e) => e.stopPropagation()}
-                      aria-label={`Select ${video.title}`}
-                    />
-                  </div>
-
-                  {/* Actions menu on hover */}
-                  <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="h-8 w-8 bg-black/80 hover:bg-black text-white"
-                          aria-label="More options"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => openDetailDialog(video)}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Detail
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => openEditDialog(video)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => openDeleteDialog(video)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  {/* Video Preview Card with hover & click */}
-                  <VideoPreviewCard 
-                    video={video} 
-                    category={getVideoCategory(video)}
-                  />
-                </div>
-              ))}
-            </div>
+            {/* Virtual Scrolling Grid Container */}
+            <VirtualGrid
+              videos={videos}
+              selectedVideos={selectedVideos}
+              handleSelectVideo={handleSelectVideo}
+              openDetailDialog={openDetailDialog}
+              openEditDialog={openEditDialog}
+              openDeleteDialog={openDeleteDialog}
+              getVideoCategory={getVideoCategory}
+            />
           </div>
 
           {/* Pagination */}

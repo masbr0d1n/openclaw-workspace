@@ -1,5 +1,6 @@
 /**
- * ThumbnailImage component with fallback
+ * ThumbnailImage component with fallback and lazy loading
+ * Uses Next.js Image component for optimized image loading
  */
 
 'use client';
@@ -13,6 +14,7 @@ interface ThumbnailImageProps {
   className?: string;
   width?: number;
   height?: number;
+  priority?: boolean; // For above-the-fold images
 }
 
 export function ThumbnailImage({ 
@@ -20,16 +22,44 @@ export function ThumbnailImage({
   alt, 
   className = '', 
   width = 320, 
-  height = 180 
+  height = 180,
+  priority = false
 }: ThumbnailImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
   const handleError = () => {
-    if (!hasError) {
-      setHasError(true);
-      // Use placeholder gradient
-      setImgSrc(`data:image/svg+xml,${encodeURIComponent(`
+    setHasError(true);
+  };
+
+  // If error occurred, render placeholder
+  if (hasError) {
+    return (
+      <div 
+        className={className}
+        style={{ 
+          width, 
+          height,
+          background: 'linear-gradient(135deg, #374151 0%, #1f2937 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <span className="text-4xl">🎬</span>
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      className={className}
+      width={width}
+      height={height}
+      loading={priority ? 'eager' : 'lazy'}
+      placeholder="blur"
+      blurDataURL={`data:image/svg+xml,${encodeURIComponent(`
         <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -38,22 +68,12 @@ export function ThumbnailImage({
             </linearGradient>
           </defs>
           <rect width="100%" height="100%" fill="url(#grad)" />
-          <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#9ca3af" text-anchor="middle" dy=".3em">
-            🎬
-          </text>
         </svg>
-      `)}`);
-    }
-  };
-
-  return (
-    <img
-      src={imgSrc}
-      alt={alt}
-      className={className}
-      width={width}
-      height={height}
+      `)}`}
       onError={handleError}
+      style={{
+        objectFit: 'cover',
+      }}
     />
   );
 }

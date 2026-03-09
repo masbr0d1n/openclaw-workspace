@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Play, Clock, Eye } from 'lucide-react';
 import { formatDuration, formatViewCount } from '@/lib/utils';
 import { VideoPlayerModal } from './video-player-modal';
+import { ThumbnailImage } from './thumbnail-image';
 import type { Video as VideoType } from '@/types';
 
 interface VideoPreviewCardProps {
@@ -83,14 +84,16 @@ export function VideoPreviewCard({ video, category }: VideoPreviewCardProps) {
         <div className="relative aspect-video bg-muted rounded-lg overflow-hidden">
           {hasLocalVideo ? (
             <>
-              {/* Static thumbnail */}
-              <img
-                src={getThumbnailUrl()}
-                alt={video.title}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                  isHovered ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
+              {/* Static thumbnail with lazy loading */}
+              <div className={`absolute inset-0 transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+                <ThumbnailImage
+                  src={getThumbnailUrl()}
+                  alt={video.title}
+                  width={320}
+                  height={180}
+                  className="w-full h-full"
+                />
+              </div>
               
               {/* Video preview on hover */}
               <video
@@ -108,11 +111,13 @@ export function VideoPreviewCard({ video, category }: VideoPreviewCardProps) {
               />
             </>
           ) : (
-            // YouTube thumbnail (static)
-            <img
+            // YouTube thumbnail with lazy loading
+            <ThumbnailImage
               src={getThumbnailUrl()}
               alt={video.title}
-              className="w-full h-full object-cover"
+              width={320}
+              height={180}
+              className="w-full h-full"
             />
           )}
 

@@ -1,5 +1,5 @@
 /**
- * ThumbnailImage component with fallback
+ * ThumbnailImage component with lazy loading and blur placeholder
  */
 
 'use client';
@@ -13,6 +13,7 @@ interface ThumbnailImageProps {
   className?: string;
   width?: number;
   height?: number;
+  priority?: boolean; // For above-the-fold images
 }
 
 export function ThumbnailImage({ 
@@ -20,40 +21,63 @@ export function ThumbnailImage({
   alt, 
   className = '', 
   width = 320, 
-  height = 180 
+  height = 180,
+  priority = false
 }: ThumbnailImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Generate a blur data URL for placeholder
+  const blurPlaceholder = `data:image/svg+xml;base64,${btoa(`
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#374151;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#1f2937;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grad)" />
+    </svg>
+  `)}`;
 
   const handleError = () => {
-    if (!hasError) {
-      setHasError(true);
-      // Use placeholder gradient
-      setImgSrc(`data:image/svg+xml,${encodeURIComponent(`
-        <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#374151;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#1f2937;stop-opacity:1" />
-            </linearGradient>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grad)" />
-          <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#9ca3af" text-anchor="middle" dy=".3em">
-            🎬
-          </text>
-        </svg>
-      `)}`);
-    }
+    setHasError(true);
   };
 
+  const handleLoad = () => {
+    setIsLoaded(true);
+  };
+
+  // If error, show fallback
+  if (hasError) {
+    return (
+      <div 
+        className={className} 
+        style={{ width, height, backgroundColor: '#374151' }}
+      >
+        <div className="w-full h-full flex items-center justify-center text-gray-500">
+          🎬
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <img
-      src={imgSrc}
-      alt={alt}
-      className={className}
-      width={width}
-      height={height}
-      onError={handleError}
-    />
+    <div className={`relative overflow-hidden ${className}`} style={{ width, height }}>
+      <Image
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={priority ? 'eager' : 'lazy'}
+        placeholder="blur"
+        blurDataURL={blurPlaceholder}
+        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        onError={handleError}
+        onLoad={handleLoad}
+        priority={priority}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+      />
+    </div>
   );
 }

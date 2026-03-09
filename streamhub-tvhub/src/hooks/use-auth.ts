@@ -166,7 +166,8 @@ export function useAuth() {
       if (response.status) {
         console.log('✅ User authenticated:', response.data);
         setUser(response.data);
-        setAccessToken(token);
+        // Token is in httpOnly cookie, not accessible from JavaScript
+        setAccessToken(null);
       } else {
         console.log('❌ Invalid token, logging out');
         logout();

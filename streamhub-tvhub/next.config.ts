@@ -1,4 +1,9 @@
 import type { NextConfig } from "next";
+import analyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = analyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const nextConfig: NextConfig = {
   output: 'standalone', // For Docker deployment
@@ -14,6 +19,16 @@ const nextConfig: NextConfig = {
       ],
     };
   },
+  // Image optimization configuration
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    unoptimized: false,
+  },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

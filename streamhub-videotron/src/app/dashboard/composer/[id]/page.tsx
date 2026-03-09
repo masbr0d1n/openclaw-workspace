@@ -1,19 +1,33 @@
 /**
  * Layout Editor Page
- * Full-screen layout editor with LayoutBuilder component
+ * Full-screen layout editor with LayoutBuilder component (lazy loaded)
  * TASK-B7: Integrated with Layouts API
+ * PERFORMANCE: Code splitting with dynamic import
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { layoutService } from '@/services';
-import LayoutBuilder from '@/components/composer/LayoutBuilder';
+import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Layout } from '@/types';
+
+// Lazy load LayoutBuilder for code splitting
+const LayoutBuilder = dynamic(
+  () => import('@/components/composer/LayoutBuilder'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    ),
+    ssr: false, // LayoutBuilder is client-only
+  }
+);
 
 export default function LayoutEditorPage() {
   const params = useParams();
@@ -65,12 +79,18 @@ export default function LayoutEditorPage() {
   }
 
   return (
-    <LayoutBuilder
-      layoutId={layoutId === 'new' ? undefined : layoutId}
-      initialLayout={layout || undefined}
-      onSave={handleSave}
-      onCancel={handleCancel}
-      mode="edit"
-    />
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    }>
+      <LayoutBuilder
+        layoutId={layoutId === 'new' ? undefined : layoutId}
+        initialLayout={layout || undefined}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        mode="edit"
+      />
+    </Suspense>
   );
 }
