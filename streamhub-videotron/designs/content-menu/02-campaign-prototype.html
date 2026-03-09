@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign UI/UX Prototype - Videotron</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .breadcrumb {
+            color: var(--gray-600);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-draft {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .badge-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .badge-active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-completed {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .badge-archived {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--gray-700);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Campaign Card */
+        .campaign-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .campaign-card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .campaign-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .campaign-card-body {
+            padding: 16px;
+        }
+
+        .campaign-card-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .campaign-card-footer {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 500;
+            color: var(--gray-600);
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gray-200);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            background: var(--gray-50);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        /* Schedule Visualizer */
+        .schedule-visualizer {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .schedule-bar {
+            height: 40px;
+            background: var(--gray-200);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .schedule-bar-active {
+            position: absolute;
+            left: 20%;
+            width: 60%;
+            height: 100%;
+            background: var(--success);
+            opacity: 0.7;
+        }
+
+        .schedule-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Prototype Sections */
+        .prototype-section {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 2px dashed var(--gray-300);
+        }
+
+        .prototype-label {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">Videotron / Content / Campaigns</div>
+                <h1>Campaign Management</h1>
+            </div>
+            <button class="btn btn-primary">+ New Campaign</button>
+        </div>
+
+        <!-- TASK-003: Campaign UI/UX Prototype -->
+        
+        <!-- SECTION 1: Campaign List View -->
+        <div class="prototype-section">
+            <span class="prototype-label">TASK-003.1 - Campaign List View</span>
+            <div class="section-header">
+                <h2>All Campaigns</h2>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search campaigns...">
+                <select class="filter-select">
+                    <option>All Status</option>
+                    <option>Draft</option>
+                    <option>Pending Approval</option>
+                    <option>Active</option>
+                    <option>Completed</option>
+                    <option>Archived</option>
+                </select>
+                <select class="filter-select">
+                    <option>All Displays</option>
+                    <option>Store-Front-01</option>
+                    <option>Store-Front-02</option>
+                    <option>Lobby-Display</option>
+                </select>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Campaigns</div>
+                    <div class="stat-value">24</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Now</div>
+                    <div class="stat-value">5</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Approval</div>
+                    <div class="stat-value">3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">This Month</div>
+                    <div class="stat-value">8</div>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Campaign Name</th>
+                            <th>Status</th>
+                            <th>Displays</th>
+                            <th>Duration</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>Spring Promotion 2026</strong><br>
+                                <small style="color: var(--gray-600);">Layout: Spring Promo Layout v1</small>
+                            </td>
+                            <td><span class="badge badge-active">Active</span></td>
+                            <td>Store-Front-01, Store-Front-02</td>
+                            <td>Mar 15 - Apr 15, 2026</td>
+                            <td>Mar 10, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-secondary">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Product Launch Q2</strong><br>
+                                <small style="color: var(--gray-600);">Layout: Product Showcase</small>
+                            </td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                            <td>Lobby-Display</td>
+                            <td>Apr 1 - Apr 30, 2026</td>
+                            <td>Mar 12, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-primary">Submit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Weekend Special</strong><br>
+                                <small style="color: var(--gray-600);">Layout: Simple Text</small>
+                            </td>
+                            <td><span class="badge badge-draft">Draft</span></td>
+                            <td>Store-Front-01</td>
+                            <td>Mar 14 - Mar 15, 2026</td>
+                            <td>Mar 13, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-primary">Edit</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Holiday Sale 2025</strong><br>
+                                <small style="color: var(--gray-600);">Layout: Holiday Theme</small>
+                            </td>
+                            <td><span class="badge badge-archived">Archived</span></td>
+                            <td>All Displays</td>
+                            <td>Dec 1 - Dec 31, 2025</td>
+                            <td>Nov 15, 2025</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-success">Restore</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Campaign Creation Form -->
+        <div class="prototype-section">
+            <span class="prototype-label">TASK-003.2 - Campaign Creation Form</span>
+            <div class="section-header">
+                <h2>Create New Campaign</h2>
+            </div>
+
+            <div class="card">
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Campaign Name *</label>
+                        <input type="text" class="form-input" placeholder="e.g., Spring Promotion 2026">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" placeholder="Describe the campaign purpose, goals, and any important notes..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Select Layout *</label>
+                            <select class="form-select">
+                                <option>Choose a layout...</option>
+                                <option>Spring Promo Layout v1</option>
+                                <option>Product Showcase</option>
+                                <option>Simple Text</option>
+                                <option>Holiday Theme</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Campaign Owner</label>
+                            <select class="form-select">
+                                <option>Current User</option>
+                                <option>John Doe</option>
+                                <option>Jane Smith</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Target Displays *</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox"> Store-Front-01
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox"> Store-Front-02
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox"> Lobby-Display
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox"> Cafeteria-Screen
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox"> Reception-Desk
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" checked> All Displays
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Schedule</label>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label" style="font-size: 13px;">Start Date & Time</label>
+                                <input type="datetime-local" class="form-input" value="2026-03-15T00:00">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size: 13px;">End Date & Time</label>
+                                <input type="datetime-local" class="form-input" value="2026-04-15T23:59">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Active Hours</label>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label" style="font-size: 13px;">Start Time</label>
+                                <input type="time" class="form-input" value="08:00">
+                            </div>
+                            <div>
+                                <label class="form-label" style="font-size: 13px;">End Time</label>
+                                <input type="time" class="form-input" value="22:00">
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+                                <input type="checkbox" checked> Monday
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+                                <input type="checkbox" checked> Tuesday
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+                                <input type="checkbox" checked> Wednesday
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+                                <input type="checkbox" checked> Thursday
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+                                <input type="checkbox" checked> Friday
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+                                <input type="checkbox"> Saturday
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox"> Sunday
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="schedule-visualizer">
+                        <div style="font-weight: 600; margin-bottom: 12px;">Schedule Preview</div>
+                        <div class="schedule-bar">
+                            <div class="schedule-bar-active"></div>
+                        </div>
+                        <div class="schedule-labels">
+                            <span>00:00</span>
+                            <span>Active: 08:00 - 22:00</span>
+                            <span>23:59</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Attachments</label>
+                        <div style="border: 2px dashed var(--gray-300); border-radius: 6px; padding: 24px; text-align: center; color: var(--gray-600);">
+                            <div style="margin-bottom: 8px;">📁</div>
+                            <div>Drag and drop files here, or <a href="#" style="color: var(--primary);">browse</a></div>
+                            <small>Supports: PDF, DOC, images (max 10MB)</small>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button type="button" class="btn btn-secondary">Save as Draft</button>
+                        <button type="button" class="btn btn-primary">Submit for Approval</button>
+                        <button type="button" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Campaign Detail View -->
+        <div class="prototype-section">
+            <span class="prototype-label">TASK-003.3 - Campaign Detail View</span>
+            <div class="section-header">
+                <h2>Campaign Details: Spring Promotion 2026</h2>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active">Overview</div>
+                <div class="tab">Schedule</div>
+                <div class="tab">Content</div>
+                <div class="tab">Analytics</div>
+                <div class="tab">History</div>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 2fr 1fr;">
+                <div>
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                            <div>
+                                <h3 style="margin-bottom: 8px;">Spring Promotion 2026</h3>
+                                <span class="badge badge-active">Active</span>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-sm btn-secondary">Edit</button>
+                                <button class="btn btn-sm btn-secondary">Duplicate</button>
+                                <button class="btn btn-sm btn-danger">Stop</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <p style="color: var(--gray-700);">
+                                Q1 2026 spring promotion campaign featuring new product lineup. 
+                                Focus on outdoor and garden products with seasonal messaging.
+                            </p>
+                        </div>
+
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">Layout</label>
+                                <div style="padding: 12px; background: var(--gray-50); border-radius: 6px;">
+                                    <strong>Spring Promo Layout v1</strong><br>
+                                    <small style="color: var(--gray-600);">Split Screen (70/30)</small>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="form-label">Owner</label>
+                                <div style="padding: 12px; background: var(--gray-50); border-radius: 6px;">
+                                    <strong>John Doe</strong><br>
+                                    <small style="color: var(--gray-600);">Content Manager</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 16px;">
+                            <label class="form-label">Target Displays</label>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span class="badge badge-active">Store-Front-01</span>
+                                <span class="badge badge-active">Store-Front-02</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="margin-bottom: 16px;">Content Preview</h4>
+                        <div style="background: var(--gray-900); border-radius: 6px; padding: 24px; text-align: center; color: white;">
+                            <div style="aspect-ratio: 16/9; background: var(--gray-700); border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                <div>
+                                    <div style="font-size: 48px; margin-bottom: 8px;">🌸</div>
+                                    <div style="font-size: 24px; font-weight: 600;">Spring Sale 2026</div>
+                                    <div style="font-size: 16px; opacity: 0.8;">Up to 50% Off</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 12px; font-size: 13px; color: var(--gray-300);">
+                                Preview: 1920x1080 • Layout: Split Screen
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h4 style="margin-bottom: 16px;">Schedule Summary</h4>
+                        <div style="margin-bottom: 16px;">
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Duration</div>
+                            <div style="font-weight: 600;">Mar 15 - Apr 15, 2026</div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Active Hours</div>
+                            <div style="font-weight: 600;">08:00 - 22:00</div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Active Days</div>
+                            <div style="font-weight: 600;">Mon - Fri</div>
+                        </div>
+                        <div style="margin-bottom: 16px;">
+                            <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 4px;">Time Remaining</div>
+                            <div style="font-weight: 600; color: var(--success);">37 days</div>
+                        </div>
+
+                        <div class="schedule-visualizer" style="margin-top: 16px;">
+                            <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Timeline</div>
+                            <div class="schedule-bar">
+                                <div class="schedule-bar-active" style="left: 10%; width: 40%;"></div>
+                            </div>
+                            <div class="schedule-labels">
+                                <span>Mar 15</span>
+                                <span>Now</span>
+                                <span>Apr 15</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="margin-bottom: 16px;">Quick Stats</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div style="text-align: center; padding: 12px; background: var(--gray-50); border-radius: 6px;">
+                                <div style="font-size: 24px; font-weight: 700; color: var(--primary);">1,247</div>
+                                <div style="font-size: 12px; color: var(--gray-600);">Plays</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--gray-50); border-radius: 6px;">
+                                <div style="font-size: 24px; font-weight: 700; color: var(--success);">99.8%</div>
+                                <div style="font-size: 12px; color: var(--gray-600);">Uptime</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: Campaign Scheduling -->
+        <div class="prototype-section" style="border-bottom: none;">
+            <span class="prototype-label">TASK-003.4 - Campaign Scheduling Interface</span>
+            <div class="section-header">
+                <h2>Campaign Scheduling</h2>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label">Scheduling Mode</label>
+                    <div style="display: flex; gap: 16px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="schedule-mode" checked> Simple (Start/End)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="schedule-mode"> Advanced (Recurring)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="schedule-mode"> Instant (Now)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Calendar View</label>
+                    <div style="border: 1px solid var(--gray-200); border-radius: 6px; padding: 20px; min-height: 400px;">
+                        <!-- Simplified Calendar Mockup -->
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 16px;">
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Sun</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Mon</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Tue</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Wed</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Thu</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Fri</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--gray-600);">Sat</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                            <!-- March 2026 Mockup -->
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">1</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">2</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">3</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">4</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">5</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">6</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">7</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">8</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">9</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">10</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">11</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">12</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">13</div>
+                            <div style="padding: 8px; border: 1px solid var(--gray-200); border-radius: 4px; min-height: 80px; opacity: 0.5;">14</div>
+                            <div style="padding: 8px; border: 2px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">
+                                <strong>15</strong><br>
+                                <small style="color: var(--success);">Spring Promo</small>
+                            </div>
+                            <div style="padding: 8px; border: 1px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">
+                                <strong>16</strong><br>
+                                <small style="color: var(--success);">Spring Promo</small>
+                            </div>
+                            <div style="padding: 8px; border: 1px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">17</div>
+                            <div style="padding: 8px; border: 1px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">18</div>
+                            <div style="padding: 8px; border: 1px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">19</div>
+                            <div style="padding: 8px; border: 1px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">20</div>
+                            <div style="padding: 8px; border: 1px solid var(--success); border-radius: 4px; min-height: 80px; background: #D1FAE5;">21</div>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; gap: 16px; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 16px; height: 16px; background: var(--success); border-radius: 4px;"></div>
+                                <span style="font-size: 13px;">Active Campaign</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 16px; height: 16px; background: var(--warning); border-radius: 4px;"></div>
+                                <span style="font-size: 13px;">Scheduled</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 16px; height: 16px; background: var(--gray-300); border-radius: 4px;"></div>
+                                <span style="font-size: 13px;">Available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Conflict Detection</label>
+                    <div style="padding: 12px; background: #FEF3C7; border: 1px solid var(--warning); border-radius: 6px; color: #92400E;">
+                        <strong>⚠️ Schedule Conflict Detected</strong><br>
+                        <small>
+                            "Weekend Special" campaign overlaps on Store-Front-01 (Mar 14-15). 
+                            <a href="#" style="color: #92400E; text-decoration: underline;">View conflict details</a>
+                        </small>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-primary">Save Schedule</button>
+                    <button class="btn btn-secondary">Check Availability</button>
+                    <button class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--gray-200); text-align: center; color: var(--gray-600); font-size: 13px;">
+            <strong>Campaign UI/UX Prototype - TASK-003 Complete</strong><br>
+            Includes: List View, Creation Form, Detail View, Scheduling Interface<br>
+            Designed for: Videotron Content Management System
+        </div>
+    </div>
+</body>
+</html>

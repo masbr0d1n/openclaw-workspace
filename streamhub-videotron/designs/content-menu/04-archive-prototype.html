@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive UI/UX Prototype - Videotron</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .breadcrumb {
+            color: var(--gray-600);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-archived {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .badge-expiring {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .badge-permanent {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            min-width: 180px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Archive Card */
+        .archive-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-top: 4px solid var(--gray-300);
+        }
+
+        .archive-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .archive-card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .archive-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .archive-card-body {
+            padding: 16px;
+        }
+
+        .archive-card-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .archive-card-footer {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--gray-700);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .alert-warning {
+            background: #FEF3C7;
+            border: 1px solid var(--warning);
+            color: #92400E;
+        }
+
+        .alert-danger {
+            background: #FEE2E2;
+            border: 1px solid var(--danger);
+            color: #991B1B;
+        }
+
+        .alert-info {
+            background: #DBEAFE;
+            border: 1px solid var(--info);
+            color: #1E40AF;
+        }
+
+        /* Storage Bar */
+        .storage-bar {
+            height: 24px;
+            background: var(--gray-200);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .storage-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--warning));
+            border-radius: 12px;
+            transition: width 0.3s;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--gray-100);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--gray-700);
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Prototype Sections */
+        .prototype-section {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 2px dashed var(--gray-300);
+        }
+
+        .prototype-label {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        /* Checkbox List */
+        .checkbox-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: var(--gray-100);
+        }
+
+        /* Storage Info */
+        .storage-info {
+            background: var(--gray-50);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .storage-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .storage-label {
+            color: var(--gray-600);
+        }
+
+        .storage-value {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">Videotron / Content / Archive</div>
+                <h1>Content Archive</h1>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="storage-info" style="margin: 0; min-width: 250px;">
+                    <div class="storage-stats">
+                        <span class="storage-label">Storage Used</span>
+                        <span class="storage-value">2.4 GB / 10 GB</span>
+                    </div>
+                    <div class="storage-bar">
+                        <div class="storage-bar-fill" style="width: 24%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TASK-005: Archive UI/UX Prototype -->
+        
+        <!-- SECTION 1: Archived Content List -->
+        <div class="prototype-section">
+            <span class="prototype-label">TASK-005.1 - Archived Content List</span>
+            <div class="section-header">
+                <h2>Archived Campaigns</h2>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search archived content...">
+                <select class="filter-select">
+                    <option>All Content Types</option>
+                    <option>Campaigns</option>
+                    <option>Playlists</option>
+                    <option>Layouts</option>
+                    <option>Media Files</option>
+                </select>
+                <select class="filter-select">
+                    <option>All Date Ranges</option>
+                    <option>Last 30 Days</option>
+                    <option>Last 3 Months</option>
+                    <option>Last 6 Months</option>
+                    <option>Last Year</option>
+                    <option>Older</option>
+                </select>
+                <select class="filter-select">
+                    <option>All Statuses</option>
+                    <option>Auto-Archived</option>
+                    <option>Manually Archived</option>
+                    <option>Expiring Soon</option>
+                </select>
+                <button class="btn btn-secondary">Advanced Filters</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Archived</div>
+                    <div class="stat-value">156</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Storage Used</div>
+                    <div class="stat-value" style="color: var(--info);">2.4 GB</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Expiring Soon</div>
+                    <div class="stat-value" style="color: var(--warning);">8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Restored (30d)</div>
+                    <div class="stat-value" style="color: var(--success);">12</div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <!-- Archive Card 1 -->
+                <div class="archive-card">
+                    <div class="archive-card-header">
+                        <div class="archive-card-title">Holiday Sale 2025</div>
+                        <span class="badge badge-archived">Auto-Archived</span>
+                    </div>
+                    <div class="archive-card-body">
+                        <div class="archive-card-meta">
+                            <span>Dec 1-31, 2025</span>
+                            <span>Archived: Jan 1, 2026</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Type:</strong> Campaign<br>
+                            <strong>Displays:</strong> All Displays<br>
+                            <strong>Size:</strong> 245 MB
+                        </div>
+                        <div>
+                            <span class="tag">holiday</span>
+                            <span class="tag">sale</span>
+                            <span class="tag">2025</span>
+                        </div>
+                    </div>
+                    <div class="archive-card-footer">
+                        <button class="btn btn-sm btn-secondary">Preview</button>
+                        <button class="btn btn-sm btn-success">Restore</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Archive Card 2 -->
+                <div class="archive-card">
+                    <div class="archive-card-header">
+                        <div class="archive-card-title">Black Friday Promo</div>
+                        <span class="badge badge-archived">Auto-Archived</span>
+                    </div>
+                    <div class="archive-card-body">
+                        <div class="archive-card-meta">
+                            <span>Nov 24-27, 2025</span>
+                            <span>Archived: Nov 28, 2025</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Type:</strong> Campaign<br>
+                            <strong>Displays:</strong> Store-Front-01, 02<br>
+                            <strong>Size:</strong> 189 MB
+                        </div>
+                        <div>
+                            <span class="tag">black-friday</span>
+                            <span class="tag">promo</span>
+                            <span class="tag">2025</span>
+                        </div>
+                    </div>
+                    <div class="archive-card-footer">
+                        <button class="btn btn-sm btn-secondary">Preview</button>
+                        <button class="btn btn-sm btn-success">Restore</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Archive Card 3 -->
+                <div class="archive-card" style="border-top-color: var(--warning);">
+                    <div class="archive-card-header">
+                        <div class="archive-card-title">Summer Campaign 2025</div>
+                        <span class="badge badge-expiring">Expiring in 7 days</span>
+                    </div>
+                    <div class="archive-card-body">
+                        <div class="archive-card-meta">
+                            <span>Jun 1-Aug 31, 2025</span>
+                            <span>Archived: Sep 1, 2025</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Type:</strong> Campaign<br>
+                            <strong>Displays:</strong> All Displays<br>
+                            <strong>Size:</strong> 412 MB
+                        </div>
+                        <div>
+                            <span class="tag">summer</span>
+                            <span class="tag">seasonal</span>
+                            <span class="tag">2025</span>
+                        </div>
+                        <div class="alert alert-warning" style="margin-top: 12px; padding: 8px; font-size: 12px;">
+                            ⚠️ Will be permanently deleted on Mar 16, 2026
+                        </div>
+                    </div>
+                    <div class="archive-card-footer">
+                        <button class="btn btn-sm btn-secondary">Preview</button>
+                        <button class="btn btn-sm btn-success">Restore</button>
+                        <button class="btn btn-sm btn-primary">Extend</button>
+                    </div>
+                </div>
+
+                <!-- Archive Card 4 -->
+                <div class="archive-card">
+                    <div class="archive-card-header">
+                        <div class="archive-card-title">Product Launch Q1</div>
+                        <span class="badge badge-archived">Manually Archived</span>
+                    </div>
+                    <div class="archive-card-body">
+                        <div class="archive-card-meta">
+                            <span>Jan 15-Feb 28, 2025</span>
+                            <span>Archived: Mar 5, 2025</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Type:</strong> Campaign<br>
+                            <strong>Displays:</strong> Lobby-Display<br>
+                            <strong>Size:</strong> 156 MB
+                        </div>
+                        <div>
+                            <span class="tag">product-launch</span>
+                            <span class="tag">Q1</span>
+                            <span class="tag">2025</span>
+                        </div>
+                    </div>
+                    <div class="archive-card-footer">
+                        <button class="btn btn-sm btn-secondary">Preview</button>
+                        <button class="btn btn-sm btn-success">Restore</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Archive Card 5 -->
+                <div class="archive-card">
+                    <div class="archive-card-header">
+                        <div class="archive-card-title">Valentine's Day Special</div>
+                        <span class="badge badge-archived">Auto-Archived</span>
+                    </div>
+                    <div class="archive-card-body">
+                        <div class="archive-card-meta">
+                            <span>Feb 10-15, 2025</span>
+                            <span>Archived: Feb 16, 2025</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Type:</strong> Campaign<br>
+                            <strong>Displays:</strong> Store-Front-01<br>
+                            <strong>Size:</strong> 98 MB
+                        </div>
+                        <div>
+                            <span class="tag">valentines</span>
+                            <span class="tag">seasonal</span>
+                            <span class="tag">2025</span>
+                        </div>
+                    </div>
+                    <div class="archive-card-footer">
+                        <button class="btn btn-sm btn-secondary">Preview</button>
+                        <button class="btn btn-sm btn-success">Restore</button>
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Archive Card 6 -->
+                <div class="archive-card">
+                    <div class="archive-card-header">
+                        <div class="archive-card-title">New Year 2025</div>
+                        <span class="badge badge-permanent">Permanent Archive</span>
+                    </div>
+                    <div class="archive-card-body">
+                        <div class="archive-card-meta">
+                            <span>Dec 28-Jan 2, 2025</span>
+                            <span>Archived: Jan 3, 2025</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Type:</strong> Campaign<br>
+                            <strong>Displays:</strong> All Displays<br>
+                            <strong>Size:</strong> 287 MB
+                        </div>
+                        <div>
+                            <span class="tag">new-year</span>
+                            <span class="tag">2025</span>
+                            <span class="tag">permanent</span>
+                        </div>
+                    </div>
+                    <div class="archive-card-footer">
+                        <button class="btn btn-sm btn-secondary">Preview</button>
+                        <button class="btn btn-sm btn-success">Restore</button>
+                        <button class="btn btn-sm btn-secondary">Export</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Table View -->
+            <div class="card" style="margin-top: 24px;">
+                <h3 style="margin-bottom: 16px;">All Archived Content</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Original Duration</th>
+                            <th>Archived Date</th>
+                            <th>Size</th>
+                            <th>Expires</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Holiday Sale 2025</strong></td>
+                            <td>Campaign</td>
+                            <td>Dec 1-31, 2025</td>
+                            <td>Jan 1, 2026</td>
+                            <td>245 MB</td>
+                            <td>Jul 1, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-success">Restore</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Black Friday Promo</strong></td>
+                            <td>Campaign</td>
+                            <td>Nov 24-27, 2025</td>
+                            <td>Nov 28, 2025</td>
+                            <td>189 MB</td>
+                            <td>May 28, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-success">Restore</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Summer Campaign 2025</strong></td>
+                            <td>Campaign</td>
+                            <td>Jun 1-Aug 31, 2025</td>
+                            <td>Sep 1, 2025</td>
+                            <td>412 MB</td>
+                            <td style="color: var(--warning); font-weight: 600;">Mar 16, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-primary">Extend</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spring Promo Layout v1</strong></td>
+                            <td>Layout</td>
+                            <td>Mar 1-Apr 30, 2025</td>
+                            <td>May 1, 2025</td>
+                            <td>12 MB</td>
+                            <td>Nov 1, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-success">Restore</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q1 Product Playlist</strong></td>
+                            <td>Playlist</td>
+                            <td>Jan 1-Mar 31, 2025</td>
+                            <td>Apr 1, 2025</td>
+                            <td>45 MB</td>
+                            <td>Oct 1, 2026</td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary">View</button>
+                                <button class="btn btn-sm btn-success">Restore</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Search & Filter -->
+        <div class="prototype-section">
+            <span class="prototype-label">TASK-005.2 - Search & Filter Interface</span>
+            <div class="section-header">
+                <h2>Advanced Search & Filter</h2>
+            </div>
+
+            <div class="card">
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Search Keywords</label>
+                        <input type="text" class="form-input" placeholder="Search by name, description, tags, or content...">
+                        <small style="color: var(--gray-600);">Supports boolean operators: AND, OR, NOT (e.g., "holiday AND sale")</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Content Type</label>
+                            <div class="checkbox-list">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> Campaigns
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> Playlists
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" checked> Layouts
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Media Files
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Feeds
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Approvals
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date Range</label>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div>
+                                    <label class="form-label" style="font-size: 13px;">Archived From</label>
+                                    <input type="date" class="form-input" value="2025-01-01">
+                                </div>
+                                <div>
+                                    <label class="form-label" style="font-size: 13px;">Archived To</label>
+                                    <input type="date" class="form-input" value="2026-03-09">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Original Campaign Duration</label>
+                            <div style="display: flex; gap: 12px;">
+                                <input type="date" class="form-input" placeholder="Start date">
+                                <span style="align-self: center;">to</span>
+                                <input type="date" class="form-input" placeholder="End date">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Archive Status</label>
+                            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Auto-Archived
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Manually Archived
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox"> Expiring Soon
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox"> Permanent
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tags</label>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span class="tag" style="cursor: pointer;">+ holiday</span>
+                            <span class="tag" style="cursor: pointer;">+ sale</span>
+                            <span class="tag" style="cursor: pointer;">+ seasonal</span>
+                            <span class="tag" style="cursor: pointer;">+ product-launch</span>
+                            <span class="tag" style="cursor: pointer;">+ promo</span>
+                            <span class="tag" style="cursor: pointer;">+ 2025</span>
+                            <span class="tag" style="cursor: pointer;">+ 2026</span>
+                            <input type="text" class="form-input" placeholder="Add custom tag..." style="flex: 1; min-width: 150px; padding: 4px 10px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Target Displays</label>
+                        <select class="form-select" multiple style="min-height: 100px;">
+                            <option>Store-Front-01</option>
+                            <option>Store-Front-02</option>
+                            <option>Lobby-Display</option>
+                            <option>Cafeteria-Screen</option>
+                            <option>Reception-Desk</option>
+                            <option>All Displays</option>
+                        </select>
+                        <small style="color: var(--gray-600);">Hold Ctrl/Cmd to select multiple</small>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <button type="button" class="btn btn-primary">Apply Filters</button>
+                        <button type="button" class="btn btn-secondary">Clear All</button>
+                        <button type="button" class="btn btn-secondary">Save Filter Preset</button>
+                        <span style="color: var(--gray-600); font-size: 14px;">156 results found</span>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">Saved Filter Presets</h3>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary">📅 Last Quarter</button>
+                    <button class="btn btn-secondary">🎄 Holiday Campaigns</button>
+                    <button class="btn btn-secondary">⚠️ Expiring Soon</button>
+                    <button class="btn btn-secondary">🏪 Store Front Only</button>
+                    <button class="btn btn-secondary">💾 Large Files (>100MB)</button>
+                    <button class="btn btn-primary">+ Save Current Filter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Restore Functionality -->
+        <div class="prototype-section">
+            <span class="prototype-label">TASK-005.3 - Restore Functionality</span>
+            <div class="section-header">
+                <h2>Restore Archived Content</h2>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Restore as New Campaign</h3>
+                    <div class="alert alert-info">
+                        ℹ️ This creates a copy of the archived campaign. The original archive remains unchanged.
+                    </div>
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">New Campaign Name *</label>
+                            <input type="text" class="form-input" value="Holiday Sale 2026" placeholder="e.g., Holiday Sale 2026">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Campaign Owner</label>
+                            <select class="form-select">
+                                <option>Current User</option>
+                                <option>Jane Smith</option>
+                                <option>Mike Johnson</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Update Schedule</label>
+                            <div class="form-row">
+                                <div>
+                                    <label class="form-label" style="font-size: 13px;">New Start Date</label>
+                                    <input type="date" class="form-input" value="2026-12-01">
+                                </div>
+                                <div>
+                                    <label class="form-label" style="font-size: 13px;">New End Date</label>
+                                    <input type="date" class="form-input" value="2026-12-31">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">What to Restore</label>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Campaign Configuration
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Playlists
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" checked> Layouts
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox"> Media Files (if not in library)
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox"> Dynamic Feeds
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Approval Status</label>
+                            <div style="display: flex; gap: 16px;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="radio" name="approval" checked> Submit for Approval (Recommended)
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="radio" name="approval"> Save as Draft
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <button type="button" class="btn btn-success">Restore Campaign</button>
+                            <button type="button" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Restore Preview</h3>
+                    <div style="background: var(--gray-50); padding: 20px; border-radius: 6px; margin-bottom: 16px;">
+                        <h4 style="margin-bottom: 12px;">Original Campaign Details</h4>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Name:</strong> Holiday Sale 2025<br>
+                            <strong>Duration:</strong> Dec 1-31, 2025<br>
+                            <strong>Displays:</strong> All Displays (6)<br>
+                            <strong>Layout:</strong> Holiday Theme<br>
+                            <strong>Playlist:</strong> Holiday Promo Loop (8 items, 45s)<br>
+                            <strong>Size:</strong> 245 MB
+                        </div>
+                    </div>
+
+                    <div style="background: var(--gray-50); padding: 20px; border-radius: 6px; margin-bottom: 16px;">
+                        <h4 style="margin-bottom: 12px;">Restored Campaign Preview</h4>
+                        <div style="margin-bottom: 12px;">
+                            <strong>Name:</strong> Holiday Sale 2026<br>
+                            <strong>Duration:</strong> Dec 1-31, 2026<br>
+                            <strong>Displays:</strong> All Displays (6)<br>
+                            <strong>Layout:</strong> Holiday Theme (restored)<br>
+                            <strong>Playlist:</strong> Holiday Promo Loop (restored)<br>
+                            <strong>Status:</strong> Pending Approval
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        ⚠️ <strong>Media Check:</strong> 3 media files from the original campaign are no longer in the Media Library. They will be restored from archive.
+                    </div>
+
+                    <div class="alert alert-info">
+                        ℹ️ <strong>Feeds Update:</strong> Dynamic feed URLs will be validated. You may need to reconfigure expired API keys.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: Permanent Delete -->
+        <div class="prototype-section" style="border-bottom: none;">
+            <span class="prototype-label">TASK-005.4 - Permanent Delete</span>
+            <div class="section-header">
+                <h2>Permanent Delete</h2>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Delete Archived Content</h3>
+                    <div class="alert alert-danger">
+                        ⚠️ <strong>Warning:</strong> Permanent deletion cannot be undone. All associated media, playlists, and layouts will be removed from the archive.
+                    </div>
+
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Select Items to Delete</label>
+                            <div style="border: 1px solid var(--gray-200); border-radius: 6px; max-height: 300px; overflow-y: auto;">
+                                <label class="checkbox-item" style="border-bottom: 1px solid var(--gray-200);">
+                                    <input type="checkbox"> Summer Campaign 2025 (412 MB)
+                                </label>
+                                <label class="checkbox-item" style="border-bottom: 1px solid var(--gray-200);">
+                                    <input type="checkbox"> Valentine's Day Special (98 MB)
+                                </label>
+                                <label class="checkbox-item" style="border-bottom: 1px solid var(--gray-200);">
+                                    <input type="checkbox"> Product Launch Q1 (156 MB)
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Old Test Campaign (23 MB)
+                                </label>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 13px; color: var(--gray-600);">
+                                Selected: 0 items (0 MB)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Deletion Reason *</label>
+                            <select class="form-select">
+                                <option>Select a reason...</option>
+                                <option>No longer needed</option>
+                                <content>Outdated content</content>
+                                <option>Storage cleanup</option>
+                                <option>Duplicate content</option>
+                                <option>Compliance requirement</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-textarea" placeholder="Optional: Add any notes about this deletion..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirmation</label>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: #FEE2E2; border: 1px solid var(--danger); border-radius: 6px;">
+                                <input type="checkbox" id="confirm-delete">
+                                <label for="confirm-delete" style="cursor: pointer; font-size: 14px;">
+                                    I understand this action cannot be undone
+                                </label>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <button type="button" class="btn btn-danger" disabled>Permanently Delete</button>
+                            <button type="button" class="btn btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px;">Archive Retention Policy</h3>
+                        <div style="margin-bottom: 16px;">
+                            <strong>Default Retention Period:</strong> 6 months<br>
+                            <strong>Auto-Archived Content:</strong> Deleted after 6 months<br>
+                            <strong>Manually Archived:</strong> Deleted after 12 months<br>
+                            <strong>Permanent Archive:</strong> No auto-deletion
+                        </div>
+
+                        <div class="alert alert-info">
+                            ℹ️ <strong>Storage Management:</strong> Archive is currently using 2.4 GB of 10 GB (24%). Consider deleting old campaigns to free up space.
+                        </div>
+
+                        <h4 style="margin: 20px 0 12px 0;">Upcoming Auto-Deletions</h4>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Campaign</th>
+                                    <th>Delete Date</th>
+                                    <th>Size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Summer Campaign 2025</td>
+                                    <td style="color: var(--warning);">Mar 16, 2026</td>
+                                    <td>412 MB</td>
+                                </tr>
+                                <tr>
+                                    <td>Spring Promo 2025</td>
+                                    <td>Mar 20, 2026</td>
+                                    <td>198 MB</td>
+                                </tr>
+                                <tr>
+                                    <td>Easter Special 2025</td>
+                                    <td>Apr 1, 2026</td>
+                                    <td>87 MB</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 16px;">View All Scheduled Deletions</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px;">Bulk Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn btn-secondary">📦 Export Selected to ZIP</button>
+                            <button class="btn btn-secondary">🏷️ Add Tags to Selected</button>
+                            <button class="btn btn-secondary">📅 Extend Retention Period</button>
+                            <button class="btn btn-secondary">🔒 Mark as Permanent</button>
+                            <button class="btn btn-danger">🗑️ Delete Selected</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--gray-200); text-align: center; color: var(--gray-600); font-size: 13px;">
+            <strong>Archive UI/UX Prototype - TASK-005 Complete</strong><br>
+            Includes: Archived Content List, Search & Filter, Restore Functionality, Permanent Delete<br>
+            Designed for: Videotron Content Management System
+        </div>
+    </div>
+</body>
+</html>
