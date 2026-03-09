@@ -17,11 +17,14 @@ export async function POST(
     const { id } = await params;
     const body = await request.json();
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(`${BACKEND_API_URL}/screens/${id}/heartbeat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });

@@ -34,16 +34,15 @@ export async function POST(request: NextRequest) {
       backendFormData.append('description', description);
     }
 
-    // Get access token from Authorization header
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
 
     // Forward to backend
     const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001/api/v1';
     const response = await fetch(`${backendUrl}/videos/upload`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Cookie': cookieHeader,
       },
       body: backendFormData,
     });

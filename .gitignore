@@ -51,3 +51,7 @@ test-game.html
 # Backup files
 *.bak
 IDENTITY.md.bak
+
+.next/
+node_modules/
+*.log

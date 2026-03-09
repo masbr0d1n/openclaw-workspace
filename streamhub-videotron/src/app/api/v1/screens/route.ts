@@ -24,11 +24,14 @@ export async function GET(request: NextRequest) {
     const url = `${BACKEND_API_URL}/screens${queryString ? `?${queryString}` : ''}`;
     console.log('[Screens API] GET:', url);
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
     });
 
@@ -48,11 +51,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(`${BACKEND_API_URL}/screens`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });

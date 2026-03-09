@@ -17,11 +17,14 @@ export async function GET(
   try {
     const { id } = await params;
     
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(`${BACKEND_API_URL}/playlists/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
     });
 
@@ -45,11 +48,14 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+
     const response = await fetch(`${BACKEND_API_URL}/playlists/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });
@@ -73,11 +79,14 @@ export async function DELETE(
   try {
     const { id } = await params;
     
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(`${BACKEND_API_URL}/playlists/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
     });
 

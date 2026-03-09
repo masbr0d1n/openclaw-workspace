@@ -9,25 +9,20 @@ const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/ap
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader) {
-      return NextResponse.json(
-        { status: false, statusCode: 401, error: 'Unauthorized', message: 'No authorization header' },
-        { status: 401 }
-      );
-    }
-
     const url = new URL(request.url);
     const includeInactive = url.searchParams.get('include_inactive') === 'true';
 
     // Proxy to backend - NOTE: backend requires trailing slash
     const backendUrl = `${BACKEND_API_URL}/role-presets/${includeInactive ? '?include_inactive=true' : ''}`;
+    
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
-        'Authorization': authHeader,
         'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
       },
     });
 
@@ -50,23 +45,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader) {
-      return NextResponse.json(
-        { status: false, statusCode: 401, error: 'Unauthorized', message: 'No authorization header' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
 
     // Proxy to backend - NOTE: backend requires trailing slash
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(`${BACKEND_API_URL}/role-presets/`, {
       method: 'POST',
       headers: {
-        'Authorization': authHeader,
         'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });

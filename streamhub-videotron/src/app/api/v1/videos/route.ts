@@ -10,19 +10,20 @@ const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/ap
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    
     // Build URL with query params
     const url = new URL(`${BACKEND_API_URL}/videos/`);
     request.nextUrl.searchParams.forEach((value, key) => {
       url.searchParams.set(key, value);
     });
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        ...(authHeader && { 'Authorization': authHeader }),
+        'Cookie': cookieHeader,
       },
     });
 
@@ -40,14 +41,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
     const body = await request.json();
+
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
 
     const response = await fetch(`${BACKEND_API_URL}/videos/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(authHeader && { 'Authorization': authHeader }),
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });

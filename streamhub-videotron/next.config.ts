@@ -14,19 +14,9 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  async rewrites() {
-    // Use environment variable for backend URL, fallback to localhost for development
-    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:8001';
-    
-    return {
-      afterFiles: [
-        {
-          source: '/api/v1/:path*',
-          destination: `${backendUrl}/api/v1/:path*`,
-        },
-      ],
-    };
-  },
+  // REMOVED: Rewrites bypass API routes and don't forward Set-Cookie headers
+  // All API calls now go through Next.js API routes (src/app/api/v1/*)
+  // which properly forward cookies from backend responses
 };
 
 export default withBundleAnalyzer(nextConfig);

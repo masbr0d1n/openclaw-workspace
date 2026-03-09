@@ -44,8 +44,10 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const authHeader = request.headers.get('authorization');
     const body = await request.json();
+
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
 
     const response = await fetch(`${BACKEND_API_URL}/videos/${id}`, {
       method: 'PUT',

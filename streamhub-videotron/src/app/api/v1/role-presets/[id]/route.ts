@@ -13,20 +13,13 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader) {
-      return NextResponse.json(
-        { status: false, statusCode: 401, error: 'Unauthorized', message: 'No authorization header' },
-        { status: 401 }
-      );
-    }
-
-    const response = await fetch(`${BACKEND_API_URL}/role-presets/${id}`, {
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+        const response = await fetch(`${BACKEND_API_URL}/role-presets/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': authHeader,
         'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
       },
     });
 
@@ -53,22 +46,15 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader) {
-      return NextResponse.json(
-        { status: false, statusCode: 401, error: 'Unauthorized', message: 'No authorization header' },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+        const body = await request.json();
 
     const response = await fetch(`${BACKEND_API_URL}/role-presets/${id}/`, {
       method: 'PUT',
       headers: {
-        'Authorization': authHeader,
         'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });
@@ -96,20 +82,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader) {
-      return NextResponse.json(
-        { status: false, statusCode: 401, error: 'Unauthorized', message: 'No authorization header' },
-        { status: 401 }
-      );
-    }
-
-    const response = await fetch(`${BACKEND_API_URL}/role-presets/${id}`, {
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+        const response = await fetch(`${BACKEND_API_URL}/role-presets/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': authHeader,
         'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
       },
     });
 

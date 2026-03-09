@@ -11,14 +11,14 @@ export async function GET(request: NextRequest) {
     // Proxy to backend
     const backendUrl = `${BACKEND_API_URL}/users${queryString ? `?${queryString}` : ''}`;
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+
     const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Forward authorization header if present
-        ...(request.headers.get('authorization') && {
-          'Authorization': request.headers.get('authorization')!
-        }),
+        'Cookie': cookieHeader,
       },
     });
 
@@ -40,13 +40,14 @@ export async function POST(request: NextRequest) {
 
     const backendUrl = `${BACKEND_API_URL}/users`;
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(request.headers.get('authorization') && {
-          'Authorization': request.headers.get('authorization')!
-        }),
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });

@@ -13,22 +13,15 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const authHeader = request.headers.get('authorization');
-    
-    if (!authHeader) {
-      return NextResponse.json(
-        { status: false, statusCode: 401, error: 'Unauthorized', message: 'No authorization header' },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json().catch(() => ({}));
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+        const body = await request.json().catch(() => ({}));
 
     const response = await fetch(`${BACKEND_API_URL}/layouts/${id}/duplicate`, {
       method: 'POST',
       headers: {
-        'Authorization': authHeader,
         'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });

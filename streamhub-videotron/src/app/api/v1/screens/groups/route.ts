@@ -12,11 +12,14 @@ const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8001/ap
 // GET all screen groups
 export async function GET(request: NextRequest) {
   try {
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+    
     const response = await fetch(`${BACKEND_API_URL}/screens/groups`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
     });
 
@@ -36,11 +39,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    // Forward cookies from client request
+    const cookieHeader = request.headers.get('cookie') || '';
+
     const response = await fetch(`${BACKEND_API_URL}/screens/groups`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': request.headers.get('Authorization') || '',
+        'Cookie': cookieHeader,
       },
       body: JSON.stringify(body),
     });
