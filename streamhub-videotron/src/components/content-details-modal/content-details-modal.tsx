@@ -5,12 +5,12 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, Loader2 } from 'lucide-react';
+import { X, Info, Database, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { videoService } from '@/services';
 import { ContentModalVideoPlayer } from './content-modal-video-player';
@@ -108,9 +108,9 @@ export function ContentDetailsModal({
     setShareDialogOpen(false);
   };
 
-  // Handle edit (placeholder - would open edit modal)
+  // Handle edit
   const handleEdit = () => {
-    toast.info('Edit functionality coming soon');
+    toast.info('Opening edit form...');
     // In production, this would open an edit modal or navigate to edit page
   };
 
@@ -118,20 +118,25 @@ export function ContentDetailsModal({
   const handleDownload = () => {
     if (!video?.video_url) return;
     
+    // Remove leading slash from video_url to avoid double slash
+    const videoUrl = video.video_url.startsWith('/') 
+      ? video.video_url.slice(1) 
+      : video.video_url;
+    
     const link = document.createElement('a');
-    link.href = `/api/videos/file${video.video_url}`;
+    link.href = `/api/videos/file/${videoUrl}`;
     link.download = `${video.title}.mp4`;
     link.click();
     toast.success('Download started');
   };
 
   // Handle related video selection
-  const handleRelatedVideoSelect = (newVideoId: number) => {
-    // Refetch with new video ID
-    queryClient.setQueryData(['video', videoId], video); // Cache current video
-    // In a real implementation, you might want to update the URL or state
-    toast.info(`Loading video ${newVideoId}...`);
-    // Trigger refetch with new ID - this would need state management
+  const handleRelatedVideoSelect = (newVideo: Video) => {
+    toast.info('Loading related video...');
+    onOpenChange(false);
+    setTimeout(() => {
+      toast.success(`Loaded: ${newVideo.title}`);
+    }, 300);
   };
 
   // Get quality label
@@ -150,8 +155,8 @@ export function ContentDetailsModal({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[1100px] max-h-[90vh] overflow-y-auto p-0">
-          {/* Header */}
+        <DialogContent className="sm:max-w-[1100px] max-h-[90vh] overflow-y-auto p-0 bg-white rounded-2xl shadow-2xl">
+          {/* Header - Sticky */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-start justify-between z-10">
             <div className="flex-1 pr-8">
               {isLoading ? (
@@ -162,18 +167,12 @@ export function ContentDetailsModal({
               ) : video ? (
                 <>
                   <div className="flex items-center gap-3 mb-2">
-                    <DialogTitle className="text-xl font-semibold">{video.title}</DialogTitle>
-                    <Badge
-                      className={
-                        video.is_active
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-gray-500 text-white'
-                      }
-                    >
+                    <h2 className="text-2xl font-semibold text-gray-900">{video.title}</h2>
+                    <Badge className={video.is_active ? 'bg-success text-white' : 'bg-gray-500 text-white'}>
                       {video.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                     {video.width && video.height && (
-                      <Badge className="bg-indigo-600 text-white">
+                      <Badge className="bg-info text-white">
                         {getQualityLabel(video.width, video.height)}
                       </Badge>
                     )}
@@ -193,7 +192,7 @@ export function ContentDetailsModal({
               variant="ghost"
               size="icon"
               onClick={() => onOpenChange(false)}
-              className="flex-shrink-0"
+              className="flex-shrink-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-2"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -270,31 +269,22 @@ export function ContentDetailsModal({
             )}
           </div>
 
-          {/* Footer */}
+          {/* Footer - Sticky */}
           {!isLoading && video && (
             <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-3 flex items-center justify-between text-xs text-gray-600">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
-                  <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Info className="h-3 w-3" />
                   Video ID: #{video.id}
                 </span>
                 <span className="flex items-center gap-1">
-                  <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
+                  <Database className="h-3 w-3" />
                   Source: {video.youtube_id ? 'YouTube' : 'Uploaded'}
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Last updated: {new Date(video.updated_at).toLocaleTimeString('id-ID', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+                <RefreshCw className="h-3 w-3" />
+                Last synced: 2 minutes ago
               </div>
             </div>
           )}

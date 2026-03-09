@@ -1,11 +1,11 @@
 /**
  * Content Modal Metadata Component
- * Displays channel info, description, tags, and statistics
+ * Displays channel info, statistics, and tags
  */
 
 'use client';
 
-import { Calendar, Clock, Eye, RefreshCw, Tag, ExternalLink } from 'lucide-react';
+import { Calendar, Clock, Eye, RefreshCw, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { MetadataProps } from './types';
 
@@ -16,9 +16,9 @@ export function ContentModalMetadata({ video, channel }: MetadataProps) {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return '-';
     return date.toLocaleDateString('id-ID', {
-      year: 'numeric',
       month: 'short',
       day: 'numeric',
+      year: 'numeric',
     });
   };
 
@@ -36,19 +36,6 @@ export function ContentModalMetadata({ video, channel }: MetadataProps) {
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
   };
-
-  // Get quality label
-  const getQualityLabel = (width: number | null, height: number | null): string => {
-    if (!width || !height) return '';
-    if (height >= 2160) return '4K';
-    if (height >= 1440) return '2K';
-    if (height >= 1080) return 'Full HD';
-    if (height >= 720) return 'HD';
-    if (height >= 480) return 'SD';
-    return `${width}x${height}`;
-  };
-
-  const qualityLabel = getQualityLabel(video.width, video.height);
 
   return (
     <div className="space-y-4">
@@ -77,9 +64,9 @@ export function ContentModalMetadata({ video, channel }: MetadataProps) {
             )}
             <a
               href={`/dashboard/channels/${channel.id}`}
-              className="text-xs text-indigo-600 hover:underline mt-1 inline-flex items-center gap-1"
+              className="text-xs text-primary hover:underline mt-1 inline-block"
             >
-              View Channel <ExternalLink className="h-3 w-3" />
+              View Channel →
             </a>
           </div>
         </div>
@@ -117,29 +104,16 @@ export function ContentModalMetadata({ video, channel }: MetadataProps) {
         </div>
       </div>
 
-      {/* Quality Badge (if available) */}
-      {qualityLabel && qualityLabel !== '-' && (
-        <div>
-          <h4 className="text-xs font-medium text-gray-600 mb-2">Quality</h4>
-          <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-200">
-            {qualityLabel}
-          </Badge>
-        </div>
-      )}
-
       {/* Tags */}
       {video.tags && video.tags.length > 0 && (
         <div>
-          <h4 className="text-xs font-medium text-gray-600 mb-2 flex items-center gap-1">
-            <Tag className="h-3 w-3" />
-            Tags
-          </h4>
+          <h4 className="text-xs font-medium text-gray-600 mb-2">Tags</h4>
           <div className="flex flex-wrap gap-2">
             {video.tags.slice(0, 10).map((tag, index) => (
               <Badge
                 key={index}
                 variant="secondary"
-                className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs hover:bg-gray-300"
               >
                 {tag}
               </Badge>
@@ -149,16 +123,6 @@ export function ContentModalMetadata({ video, channel }: MetadataProps) {
                 +{video.tags.length - 10} more
               </Badge>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Description */}
-      {video.description && (
-        <div>
-          <h4 className="text-xs font-medium text-gray-600 mb-2">Description</h4>
-          <div className="text-sm text-gray-700 whitespace-pre-wrap line-clamp-4 bg-gray-50 p-3 rounded-lg">
-            {video.description}
           </div>
         </div>
       )}

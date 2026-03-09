@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Link, Twitter, Facebook, Linkedin, Copy, Check, ExternalLink, Loader2 } from 'lucide-react';
+import { Link, Twitter, Facebook, Linkedin, Copy, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ export function ContentModalShareDialog({
 }: ShareDialogProps) {
   const [copied, setCopied] = useState(false);
 
-  const videoUrl = typeof window !== 'undefined'
+  const videoUrl = typeof window !== 'undefined' && video
     ? `${window.location.origin}/dashboard/videos/${video.id}`
     : '';
 
@@ -86,7 +86,7 @@ export function ContentModalShareDialog({
             Share Video
           </DialogTitle>
           <DialogDescription>
-            Share &quot;{video.title}&quot; with others
+            Share &quot;{video?.title || 'this video'}&quot; with others
           </DialogDescription>
         </DialogHeader>
 

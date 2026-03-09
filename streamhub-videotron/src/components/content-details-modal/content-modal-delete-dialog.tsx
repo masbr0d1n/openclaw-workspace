@@ -34,7 +34,7 @@ export function ContentModalDeleteDialog({
             Delete Video
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete &quot;{video.title}&quot;? This action cannot be
+            Are you sure you want to delete &quot;{video?.title || 'this video'}&quot;? This action cannot be
             undone and will permanently remove the video and all associated data.
           </AlertDialogDescription>
         </AlertDialogHeader>

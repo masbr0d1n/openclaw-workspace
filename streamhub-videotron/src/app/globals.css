@@ -25,6 +25,11 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
+  /* Custom colors for Content Details Modal */
+  --color-success: oklch(0.627 0.194 149.214);
+  --color-danger: oklch(0.627 0.214 25.325);
+  --color-warning: oklch(0.696 0.184 54.484);
+  --color-info: oklch(0.623 0.226 251.214);
 }
 
 @layer base {
@@ -33,5 +38,38 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Content Details Modal Custom Styles */
+@layer components {
+  .video-player {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  }
+
+  .spec-card {
+    transition: all 0.2s ease;
+  }
+
+  .spec-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .related-card {
+    transition: all 0.2s ease;
+  }
+
+  .related-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .action-btn {
+    transition: all 0.2s ease;
+  }
+
+  .action-btn:hover {
+    transform: translateY(-1px);
   }
 }
